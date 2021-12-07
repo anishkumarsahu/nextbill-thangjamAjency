@@ -1,0 +1,1390 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Product</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+    <style>
+        .cwide {
+            width: 75% !important;
+        }
+
+        #productTable_length {
+
+            left: 10px;
+            position: absolute;
+        }
+
+        #productTable_filter {
+            width: 75%;
+            float: right;
+        }
+
+            #batchTable_length {
+
+            left: 10px;
+            position: absolute;
+        }
+
+        #batchTable_filter {
+            width: 75%;
+            float: right;
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 200px;
+        }
+    </style>
+    <div class="ui right aligned basic segment">
+        <div class="ui internally celled grid">
+            {% if  request.user|has_group:"Admin" %}
+                <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                    <div class="thirteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                        <form action="" id="productForm">{% csrf_token %}
+                            <div class="ui mini form">
+                                <div class="6 fields">
+                                    <div class="field" style="width: 15%">
+                                        <label style="text-align: center">Type</label>
+                                        <select class="dropdown" id="pType" onchange="changeProductType()">
+                                            <option value="Normal" selected>Normal</option>
+                                            {#                                            <option value="Jet">Jet</option>#}
+                                        </select>
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">Product Name</label>
+                                        <div class="ui productList search">
+                                            <div class="ui icon input">
+                                                <input placeholder="Product Name" class="prompt"
+                                                       list="productAutocomplete"
+                                                       type="text" id="productName">
+                                                <i class="shopping basket icon"></i>
+                                            </div>
+                                            <div class="results"></div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">Category <i onclick="openCategory()"
+                                                                                      class="plus green icon"
+                                                                                      style="cursor:pointer"></i><span
+                                                id="gstShow"></span> </label>
+                                        <div class="ui categoryList search">
+                                            <div class="ui icon input">
+                                                <input placeholder="Category" class="prompt"
+                                                       type="text" id="category">
+                                                <i class="shopping bag icon"></i>
+
+                                                <input type="hidden" id="catID" value="N/A">
+                                            </div>
+                                            <div class="results"></div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">Brand</label>
+                                        <input placeholder="Brand" id="brand" type="text">
+                                    </div>
+
+                                    <div class="field" style="width: 15%">
+                                        <label style="text-align: center">Unit</label>
+                                        <select class="dropdown" id="unit">
+
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label style="text-align: center">MRP</label>
+                                        <input placeholder="MRP" id="mrp" type="number" value="0"
+                                               onblur="getTaxValue()">
+                                        <input type="hidden" id="taxVal" value="0.0">
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">Cost(CP)</label>
+                                        <input placeholder="Cost" id="cost" type="number" value="0">
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">Rate(SP)</label>
+                                        <input placeholder="Rate(SP)" id="sp" type="number" value="0"
+                                        >
+                                    </div>
+                                    <div class="field" id="netDiv">
+                                        <label style="text-align: center">Net(SP+GST)</label>
+                                        <input placeholder="Net(SP+GST)" id="net" type="number" value="0">
+                                    </div>
+
+                                </div>
+                                <div class="7 fields" style="float: left">
+                                    <div class="field">
+                                        <label style="text-align: center">Stock</label>
+                                        <input placeholder="Stock" id="stock" type="number" value="0">
+                                    </div>
+
+                                    <div class="field" style="width: 25%">
+                                        <label style="text-align: center">Company</label>
+                                        <select class="dropdown" id="company">
+                                        </select>
+                                    </div>
+                                    <div class="field" style="width:25%;">
+                                        <label style="text-align: center">Ware House</label>
+
+                                        <select class="dropdown" id="wareHouse">
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label style="text-align: center">Discount(%)</label>
+                                        <input placeholder="Discount(%)" id="discount" type="number" value="0">
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">BarCode</label>
+                                        <input placeholder="BarCode" id="barCode" type="number" value="0">
+                                    </div>
+                                    <div class="field" style="width: 25%">
+                                        <label style="text-align: center">Status</label>
+                                        <select class="dropdown" id="status">
+
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                        </select>
+                                        <input type="hidden" id="pID">
+                                    </div>
+                                    <div class="field">
+                                        <label style="text-align: center">Stock Warning At</label>
+                                        <input placeholder="Stock Warning At" id="stockWarning" type="number" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="pc">
+                        </form>
+                    </div>
+                    <div class="three left column" style="padding: 3rem">
+                        <div class="ui buttons">
+
+                            <button class="ui positive button" id="addProductBtn" type="button" onclick="addProduct()">
+                                <i
+                                        class="plus icon"></i>Add
+                            </button>
+                            <button style="display: none" type="button" id="updateProductBtn" onclick="editProduct()"
+                                    class="ui orange button">
+                                <i class="icon redo"></i>
+                                Update
+                            </button>
+                            <div class="or"></div>
+                            <button class="ui button red" onclick="clearProductForm()"><i class="minus icon"></i> Clear
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row" style="padding-bottom: 0!important;padding-top: 5px!important;">
+                <div class="sixteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Product List
+                    </h5>
+                    <table class="ui sortable celled very compact table" id="productTable"
+                           style="margin-top: 5px;width: 100%">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>MRP(₹)</th>
+                            <th>Cost(₹)</th>
+                            <th>SP(₹)</th>
+                            <th>Net(₹)</th>
+                            <th>Stock</th>
+                            <th>Warning</th>
+                            <th>Unit</th>
+                            <th>Company</th>
+                            <th>WareHouse</th>
+                            <th>Discount</th>
+                            <th>Barcode</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Take Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="ui basic modal custom" id="delProductModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Product detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Product detail will be deleted, are you sure to delete
+                this Product?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dpID">
+            <div class="ui green ok inverted button" onclick="deleteProduct()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui overlay fullscreen modal front transition scrolling win" id="batchDiv">
+        <div class="header">
+            Batch <span class="ui teal text">Detail.</span>
+
+        </div>
+        <div class="content" style="padding-top: 0!important;">
+            <div class="description">
+                <div class="ui right aligned basic segment">
+<h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Add New Product Batch Details
+                    </h5>
+
+                        <div class="ui internally grid">
+
+                            <div class="row" style="padding-bottom: 0!important;">
+                                <div class="thirteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                                    <form action="" id="batchForm">{% csrf_token %}
+                                        <input type="hidden" id="batchProductID">
+                                        <div class="ui mini form">
+                                            <div class="6 fields">
+                                                <div class="field">
+                                                    <label style="text-align: center">Batch Number</label>
+                                                        <div class="ui icon input">
+                                                            <input placeholder="Batch Number" class="prompt"
+                                                                   type="text"
+                                                                   id="batchNumber">
+                                                        </div>
+
+                                                </div>
+                                                <div class="field">
+                                                    <label style="text-align: center">Quantity</label>
+                                                        <div class="ui icon input">
+                                                            <input placeholder="Quantity" class="prompt" type="number"
+                                                                   id="batchQuantity" autocomplete="off" value="0">
+                                                            <input type="hidden" id="batchID" value="N/A">
+                                                        </div>
+
+                                                </div>
+                                                <div class="field">
+                                                    <label style="text-align: center">Rate</label>
+                                                    <input placeholder="Rate" id="batchRate" type="number" value="0"
+                                                    >
+                                                </div>
+                                                <div class="field">
+                                                    <label style="text-align: center">MRP</label>
+                                                    <input placeholder="MRP" id="batchMrp" type="number" value="0">
+                                                </div>
+                                                <div class="field" id="mDate">
+                                                    <label style="text-align: center">Manufacture Date</label>
+                                                    <input placeholder="Manufacture Date" id="manufactureBatch" type="text">
+                                                </div>
+                                                <div class="field" id="eDate">
+                                                    <label style="text-align: center">Expiry Date</label>
+                                                    <input placeholder="Expiry Date" id="expiryBatch" type="text" >
+                                                </div>
+
+                                            </div>
+                                            <div class="two fields" style="float: left;width: 100%;">
+
+
+                                                <div class="field">
+                                                    <label style="text-align: center">Location</label>
+                                                    <input placeholder="Location" id="locationBatch" type="text">
+                                                </div>
+                                                 <div class="field">
+                                                    <label style="text-align: center">Additional Detail</label>
+                                                    <input placeholder="Additional Detail" id="additionBatch" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="three left column" style="padding: 3rem">
+                                    <div class="ui buttons">
+
+                                        <button class="ui positive button" id="addBatchBtn" type="button"
+                                                onclick="addBatch()">
+                                            <i class="plus icon"></i>Add
+                                        </button>
+                                        <button style="display: none" type="button" id="updateBatchBtn"
+                                                onclick="editBatch()" class="ui orange button">
+                                            <i class="icon redo"></i>
+                                            Update
+                                        </button>
+                                        <div class="or"></div>
+                                        <button class="ui button red" onclick="clearBatchForm()"><i
+                                                class="minus icon"></i> Clear
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Product Batch List
+                    </h5>
+                    <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                        <table class="ui sortable celled very compact table" id="batchTable"
+                           style="margin-top: 5px;width: 100%;">
+                        <thead>
+                        <tr>
+                            <th>Batch Number</th>
+                            <th>Quantity</th>
+                            <th>Rate(₹)</th>
+                            <th>MRP(₹)</th>
+                            <th>ManDate</th>
+                            <th>ExDate</th>
+                            <th>Location</th>
+                            <th>Add Details</th>
+                            <th>Datetime</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+
+            <div class="ui primary approve button">
+                Close
+                <i class="compress arrows alternate icon"></i>
+            </div>
+        </div>
+    </div>
+
+        <div class="ui basic modal custom" id="delBatchModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Product Batch detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Product Batch detail will be deleted, are you sure to delete
+                this Product Batch?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dpBatchID">
+            <div class="ui green ok inverted button" onclick="deleteBatch()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+{% block js %}
+    <script>
+        $('.selection.dropdown')
+            .dropdown()
+        ;
+        var pType = $('#pType').val();
+
+
+        function addProduct() {
+            var pType = $('#pType').val();
+            var productName = $('#productName').val();
+            var brand = $('#brand').val();
+            var category = $('#catID').val();
+            var mrp = $('#mrp').val();
+            var cost = $('#cost').val();
+            var sp = $('#sp').val();
+            var net = $('#net').val();
+            var stock = $('#stock').val();
+            var company = $('#company').val();
+            var wareHouse = $('#wareHouse').val();
+            var discount = $('#discount').val();
+            var barCode = $('#barCode').val();
+            var status = $('#status').val();
+            var unit = $('#unit').val();
+            var stockWarning = $('#stockWarning').val();
+            if (productName === '' || category === 'N/A' || mrp === '' ||
+                cost === '' || sp === '' || net === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Product Name, Category, MRP, Cost and SP are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+                if (pType === 'Jet') {
+                    net = '0.0'
+                }
+
+                data = new FormData();
+                data.append('pType', pType);
+                data.append('productName', productName);
+                data.append('brand', brand);
+                data.append('category', category);
+                data.append('mrp', mrp);
+                data.append('cost', cost);
+                data.append('sp', sp);
+                data.append('net', net);
+                data.append('stock', stock);
+                data.append('company', company);
+                data.append('wareHouse', wareHouse);
+                data.append('discount', discount);
+                data.append('barCode', barCode);
+                data.append('status', status);
+                data.append('unit', unit);
+                data.append('stockWarning', stockWarning);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/PostProductDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Product Added Successfully.'
+                                })
+                            ;
+
+                            productTab.ajax.reload();
+                            $('#productForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+        $(getProduct());
+        var productTab;
+        function getProduct() {
+
+
+            productTab = $('#productTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollX": true,
+
+                {% if  request.user|has_group:"Admin"%}
+                    "scrollY": "245px",
+                {% endif %}
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                    }
+                }
+                    , {
+                        extend: 'colvis',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    {"name": "name", "targets": 0, "orderable": true},
+                    {"name": "brand", "targets": 1, "orderable": true},
+                    {"name": "categoryID", "targets": 2, "orderable": true},
+                    {"name": "mrp", "targets": 3, "orderable": true},
+                    {"name": "cost", "targets": 4, "orderable": true},
+                    {"name": "spWithoutGst", "targets": 5, "orderable": true},
+                    {"name": "spWithGst", "targets": 6, "orderable": true},
+                    {"name": "stock", "targets": 7, "orderable": true},
+                    {"name": "warningStockLimit", "targets": 8, "orderable": true},
+                    {"name": "unitID", "targets": 9, "orderable": true},
+                    {"name": "company_ID", "targets": 10, "orderable": true},
+                    {"name": "wareHouse_ID", "targets": 11, "orderable": true},
+                    {"name": "discountPc", "targets": 12, "orderable": true},
+                    {"name": "barcode", "targets": 13, "orderable": true},
+                    {"name": "status", "targets": 14, "orderable": true},
+                    {"name": "productType", "targets": 15, "orderable": true},
+                    {"name": "action", "targets": 16, "orderable": false, "class": "flexbox"}
+
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:ProductListJson' %}"
+            });
+        }
+
+        function getCategories() {
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCategoryList/' + data + '/',
+                success: function (response) {
+                    var i;
+                    for (i = 0; i < response.data.length; i++) {
+                        $('#categoryAutocomplete').append('<option id=' + response.data[i]["ID"] + ' value=' + response.data[i]['Category'] + '>')
+
+                    }
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occured !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function GetProductDetail(id) {
+
+            $('#addProductBtn').css('display', 'none');
+            $('#updateProductBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetProductDetail/' + id + '/',
+
+
+                success: function (response) {
+                    $('#productName').val(response.data['ProductName']);
+                    $('#pID').val(response.data['ID']);
+                    $('#pType').val(response.data['ProductType']);
+                    $('#brand').val(response.data['Brand']);
+                    $('#category').val(response.data['Category']);
+                    $('#catID').val(response.data['CatID']);
+                    $('#mrp').val(response.data['Mrp']);
+                    $('#cost').val(response.data['Cost']);
+                    $('#Price').val(response.data['Sp']);
+                    {#                            $('#GST').val(response.data['GST']).addClass('background');#}
+
+                    $('#sp').val(response.data['Sp']);
+                    $('#net').val(response.data['Net']);
+                    $('#stock').val(response.data['Stock']);
+                    $('#discount').val(response.data['Discount']);
+                    $('#barCode').val(response.data['Barcode']);
+                    $('#status').val(response.data['Status']);
+                    $('#company').val(response.data['Company']);
+                    $('#wareHouse').val(response.data['Warehouse']);
+                    $('#unit').val(response.data['Unit']);
+                    $('#taxVal').val(response.data['Tax']);
+                    $('#stockWarning').val(response.data['StockWarning']);
+                    $('#pc').val(response.data['Tax']);
+                    changeProductType();
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        });
+                }
+            });
+
+
+        }
+
+        $(getCompany());
+
+        function getCompany() {
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCompanyList/',
+
+                success: function (response) {
+                    $('#company').html('');
+                    var i;
+                    for (i = 0; i < response.data.length; i++) {
+
+                        $('#company').append('<option value="' + response.data[i]["ID"] + '">' + response.data[i]["CompanyName"] + '</option>');
+
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+        $(getWareHouse());
+
+        function getWareHouse() {
+            $.ajax({
+                type: 'get',
+                url: '/api/GetWareHouseList/',
+
+                success: function (response) {
+                    $('#wareHouse').html('');
+                    var i;
+                    for (i = 0; i < response.data.length; i++) {
+
+                        $('#wareHouse').append('<option value ="' + response.data[i]["ID"] + '">' + response.data[i]["WareHouseName"] + '</option>');
+
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+        $(getUnitList())
+        function getUnitList() {
+            $.ajax({
+                type: 'get',
+                url: '/api/get_unit_list/',
+
+                success: function (response) {
+                    $('#unit').html('');
+                    var i;
+                    for (i = 0; i < response.data.length; i++) {
+
+                        $('#unit').append('<option value ="' + response.data[i]["ID"] + '">' + response.data[i]["Name"] + '</option>');
+
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+
+        $('.ui.categoryList')
+            .search({
+                apiSettings: {
+                    url: '/api/GetCategoryList/?q={query}'
+                },
+                fields: {
+                    results: 'data',
+                    title: 'Category',
+                    "price": "Hsn",
+                },
+                minCharacters: 1,
+                onSelect: function (result) {
+                    GetCategoryDetail(result.ID)
+
+
+                },
+            });
+
+
+        function GetCategoryDetail(id) {
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCategoryDetail/' + id + '/',
+
+                success: function (response) {
+
+                    $('#autoHSN').val(response.data['HSN']);
+                    $('#Category').val(response.data['CategoryName']);
+                    $('#brand').val(response.data['Brand']);
+                    $('#cost').val(response.data['Price']);
+                    $('#catID').val(response.data['ID']);
+                    $('#gstShow').html(response.data['GST'] + ' %');
+                    $('#pc').val(response.data['GST']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+        $("#category").keyup(function () {
+            var charName = $('#category').val();
+            if (charName.length === 0) {
+                $('#cost').val('0');
+                $('#mrp').val('0');
+                $('#sp').val('0');
+                $('#net').val('0');
+                $('#stock').val('0');
+                $('#discount').val('0');
+                $('#brand').val('');
+                $('#pc').val('0');
+                $('#gstShow').html('')
+                $('#catID').val('N/A');
+            }
+
+
+        });
+
+        $('#sp').keyup(function () {
+            var rate = $('#pc').val();
+            var sp = $('#sp').val();
+            var net = ((parseFloat(rate) / 100) * parseFloat(sp)) + parseFloat(sp);
+
+            $('#net').val(net.toFixed(2));
+
+        });
+
+        $('#net').keyup(function () {
+            var rate = $('#pc').val();
+            var net = $('#net').val();
+            var sp = parseFloat(net) / (1 + ((parseFloat(rate) / 100)));
+
+            $('#sp').val(sp.toFixed(2));
+
+        });
+
+
+        function getTaxValue() {
+            var tax = $('#category').val();
+            $.ajax({
+                type: 'get',
+                url: '/api/get_category_by_name/?q=' + tax,
+
+                success: function (response) {
+                    $('#taxVal').val(response.data);
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+
+        function changeProductType() {
+            pType = $('#pType').val();
+
+            if (pType === 'Jet') {
+                $('#netDiv').css('display', 'none')
+            }
+            else {
+                $('#netDiv').css('display', '')
+            }
+
+        }
+        function calcGst() {
+            var tax = $('#taxVal').val();
+            var sp = $('#sp').val();
+            console.log(tax, sp)
+
+            var total = parseFloat(sp) + ((parseFloat(tax) / 100.0) * parseFloat(sp));
+            $('#net').val(total);
+
+
+        }
+        //product
+        function clearProductForm() {
+            $('#productForm').trigger('reset')
+            $('#addProductBtn').css('display', '');
+            $('#updateProductBtn').css('display', 'none');
+            $('#catID').val('N/A');
+
+        }
+        function editProduct() {
+            debugger;
+            var pID = $('#pID').val();
+            var pType = $('#pType').val();
+            var productName = $('#productName').val();
+            var brand = $('#brand').val();
+            var category = $('#catID').val();
+            var mrp = $('#mrp').val();
+            var cost = $('#cost').val();
+            var sp = $('#sp').val();
+            var net = $('#net').val();
+            var stock = $('#stock').val();
+            var company = $('#company').val();
+            var wareHouse = $('#wareHouse').val();
+            var discount = $('#discount').val();
+            var barCode = $('#barCode').val();
+            var status = $('#status').val();
+            var unit = $('#unit').val();
+            var stockWarning = $('#stockWarning').val();
+            if (productName === '' || category === 'N/A' || mrp === '' ||
+                cost === '' || sp === '' || net === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Product Name, Category, MRP, Cost and SP are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+                if (pType === 'Jet') {
+                    net = '0.0'
+                }
+
+                data = new FormData();
+                data.append('pID', pID);
+                data.append('pType', pType);
+                data.append('productName', productName);
+                data.append('brand', brand);
+                data.append('category', category);
+                data.append('mrp', mrp);
+                data.append('cost', cost);
+                data.append('sp', sp);
+                data.append('net', net);
+                data.append('stock', stock);
+                data.append('company', company);
+                data.append('wareHouse', wareHouse);
+                data.append('discount', discount);
+                data.append('barCode', barCode);
+                data.append('status', status);
+                data.append('unit', unit);
+                data.append('stockWarning', stockWarning);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/EditProductDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Product Detail Updated Successfully.'
+                                })
+                            ;
+
+                            productTab.ajax.reload();
+                            $('#productForm').trigger('reset')
+                            $('#addProductBtn').css('display', '');
+                            $('#updateProductBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        function delProduct(id) {
+            $('#delProductModal')
+                .modal('show')
+            ;
+            $('#dpID').val(id)
+        }
+
+        function deleteProduct() {
+            var id = $('#dpID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_product' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Product Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        productTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+        function openCategory() {
+            window.open('{% url "homeApp:hsn" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function openProductBatch(id) {
+            $('#batchProductID').val(id);
+            $('#batchDiv').modal('show');
+            batchTab.ajax.url("{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + id).load();
+
+
+        }
+
+        var today = new Date();
+        $('#mDate')
+            .calendar({
+                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    },
+                    popupOptions: {
+                        observeChanges: false
+                    }
+
+                }
+            );
+
+
+        $('#eDate')
+            .calendar({
+                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    },
+                    popupOptions: {
+                        observeChanges: false
+                    }
+
+                }
+            );
+ function clearBatchForm() {
+            $('#batchForm').trigger('reset');
+            $('#addBatchBtn').css('display', '');
+            $('#updateBatchBtn').css('display', 'none');
+            $('#batchID').val('N/A');
+
+        }
+
+        function addBatch() {
+            var batchProductID = $('#batchProductID').val();
+            var batchNumber = $('#batchNumber').val();
+            var batchQuantity = $('#batchQuantity').val();
+            var batchRate = $('#batchRate').val();
+            var batchMrp = $('#batchMrp').val();
+            var manufactureBatch = $('#manufactureBatch').val();
+            var expiryBatch = $('#expiryBatch').val();
+            var locationBatch = $('#locationBatch').val();
+            var additionBatch = $('#additionBatch').val();
+            if (batchProductID === '' ||batchNumber === '' || batchQuantity === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Batch Number and quantity are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+                data = new FormData();
+                data.append('batchProductID', batchProductID);
+                data.append('batchNumber', batchNumber);
+                data.append('batchQuantity', batchQuantity);
+                data.append('batchRate', batchRate);
+                data.append('batchMrp', batchMrp);
+                data.append('manufactureBatch', manufactureBatch);
+                data.append('expiryBatch', expiryBatch);
+                data.append('locationBatch', locationBatch);
+                data.append('additionBatch', additionBatch);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:post_product_batch_detail" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Product Batch Detail Added Successfully.'
+                                })
+                            ;
+                             batchTab.ajax.reload();
+                            $('#batchForm').trigger('reset');
+                            productTab.ajax.reload();
+
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+        $(getProductBatch());
+        var batchTab;
+        function getProductBatch() {
+           var productID = $('#batchProductID').val();
+            batchTab = $('#batchTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollX": true,
+                 "scrollY": "150px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    }
+                }
+                    , {
+                        extend: 'colvis',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    {"name": "batchNumber", "targets": 0, "orderable": true},
+                    {"name": "quantity", "targets": 1, "orderable": true},
+                    {"name": "rate", "targets": 2, "orderable": true},
+                    {"name": "mrp", "targets": 3, "orderable": true},
+                    {"name": "mDate", "targets": 4, "orderable": true},
+                    {"name": "eDate", "targets": 5, "orderable": true},
+                    {"name": "location", "targets": 6, "orderable": true},
+                    {"name": "additionalDetail", "targets": 7, "orderable": true},
+                    {"name": "datetime", "targets": 8, "orderable": true},
+                   {"name": "action", "targets": 9, "orderable": false, "class": "flexbox"}
+
+                ],
+                aaSorting: [[8, 'desc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + productID
+            });
+        }
+
+
+        function GetProductBatchDetail(id) {
+
+            $('#addBatchBtn').css('display', 'none');
+            $('#updateBatchBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/get_product_batch_detail/' + id + '/',
+
+
+                success: function (response) {
+                    $('#batchID').val(response.data['ID']);
+                    $('#batchProductID').val(response.data['ProductID']);
+                    $('#batchNumber').val(response.data['BatchNumber']);
+                    $('#batchQuantity').val(response.data['Quantity']);
+                    $('#batchMrp').val(response.data['Mrp']);
+                    $('#batchRate').val(response.data['Rate']);
+                    $('#manufactureBatch').val(response.data['MDate']);
+                    $('#expiryBatch').val(response.data['EDate']);
+                    $('#locationBatch').val(response.data['Location']);
+                    $('#additionBatch').val(response.data['AdditionalDetail']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        });
+                }
+            });
+
+
+        }
+
+        function editBatch() {
+            var batchID = $('#batchID').val();
+            var batchProductID = $('#batchProductID').val();
+            var batchNumber = $('#batchNumber').val();
+            var batchQuantity = $('#batchQuantity').val();
+            var batchRate = $('#batchRate').val();
+            var batchMrp = $('#batchMrp').val();
+            var manufactureBatch = $('#manufactureBatch').val();
+            var expiryBatch = $('#expiryBatch').val();
+            var locationBatch = $('#locationBatch').val();
+            var additionBatch = $('#additionBatch').val();
+            if (batchProductID === '' ||batchNumber === '' || batchQuantity === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Batch Number and quantity are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+                data = new FormData();
+                data.append('batchID', batchID);
+                data.append('batchProductID', batchProductID);
+                data.append('batchNumber', batchNumber);
+                data.append('batchQuantity', batchQuantity);
+                data.append('batchRate', batchRate);
+                data.append('batchMrp', batchMrp);
+                data.append('manufactureBatch', manufactureBatch);
+                data.append('expiryBatch', expiryBatch);
+                data.append('locationBatch', locationBatch);
+                data.append('additionBatch', additionBatch);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_product_batch_detail" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Product Batch Detail updated Successfully.'
+                                })
+                            ;
+                             batchTab.ajax.reload();
+                            clearBatchForm();
+                            productTab.ajax.reload();
+
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+            function delProductBatch(id) {
+            $('#delBatchModal')
+                .modal('show')
+            ;
+            $('#dpBatchID').val(id)
+        }
+         function deleteBatch() {
+            var id = $('#dpBatchID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_product_batch' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Product Batch Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        productTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+    </script>
+{% endblock %}

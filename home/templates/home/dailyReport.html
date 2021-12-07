@@ -1,0 +1,72 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Expense</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+    <div class="ui grid padded">
+  <div class="sixteen wide column">
+<h4 class="ui  left aligned  dividing header">DAILY REPORT - {{ date }} </h4>
+<table class="ui celled table">
+  <thead>
+  <tr>
+    <th>User</th>
+    <th>Daily Target</th>
+    <th>Cash Sale</th>
+    <th>Credit Sale</th>
+    <th>Card Sale</th>
+    <th>Cheque Sale</th>
+    <th>Target Achieved</th>
+  </tr>
+  </thead>
+  <tbody>
+   <tr>
+    <td class="yellow">{{ admin_data.name|capfirst }}</td>
+    <td>{{ admin_data.target }}</td>
+    <td>{{ admin_data.cash }}</td>
+    <td>{{ admin_data.credit }}</td>
+    <td>{{ admin_data.card }}</td>
+    <td>{{ admin_data.cheque }}</td>
+    <td>{{ admin_data.total }}</td>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td class="orange">{{ user.name|capfirst }}</td>
+    <td>{{ user.target }}</td>
+    <td>{{ user.cash }}</td>
+    <td>{{ user.credit }}</td>
+    <td>{{ user.card }}</td>
+    <td>{{ user.cheque }}</td>
+    <td>{{ user.total }}</td>
+  </tr>
+  {% endfor %}
+
+
+  <tr class="blue">
+    <td colspan="2">Total</td>
+    <td>{{ cash_sale_total }}</td>
+    <td>{{ credit_sale_total }}</td>
+    <td>{{ card_sale_total }}</td>
+    <td>{{ cheque_sale_total }}</td>
+    <td>{{ sale_total }}</td>
+  </tr>
+  <tr>
+    <td colspan="2"> Total Expense (-)</td>
+    <td class="pink">{{ total_expense }}</td>
+  </tr>
+  <tr>
+    <td colspan="2">Cash In Hand</td>
+    <td class="green">{{ cash_in_hand }}</td>
+  </tr>
+  </tbody>
+</table>
+    </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'home/index.html' %}
+{% block title %}
+    <title>Dashboard</title>
+{% endblock %}
+
+
+{% block body %}
+<h2 class="ui center aligned icon header">
+  <i class="chart pie    icon"></i>
+  DashBoard
+</h2>
+<div style="padding-left: 20px; padding-right: 20px;" class="ui four cards">
+    <div class="ui raised card crd">
+        <div class="content">
+            <button class="right floated ui circular gift icon button"  style="color: #0d71bb">
+                <i class="right floated gift icon" ></i>
+                </button>
+             <div class="header" style="color: #0d71bb">Purchase</div>
+            <div class="description">
+                <div class="ui orange statistic">
+                    <div class="value">{{ purchases }}</div>
+                    <div class="label">Today Purchase</div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="ui raised card crd">
+        <div class="content">
+            <button class="right floated ui circular chart line icon button">
+                <i class="right floated chart line icon" style="color: #0d71bb"></i>
+                </button>
+
+             <div class="header"  style="color: #0d71bb">Sales</div>
+            <div class="description">
+                <div class="ui purple statistic">
+                    <div class="value">{{ sales }}</div>
+                    <div class="label">Today Sale</div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="ui raised card crd">
+        <div class="content">
+             <button class="right floated ui circular balance scale left icon button">
+                <i class="right floated balance scale left icon" style="color: #0d71bb"></i>
+                </button>
+
+             <div class="header"  style="color: #0d71bb">Expense</div>
+            <div class="description">
+                <div class="ui green statistic">
+                    <div class="value">{{ expenses }}</div>
+                    <div class="label">Today Expense</div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="ui raised card crd">
+        <div class="content">
+            <button class="right floated ui circular user friends icon button">
+                <i class="right floated user friends icon" style="color: #0d71bb"></i>
+                </button>
+
+             <div class="header"  style="color: #0d71bb">Customer</div>
+            <div class="description">
+                <div class="ui red statistic">
+                    <div class="value">{{ new_customer }}</div>
+                    <div class="label">Today New Customer</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="padding-left: 20px; padding-right: 20px" class="ui four cards">
+    <div class="ui raised card crd">
+        <div class="content">
+             <button class="right floated ui circular seedling icon button">
+                <i class="right floated seedling icon" style="color: #0d71bb"></i>
+                </button>
+             <div class="header"  style="color: #0d71bb">Suppliers</div>
+            <div class="description">
+                <div class="ui yellow statistic">
+                    <div class="value">{{ supplier_count }}</div>
+                    <div class="label">Total Suppliers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="ui raised card crd">
+        <div class="content">
+
+                <button class="right floated ui circular dollar sign icon button">
+                <i class="right floated dollar sign icon" style="color: #0d71bb"></i>
+                </button>
+             <div class="header"  style="color: #0d71bb">Purchase</div>
+            <div class="description">
+                <div class="ui blue statistic">
+                    <div class="value">{{ purchase_count }}</div>
+                    <div class="label">Total No.of Purchase</div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="ui raised card crd">
+        <div class="content">
+            <button class="right floated ui circular passport icon button">
+               <i class="right floated passport icon" style="color: #0d71bb"></i>
+                </button>
+
+             <div class="header"  style="color: #0d71bb">Sales</div>
+            <div class="description">
+                <div class="ui olive statistic">
+                    <div class="value">{{ sales_count }}</div>
+                    <div class="label">Total No. of Sales</div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div class="ui raised card crd">
+        <div class="content">
+             <button class="right floated ui circular user alternate icon button">
+               <i class="right floated user alternate icon" style="color: #0d71bb"></i>
+                </button>
+             <div class="header"  style="color: #0d71bb">Customer</div>
+            <div class="description">
+                <div class="ui pink statistic">
+                    <div class="value">{{ customer_count }}</div>
+                    <div class="label">Total Customers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

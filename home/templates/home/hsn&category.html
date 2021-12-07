@@ -1,0 +1,794 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>HSN & Category</title>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+{% block body %}
+    <style>
+        #hsnTable_filter, #categoryTable_filter {
+            position: absolute;
+
+            {% if  request.user|has_group:"Admin" %}
+            top: 160px;
+        {% else %}
+                top: 77px;
+
+        {% endif %}
+            right: 35px;
+
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 200px;
+        }
+
+    #hsnTable_length, #categoryTable_length{
+        float: left;
+    }
+
+    label{
+        float: left;
+    }
+
+
+    </style>
+    <div class="ui right aligned segment">
+        <div class="ui grid">
+            <div class="nine wide column">
+                <div class="ui bottom attached segment">
+                    <form class="ui tiny form" id="categoryForm">
+                        <h5 class="ui horizontal left aligned divider header">
+                            <i class="left align icon"></i>
+                            Category - HSN
+                        </h5>
+                        {% if  request.user|has_group:"Admin" %}
+                            <div class="five fields">
+
+                                <div class="field" style="width: 18%" >
+                                    <label>Category</label>
+                                    <input type="text" name="Category" id="Category" placeholder="Category">
+                                    <input type="hidden" id="categoryID" name="categoryID">
+                                    {% csrf_token %}
+                                </div>
+                                  <div class="field" style="width: 18%" >
+                                    <label>Brand</label>
+                                    <input type="text" name="brand" id="brand" placeholder="Brand">
+                                </div>
+                                <div class="field" style="width: 15%">
+                                    <label>Price</label>
+                                    <input type="number" name="price" id="price" placeholder="Price" value="0">
+                                </div>
+
+                                <div class="field" style="width: 15%">
+                                    <label>HSN</label>
+                                    <div class="ui hsnList search">
+                                        <div class="ui icon input">
+                                            <input type="text" class="prompt" list="hsnAutocomplete" id="autoHSN"
+                                                   name="HSN" placeholder="HSN">
+                                            <i class="shopping bag icon"></i>
+
+
+                                        </div>
+                                        <div class="results"></div>
+                                    </div>
+                                </div>
+
+
+                                <div class="field" style="width:34%;padding-top: 1.666em;">
+                                    <button type="button" id="addCategoryBtn" class="ui green button"
+                                            onclick="addCategory()">
+                                        <i class="icon plus square"></i>
+                                        Add
+                                    </button>
+                                    <button style="display: none" type="button" id="updateCategoryBtn"
+                                            onclick="editCategory()"
+                                            class="ui orange button">
+                                        <i class="icon redo"></i>
+                                        Update
+                                    </button>
+                                    <button class="ui red button" type="button" onclick="clearCategoryForm()">
+                                        <i class="icon times circle"></i>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </form>
+                </div>
+                <table class="ui sortable selectable compact celled table" id="categoryTable" style="margin-top: 5px;">
+                    <thead>
+                    <tr>
+                        <th class="">Category</th>
+                        <th class="">Brand</th>
+                        <th class="">Price</th>
+                        <th class="">HSN</th>
+                        <th class="">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="seven wide column">
+                <div class="ui bottom attached segment">
+                    <form class="ui tiny form" id="hsnForm">
+                        <h5 class="ui horizontal left aligned divider header">
+                            <i class="left align icon"></i>
+                            HSN - Tax
+                        </h5>
+
+                        {% if  request.user|has_group:"Admin" %}
+                            <div class="three fields">
+
+
+                                <div class="field" style="width: 25%">
+                                    <label>HSN</label>
+                                    <input type="number" name="HSN" placeholder="HSN" id="hsn">
+                                    <input type="hidden" id="hsnID" name="hsnID">
+                                    {% csrf_token %}
+                                </div>
+
+                                <div class="field" style="width: 25%">
+                                    <label>Tax %</label>
+                                    <input type="number" name="Tax" placeholder="Tax %" id="tax">
+                                </div>
+                                <div class="field" style="padding-top: 1.666em;width: 50%;">
+                                    <button id="addHSNBtn" class="ui green button" type="button" onclick="addHsn()">
+                                        <i class="icon plus square"></i>
+                                        Add
+                                    </button>
+                                    <button style="display: none" type="button" id="updateHSNBtn" onclick="editHSN()"
+                                            class="ui orange button">
+                                        <i class="icon redo"></i>
+                                        Update
+                                    </button>
+                                    <button class="ui red button" type="button" onclick="clearHSNForm()">
+                                        <i class="icon times circle"></i>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </form>
+                </div>
+                <table class="ui sortable selectable compact celled table" id="hsnTable" style="margin-top: 5px;">
+                    <thead>
+                    <tr>
+                        <th class="">HSN</th>
+                        <th class="">Tax %</th>
+                        <th class="">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        <div class="ui  vertical divider" style="left: 56.25%">
+            &
+        </div>
+    </div>
+
+
+
+    <div class="ui basic modal custom" id="delHSNModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            HSN detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The HSN detail will be deleted, are you sure to delete
+                this HSN?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dHSNID">
+            <div class="ui green ok inverted button" onclick="deleteHSN()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+    <div class="ui basic modal custom" id="delCategoryModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Category detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Category detail will be deleted, are you sure to delete
+                this Category?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dCategoryID">
+            <div class="ui green ok inverted button" onclick="deleteCategory()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        $(getHsn());
+        function addHsn() {
+            var hsn = $('#hsn').val();
+            var tax = $('#tax').val();
+            if (hsn === '' || tax === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'HSN abd Tax required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('hsn', hsn);
+                data.append('tax', tax);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/PostHsnDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'HSN Added Successfully.'
+                                })
+                            ;
+
+                            hsnTab.ajax.reload();
+                            {#                            getHSNSearch();#}
+                            $('#hsnForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: '' + response.message
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+
+        var hsnTab;
+        function getHsn() {
+            hsnTab = $('#hsnTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY": "230px",
+                buttons: [ {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                }
+                ],
+                "columnDefs": [
+                    {"name": "hsn", "targets": 0, "orderable": true},
+                    {"name": "tax", "targets": 1, "orderable": true},
+                    {"name": "action", "targets": 2, "orderable": false},
+
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:HsnListJson' %}"
+            });
+        }
+
+
+        function addCategory() {
+            var hsn = $('#autoHSN').val();
+            var category = $('#Category').val();
+            var brand = $('#brand').val();
+            var price = $('#price').val();
+            if (hsn === '' || category === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Category and HSN required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('hsn', hsn);
+                data.append('category', category);
+                data.append('brand', brand);
+                data.append('price', price);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/PostCategoryDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Category Added Successfully.'
+                                })
+                            ;
+
+                            {#                             $("#hsnTable > tbody").prepend("<tr><td>  " + hsn +"</td ><td>  " + tax +" % </td></tr > ");#}
+                            categoryTab.ajax.reload();
+                            $('#categoryForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: '' + response.message
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        $(getCategory());
+        var categoryTab;
+        function getCategory() {
+            categoryTab = $('#categoryTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY": "230px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1,2,3]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1,2,3]
+                    }
+                }
+                ],
+                "columnDefs": [
+                    {"name": "name", "targets": 0, "orderable": true},
+                    {"name": "brand", "targets": 1, "orderable": true},
+                    {"name": "price", "targets": 2, "orderable": true},
+                    {"name": "hsnID", "targets": 3, "orderable": true},
+                    {"name": "action", "targets": 4, "orderable": false},
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:CategoryListJson' %}"
+            });
+        }
+
+
+        $('.ui.hsnList')
+            .search({
+                apiSettings: {
+                    url: '/api/GetHsnList/?q={query}'
+                },
+                fields: {
+                    results: 'data',
+                    title: 'Hsn',
+                    "price": "Tax",
+                },
+                minCharacters: 1
+            });
+
+        //hsn
+        function clearHSNForm() {
+            $('#hsnForm').trigger('reset');
+            $('#addHSNBtn').css('display', '');
+            $('#updateHSNBtn').css('display', 'none');
+
+        }
+
+
+        function GetHSNDetail(id) {
+            $('#addHSNBtn').css('display', 'none');
+            $('#updateHSNBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetHSNDetail/' + id + '/',
+
+                success: function (response) {
+                    $('#hsn').val(response.data['HSN']);
+                    $('#tax').val(response.data['Tax']);
+                    $('#hsnID').val(response.data['ID']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function editHSN() {
+            var hsnID = $('#hsnID').val();
+            var hsn = $('#hsn').val();
+            var tax = $('#tax').val();
+
+            if (hsn === '' || tax === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'HSN and Tax required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('hsnID', hsnID);
+                data.append('hsn', hsn);
+                data.append('tax', tax);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_hsn" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'HSN Detail Updated Successfully.'
+                                })
+                            ;
+                            hsnTab.ajax.reload();
+                            $('#hsnForm').trigger('reset');
+                            $('#addHSNBtn').css('display', '');
+                            $('#updateHSNBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: 'HSN Already Exist.'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        function delHSN(id) {
+            $('#delHSNModal')
+                .modal('show')
+            ;
+            $('#dHSNID').val(id)
+        }
+
+        function deleteHSN() {
+            var id = $('#dHSNID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_hsn' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'HSN Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        hsnTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        //Category
+        function clearCategoryForm() {
+            $('#categoryForm').trigger('reset')
+            $('#addCategoryBtn').css('display', '');
+            $('#updateCategoryBtn').css('display', 'none');
+
+        }
+
+
+        function GetCategoryDetail(id) {
+            $('#addCategoryBtn').css('display', 'none');
+            $('#updateCategoryBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCategoryDetail/' + id + '/',
+
+                success: function (response) {
+
+                    $('#autoHSN').val(response.data['HSN']);
+                    $('#Category').val(response.data['CategoryName']);
+                    $('#brand').val(response.data['Brand']);
+                    $('#price').val(response.data['Price']);
+                    $('#categoryID').val(response.data['ID']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function editCategory() {
+            var categoryID = $('#categoryID').val();
+            var hsn = $('#autoHSN').val();
+            var Category = $('#Category').val();
+            var brand = $('#brand').val();
+            var price = $('#price').val();
+
+            if (hsn === '' || Category === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Category and HSN required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('categoryID', categoryID);
+                data.append('hsn', hsn);
+                data.append('Category', Category);
+                data.append('brand', brand);
+                data.append('price', price);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_category" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Category Detail Updated Successfully.'
+                                })
+                            ;
+                            categoryTab.ajax.reload();
+                            $('#categoryForm').trigger('reset');
+                            $('#addCategoryBtn').css('display', '');
+                            $('#updateCategoryBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: '' + response.message
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        function delCategory(id) {
+            $('#delCategoryModal')
+                .modal('show')
+            ;
+            $('#dCategoryID').val(id)
+        }
+
+        function deleteCategory() {
+            var id = $('#dCategoryID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_category' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Category Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        categoryTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+    </script>
+
+{% endblock %}

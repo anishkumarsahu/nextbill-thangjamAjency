@@ -1,0 +1,666 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Purchase Report</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+    <style>
+        .cwide {
+            width: 75% !important;
+        }
+
+        #purchaseTable_length {
+            left: 10px;
+            position: absolute;
+        }
+
+        #purchaseTable_filter {
+            width: 75%;
+            float: right;
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 200px;
+        }
+    </style>
+
+    <div class="ui right aligned basic segment">
+        <div class="ui internally grid">
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+
+                <div class="eight wide column">
+                    <div class="ui form">
+
+
+                        <form class="ui tiny form">
+
+                            <div class="field inline" id="custom_date">
+                            <span style="float: left;padding: 7px;">
+                            <i class="calendar alternate icon"></i>
+                            <label>Filter By Date Range</label>
+                            </span>
+                                <div class="three fields">
+                                    <div class="field">
+                                        <div class="ui calendar" id="rangestart">
+                                            <div class="ui input left icon">
+                                                <input class="" type="text" placeholder="Start Date" style="width:100%;"
+                                                       id="startDateF">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="ui calendar" id="rangeend">
+                                            <div class="ui input left icon">
+                                                <input class="" type="text" placeholder="End Date" style="width:100%;"
+                                                       id="endDateF">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="ui calendar" id="rangeend">
+                                            <div class="ui input left icon">
+                                                <button class="ui tiny active button" type="button"
+                                                        onclick="filterDetails()">
+                                                    <i class="funnel dollar icon"></i>
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="ui internally celled grid">
+
+            <div class="row">
+
+                <div class="sixteen wide column">
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Purchase List
+                    </h5>
+                    <table id="purchaseTable" class="ui sortable celled very compact table" style="margin-top: 5px">
+                        <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Supplier GST</th>
+                            <th>InvoiceDate</th>
+                            <th>InvoiceNumber</th>
+                            <th>Total</th>
+                            <th>PaymentType</th>
+                            <th>Company</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>EnteredOn</th>
+                            <th>Action</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="ui overlay fullscreen modal front transition scrolling">
+        <div class="header">
+            Purchase <span class="ui teal text">Detail.</span>
+        </div>
+        <div class="content" style="padding-top: 0!important;">
+            <div class="description">
+                <div class="ui right aligned basic segment">
+                    <div class="ui pointing secondary menu">
+                        <a class="item active" data-tab="first">Basic Details</a>
+                        <a class="item" data-tab="second">Addition Details</a>
+                    </div>
+                    <div class="ui tab segment active" data-tab="first">
+                        <div class="ui internally grid">
+
+                            <div class="row" style="padding-bottom: 5px!important;padding-top: 5px!important;">
+                                <div class="three wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="user icon"></i>
+                                            <div class="content">
+                                                <a class="header">Name:</a>
+                                                <div class="description" id="CustName">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="registered icon"></i>
+                                            <div class="content">
+                                                <a class="header">GST Reg :</a>
+                                                <div class="description" id="custGst">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="mobile icon"></i>
+                                            <div class="content">
+                                                <a class="header">Phone Number:</a>
+                                                <div class="description" id="custPhone">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="mail icon"></i>
+                                            <div class="content">
+                                                <a class="header">Email:</a>
+                                                <div class="description" id="custEmail">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="map marker alternate icon"></i>
+                                            <div class="content">
+                                                <a class="header">Address:</a>
+                                                <div class="description" id="custAddress">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="street view icon"></i>
+                                            <div class="content">
+                                                <a class="header">State :</a>
+                                                <div class="description" id="custState">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="three wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="amazon pay icon"></i>
+                                            <div class="content">
+                                                <a class="header">Payment Type:</a>
+                                                <div class="description" id="sPaymentType">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="scroll icon"></i>
+                                            <div class="content">
+                                                <a class="header"> Invoice No:</a>
+                                                <div class="description" id="sInvoice">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="calendar alternate icon"></i>
+                                            <div class="content">
+                                                <a class="header">Date :</a>
+                                                <div class="description" id="sInvoiceDate">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="three wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="pencil alternate icon"></i>
+                                            <div class="content">
+                                                <a class="header">Taxable :</a>
+                                                <div class="description" id="sTaxable">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="registered icon"></i>
+                                            <div class="content">
+                                                <a class="header">GST:</a>
+                                                <div class="description" id="sBillGst">N/A</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="bullseye icon"></i>
+                                            <div class="content">
+                                                <a class="header">Round Off:</a>
+                                                <div class="description" id="sRoundOff">0</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="three wide column" style="text-align: left;">
+
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="people carry icon"></i>
+                                            <div class="content">
+                                                <a class="header">Other Charges :</a>
+                                                <div class="description" id="sOtherCharges">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="wallet icon"></i>
+                                            <div class="content">
+                                                <a class="header">Total :</a>
+                                                <div class="description" id="sGrandTotal">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui  tab segment" data-tab="second">
+                        <div class="ui internally grid">
+                            <div class="row" style="padding-bottom: 5px!important;padding-top: 5px!important;">
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="handshake icon"></i>
+                                            <div class="content">
+                                                <a class="header">Credit Days:</a>
+                                                <div class="description" id="CreditDays">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="file alternate outline icon"></i>
+                                            <div class="content">
+                                                <a class="header">Cheque Detail :</a>
+                                                <div class="description" id="chequeDetail">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="paperclip icon"></i>
+                                            <div class="content">
+                                                <a class="header">Delivery Note:</a>
+                                                <div class="description" id="deliveryNote">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="check double icon"></i>
+                                            <div class="content">
+                                                <a class="header">Supplier Reference:</a>
+                                                <div class="description" id="SupplierReference">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="clipboard check icon"></i>
+                                            <div class="content">
+                                                <a class="header">Buyers Order Number:</a>
+                                                <div class="description" id="BuyersOrderNumber">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="clipboard list icon"></i>
+                                            <div class="content">
+                                                <a class="header">Dispatch Document Number :</a>
+                                                <div class="description" id="DispatchDocumentNumber">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="shipping fast icon"></i>
+                                            <div class="content">
+                                                <a class="header">Dispatch Through:</a>
+                                                <div class="description" id="DispatchThrough">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="pen fancy icon"></i>
+                                            <div class="content">
+                                                <a class="header"> Other Reference:</a>
+                                                <div class="description" id="OtherReference">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="calendar check icon"></i>
+                                            <div class="content">
+                                                <a class="header">Dispatch Note Date :</a>
+                                                <div class="description" id="DispatchNoteDate">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="warehouse icon"></i>
+                                            <div class="content">
+                                                <a class="header">Destination:</a>
+                                                <div class="description" id="Destination">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="user circle icon"></i>
+                                            <div class="content">
+                                                <a class="header">AddedBy:</a>
+                                                <div class="description" id="AddedBy">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <h4 style="text-align: left">LIST OF PURCHASE ITEMS:</h4>
+                    <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                            <table class="ui very compact table" id="itemTable">
+                                <thead>
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>HSN</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Rate</th>
+                                    <th>Gst %</th>
+                                    <th>Net Rate</th>
+                                    <th>Total</th>
+                                </tr>
+                                </thead>
+                                <tbody id="my_body">
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="ui primary approve button">
+                Close
+                <i class="compress arrows alternate icon"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui basic modal custom" id="delPurchaseModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Purchase detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Purchase detail will be deleted, are you sure to delete
+                this Purchase?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="PurID">
+            <div class="ui green ok inverted button" onclick="deletePurchase()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('.menu .item').tab();
+        $('#standard_calendar')
+            .calendar({
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    }
+                }
+            );
+        var today = new Date();
+
+        $('#rangestart').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            endCalendar: $('#rangeend'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+        $('#rangeend').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            startCalendar: $('#rangestart'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+
+        function confirmDateMonth(a) {
+            $("#standard_calendar").hide();
+            $("#standard_month").hide();
+            $("#custom_date").hide();
+
+            if (a == 1) $("#standard_calendar").show();
+
+            else if (a == 2) $("#standard_month").show();
+
+            else $("#custom_date").show();
+
+        }
+        $(getPurchase());
+        var purchaseTab;
+        function getPurchase() {
+
+            var startDate = $('#startDateF').val();
+            var endDate = $('#endDateF').val();
+            purchaseTab = $('#purchaseTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY": "280px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    }
+                }
+                    , {
+                        extend: 'colvis',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    {"name": "supplierName", "targets": 0, "orderable": true},
+                    {"name": "supplierGst", "targets": 1, "orderable": true},
+                    {"name": "invoiceDate", "targets": 2, "orderable": true},
+                    {"name": "invoiceNumber", "targets": 3, "orderable": true},
+                    {"name": "total", "targets": 4, "orderable": true},
+                    {"name": "paymentType", "targets": 5, "orderable": true},
+                    {"name": "companyID", "targets": 6, "orderable": true},
+                    {"name": "purchaseType", "targets": 7, "orderable": true},
+                    {"name": "status", "targets": 8, "orderable": true},
+                    {"name": "datetime", "targets": 9, "orderable": true},
+                    {"name": "action", "targets": 10, "orderable": false},
+
+                ],
+                aaSorting: [[9, 'desc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": '{% url 'homeApp:PurchaseListJson' %}?startDate=' + startDate + '&endDate=' + endDate
+            });
+        }
+
+        function filterDetails() {
+            var startDate = $('#startDateF').val();
+            var endDate = $('#endDateF').val();
+            purchaseTab.ajax.url('{% url 'homeApp:PurchaseListJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
+
+        }
+        function delPurchase(id) {
+            $('#delPurchaseModal')
+                .modal('show')
+            ;
+            $('#PurID').val(id)
+        }
+
+        function deletePurchase() {
+
+            var id = $('#PurID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_purchase' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Purchase Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        purchaseTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function GetPurchaseDetail(id) {
+            $.ajax({
+                type: 'get',
+                url: '/api/get_purchase_detail/' + id + '/',
+
+                success: function (response) {
+                    console.log(response)
+
+
+                    $('#itemTable tbody tr').remove();
+                    $('#CustName').html(response.data.Basic['Name']);
+                    $('#custGst').html(response.data.Basic['Gst']);
+                    $('#custPhone').html(response.data.Basic['Phone']);
+                    $('#custEmail').html(response.data.Basic['Email']);
+                    $('#custAddress').html(response.data.Basic['Address']);
+                    $('#custState').html(response.data.Basic['State']);
+                    $('#sPaymentType').html(response.data.Basic['PaymentType']);
+                    $('#sInvoice').html(response.data.Basic['Invoice']);
+                    $('#sInvoiceDate').html(response.data.Basic['InvoiceDate']);
+                    $('#sTaxable').html(response.data.Basic['Taxable']);
+                    $('#sSubTotal').html(response.data.Basic['SubTotal']);
+                    $('#sDiscount').html(response.data.Basic['Discount']);
+                    $('#sGrandTotal').html(response.data.Basic['GrandTotal']);
+                    $('#sRoundOff').html(response.data.Basic['RoundOff']);
+                    $('#sTotalFinal').html(response.data.Basic['TotalFinal']);
+                    $('#sBillGst').html(response.data.Basic['BillGst']);
+                    $('#CreditDays').html(response.data.Basic['CreditDays']);
+                    $('#chequeDetail').html(response.data.Basic['chequeDetail']);
+                    $('#deliveryNote').html(response.data.Basic['deliveryNote']);
+                    $('#SupplierReference').html(response.data.Basic['SupplierReference']);
+                    $('#BuyersOrderNumber').html(response.data.Basic['BuyersOrderNumber']);
+                    $('#DispatchDocumentNumber').html(response.data.Basic['DispatchDocumentNumber']);
+                    $('#DispatchThrough').html(response.data.Basic['DispatchThrough']);
+                    $('#OtherReference').html(response.data.Basic['OtherReference']);
+                    $('#DispatchNoteDate').html(response.data.Basic['DispatchNoteDate']);
+                    $('#Destination').html(response.data.Basic['Destination']);
+                    $('#sOtherCharges').html(response.data.Basic['OtherCharges']);
+                    $('#AddedBy').html(response.data.Basic['AddedBy']);
+
+                    var i;
+                    for (i = 0; i < response.data.Items.length; i++) {
+                        $('#itemTable tbody').append('<tr id ="' + response.data.Items[i]['ItemID'] + '" ><td id ="row' + response.data.Items[i]['ItemID'] + '">#</td> <td id ="product' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemProductName'] + '</td><td id ="category' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemCategory'] + '</td><td id ="hsn' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemHsn'] + '</td><td id ="quantity' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemQuantity'] + '</td><td id ="unit' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['Unit'] + '</td><td id ="price' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemRate'] + '</td><td id ="gst' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemGst'] + '</td><td id ="netprice' + response.data.Items[i]['ItemnetRate'] + '">' + response.data.Items[i]['ItemnetRate'] + '</td><td id ="total' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemTotal'] + '</td></tr>');
+
+                    }
+
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+            $('.overlay.fullscreen.modal')
+                .modal('show')
+            ;
+
+        }
+
+    </script>
+{% endblock %}

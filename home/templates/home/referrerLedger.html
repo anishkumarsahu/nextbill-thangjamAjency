@@ -1,0 +1,308 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Referrer Ledger</title>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+{% block body %}
+    <style>
+        #itemTable_filter, #supplierTable_filter {
+            position: absolute;
+
+            right: 15px;
+
+        }
+
+        #itemTable_length {
+            float: left;
+
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 180px;
+        }
+    </style>
+
+
+
+    <div class="ui" id="customerLedger">
+
+        <div class="content">
+            <div class="description">
+                <div class="ui right aligned basic segment">
+                    <div class="ui internally grid">
+
+                        <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                            <div class="three wide column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="user icon"></i>
+                                        <div class="content">
+                                            <a class="header">Name:</a>
+                                            <div class="description" >{{ instance.name|capfirst }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="registered icon"></i>
+                                        <div class="content">
+                                            <a class="header">Balance :</a>
+                                            <div class="description" >{% if instance.balance %}
+                                               ₹ {{ instance.balance }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="three wide column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="mobile icon"></i>
+                                        <div class="content">
+                                            <a class="header">Phone Number:</a>
+                                            <div class="description" >{% if instance.phone %}
+                                                {{ instance.phone }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="mail icon"></i>
+                                        <div class="content">
+                                            <a class="header">Email:</a>
+                                            <div class="description" >{% if instance.email %}
+                                                {{ instance.email }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="three wide column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="map marker alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Address:</a>
+                                            <div class="description" >{% if instance.address %}
+                                                {{ instance.address }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="percent icon"></i>
+                                        <div class="content">
+                                            <a class="header">Commission:</a>
+                                            <div class="description" >{% if instance.commission %}
+                                                {{ instance.commission }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="seven wide column ">
+                                <div class="ui mini statistics">
+                                    <div class="statistic" >
+                                        <div class="value">
+                                            {{ totalCredit }}
+                                        </div>
+                                        <div class="label">
+                                            (₹) Total
+                                        </div>
+                                    </div>
+                                    <div class="statistic tiny">
+                                        <div class="value">
+                                            {{ totalDebit }}
+                                        </div>
+                                        <div class="label">
+                                            (₹) Paid
+                                        </div>
+                                    </div>
+                                    <div class="statistic tiny">
+                                        <div class="value">
+                                            {{ instance.balance }}
+                                        </div>
+                                        <div class="label">
+                                            (₹) Balance
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="row" >
+                        <div class="twelve wide column" style="margin-top: 25px;">
+                             <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                       List of Transactions
+                    </h5>
+                            <table class="ui very compact table" id="itemTable" style="margin-top: 5px;">
+                                <thead>
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>TransactionDate</th>
+                                    <th>Amount(₹)</th>
+                                    <th>Type</th>
+                                    <th>Remark</th>
+                                    <th>EntryDateTime</th>
+                                </tr>
+                                </thead>
+                                <tbody id="my_body">
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="ui basic modal custom" id="delSaleModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Sales detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The sales detail will be deleted, are you sure to delete
+                this Sales?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="SaleID">
+            <div class="ui green ok inverted button" onclick="deleteSale()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+     $('.menu .item')
+            .tab()
+        ;
+        $(getCustomer());
+        var customerTab;
+        function getCustomer() {
+
+            customerTab = $('#itemTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY": "280px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                }
+                ],
+                "columnDefs": [
+                    {"name": "id", "targets": 0, "orderable": true},
+                    {"name": "transactionDate", "targets": 1, "orderable": true},
+                    {"name": "amount", "targets": 2, "orderable": true},
+                    {"name": "transactionType", "targets": 3, "orderable": true},
+                    {"name": "remark", "targets": 4, "orderable": true},
+                    {"name": "datetime", "targets": 5, "orderable": true},
+
+                ],
+                aaSorting: [[5, 'desc']],
+                "lengthMenu": [[7, 25, 50, 100, -1], [7, 25, 50, 100, "All"]],
+                "pageLength": 7,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:TransactionListByReferrerJson' %}?ID=" + {{ instance.pk }}
+            });
+
+        }
+
+           function delSale(id) {
+            $('#delSaleModal')
+                .modal('show')
+            ;
+            $('#SaleID').val(id)
+        }
+
+        function deleteSale() {
+            var id = $('#SaleID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_sales' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Sales Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        customerTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+
+
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,1083 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Contact</title>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+{% block body %}
+    <style>
+        #customerTable_filter, #supplierTable_filter {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 180px;
+        }
+    #customerTable_length, #supplierTable_length{
+        float: left;
+    }
+
+    </style>
+
+    <div class="ui  basic  segment">
+        <div class="ui two column very relaxed grid">
+            <div class="column">
+                <div class="ui top attached tabular menu">
+                    <a class="item active" data-tab="first" onclick="getType('customer')">Customer</a>
+                    <a class="item " data-tab="second" onclick="getType('supplier')">Supplier</a>
+                </div>
+                <div class="ui bottom attached tab segment active" data-tab="first">
+                    <form class="ui tiny form" id="customerForm">
+
+                        <h4 class="ui dividing header">Customer Information</h4>
+                        <div class="field">
+                            <label>Name</label>
+                            <div class="fields">
+
+                                <input type="text" id="nameC" name="name" placeholder="Customer Name">
+                                <input type="hidden" name="idC" id="idC">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>GST Reg.</label>
+                            <div class="fields">
+                                <input type="text" id="gstC" name="gst" placeholder="GST number">
+                            </div>
+                        </div>
+                        <div class="two fields">
+
+                            <div class="field">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" id="phoneC" placeholder="Phone number">
+                            </div>
+                            {% csrf_token %}
+                            <div class="field">
+                                <label>Email</label>
+                                <input type="text" id="emailC" name="email" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>State</label>
+
+                            <div class="fields">
+                                <select class="ui fluid dropdown" id="stateC">
+                                    <option value="" hidden selected>State</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Madhaya Pradesh">Madhaya Pradesh</option>
+                                    <option value="Maharastra">Maharastra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Orissa">Orissa</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Utter Pradesh">Utter Pradesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="field">
+                            <label>Address</label>
+                            <textarea rows="3" name="address" id="addressC" placeholder="Address"></textarea>
+                        </div>
+                        <div style="width: 100%; text-align: center">
+                            <button id="addCustomerBtn" class="ui green button" type="button" onclick="addCustomer()">
+                                <i class="icon plus square"></i>
+                                Add
+                            </button>
+                            <button style="display: none" type="button" id="updateCustomerBtn" onclick="editCustomer()"
+                                    class="ui orange button">
+                                <i class="icon redo"></i>
+                                Update
+                            </button>
+                            <button class="ui red button" type="button" onclick="clearCustomerForm()">
+                                <i class="icon times circle"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="ui bottom attached tab segment " data-tab="second">
+                    <form class="ui tiny form" id="supplierForm">
+                        <h4 class="ui dividing header">Supplier Information</h4>
+                        <div class="field">
+                            <label>Name</label>
+                            <div class="fields">
+
+                                <input type="text" name="name" id="nameS" placeholder="Supplier Name">
+                            <input type="hidden" name="idS" id="idS">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>GST Reg.</label>
+                            <div class="fields">
+                                <input type="text" name="gst" id="gstS" placeholder="GST number">
+                            </div>
+                        </div>
+                        <div class="two fields">
+
+                            <div class="field">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" id="phoneS" placeholder="Phone number">
+                            </div>
+
+                            <div class="field">
+                                <label>Email</label>
+                                <input type="text" name="email" id="emailS" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>State</label>
+
+                            <div class="fields">
+                                <select class="ui fluid dropdown" id="stateS">
+                                    <option value="" hidden selected>State</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Madhaya Pradesh">Madhaya Pradesh</option>
+                                    <option value="Maharastra">Maharastra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Orissa">Orissa</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Utter Pradesh">Utter Pradesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="field">
+                            <label>Address</label>
+                            <textarea rows="3" name="address" id="addressS" placeholder="Address"></textarea>
+                        </div>
+                        <div style="width: 100%; text-align: center">
+                            <button id="addSupplierBtn" type="button" class="ui green button" onclick="addSupplier()">
+                                <i class="icon plus square"></i>
+                                Add
+                            </button>
+                            <button style="display: none" type="button" id="updateSupplierBtn" onclick="editSupplier()"
+                                    class="ui orange button">
+                                <i class="icon redo"></i>
+                                Update
+                            </button>
+                            <button class="ui red button" type="button" onclick="clearSupplierForm()">
+                                <i class="icon times circle"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class=" right aligned column">
+                <div class="ui top attached tabular menu">
+                    <a class="item active" data-tab="first">Customer List</a>
+                    <a class="item " data-tab="second">Supplier List</a>
+                </div>
+                <div class="ui bottom attached tab segment active" data-tab="first">
+                    <table class="ui sortable selectable compact celled table" id="customerTable"
+                           style="margin-top: 5px;">
+                        <thead>
+                        <tr>
+                            <th class="">Name</th>
+                            <th class="">Gst</th>
+                            <th class="">Phone Number</th>
+                            <th class="">Action</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <div class="ui bottom attached tab segment " data-tab="second">
+                    <table class="ui sortable compact selectable celled table" id="supplierTable"
+                           style="margin-top: 5px;width: 100%">
+                        <thead>
+                        <tr>
+                            <th class="">Name</th>
+                            <th class="">Gst</th>
+                            <th class="">Phone Number</th>
+                            <th class="">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="ui vertical divider">
+            ->
+        </div>
+    </div>
+
+
+    <div class="ui basic modal custom" id="delCustomerModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Customer detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The customer detail will be deleted, are you sure to delete
+                this Customer?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="CUserID">
+            <div class="ui green ok inverted button" onclick="deleteCustomer()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui basic modal custom" id="delSupplierModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Supplier detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The supplier detail will be deleted, are you sure to delete
+                this Supplier?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="SUserID">
+            <div class="ui green ok inverted button" onclick="deleteSupplier()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="ui overlay fullscreen modal front transition scrolling" id="customerLedger">
+        <div class="header">
+            Sales <span class="ui teal text">Detail.</span>
+        </div>
+        <div class="content">
+            <div class="description">
+                <div class="ui right aligned basic segment">
+                    <div class="ui internally grid">
+
+                        <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                            <div class="three wide column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="user icon"></i>
+                                        <div class="content">
+                                            <a class="header">Name:</a>
+                                            <div class="description" id="CustName">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="registered icon"></i>
+                                        <div class="content">
+                                            <a class="header">GST Reg :</a>
+                                            <div class="description" id="custGst">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="mobile icon"></i>
+                                        <div class="content">
+                                            <a class="header">Phone Number:</a>
+                                            <div class="description" id="custPhone">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="four wide column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="mail icon"></i>
+                                        <div class="content">
+                                            <a class="header">Email:</a>
+                                            <div class="description" id="custEmail">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="map marker alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Address:</a>
+                                            <div class="description" id="custAddress">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="street view icon"></i>
+                                        <div class="content">
+                                            <a class="header">State :</a>
+                                            <div class="description" id="custState">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="three wide column" style="text-align: left;">
+                                 <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="amazon pay icon"></i>
+                                        <div class="content">
+                                            <a class="header">Payment Type:</a>
+                                            <div class="description" id="sPaymentType">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="scroll icon"></i>
+                                        <div class="content">
+                                            <a class="header"> Invoice No:</a>
+                                            <div class="description" id="sInvoice">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="calendar alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Date :</a>
+                                            <div class="description" id="sInvoiceDate">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="three wide column" style="text-align: left;">
+                                 <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="sticky note outline icon"></i>
+                                        <div class="content">
+                                            <a class="header">Sub Total:</a>
+                                            <div class="description" id="sSubTotal">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="percent icon"></i>
+                                        <div class="content">
+                                            <a class="header">Discount Pc:</a>
+                                            <div class="description" id="sDiscount">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="pencil alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Taxable :</a>
+                                            <div class="description" id="sTaxable">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                 <div class="three wide column" style="text-align: left;">
+                             <div class="ui very relaxed list">
+
+                                <div class="item" style="padding-bottom: 0;">
+                                    <i class="registered icon"></i>
+                                    <div class="content">
+                                        <a class="header">GST:</a>
+                                        <div class="description" id="sBillGst">N/A</div>
+                                    </div>
+                                </div>
+                                 <div class="item" style="padding-bottom: 0;">
+                                    <i class="bullseye icon"></i>
+                                    <div class="content">
+                                        <a class="header">Round Off:</a>
+                                        <div class="description" id="sRoundOff">N/A</div>
+                                    </div>
+                                </div>
+                                <div class="item" style="padding-bottom: 0;">
+                                    <i class="wallet icon"></i>
+                                    <div class="content">
+                                        <a class="header">Total :</a>
+                                        <div class="description" id="sGrandTotal">N/A</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+
+                    <h4 style="text-align: left">LIST OF SALES ITEMS:</h4>
+                    <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                            <table class="ui very compact table" id="itemTable">
+                                <thead>
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>HSN</th>
+                                    <th>Quantity</th>
+                                    <th>Rate</th>
+                                    <th>Gst %</th>
+                                    <th>Discount %</th>
+                                    <th>Net Rate</th>
+                                    <th>Total</th>
+                                </tr>
+                                </thead>
+                                <tbody id="my_body">
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui primary approve button">
+                Close
+                <i class="compress arrows alternate icon"></i>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+ <script>
+        $('.menu .item').tab();
+        $('table').tablesort();
+
+        function clearCustomerForm() {
+
+            $('#customerForm').trigger('reset');
+            $('#addCustomerBtn').css('display', '');
+            $('#updateCustomerBtn').css('display', 'none');
+
+        }
+        function clearSupplierForm() {
+            $('#supplierForm').trigger('reset');
+            $('#addSupplierBtn').css('display', '');
+            $('#updateSupplierBtn').css('display', 'none');
+
+        }
+
+    </script>
+
+
+    <script>
+        $(getCustomer());
+        function addCustomer() {
+            var cname = $('#nameC').val();
+            var cemail = $('#emailC').val();
+            var caddress = $('#addressC').val();
+            var cgst = $('#gstC').val();
+            var cstate = $('#stateC').val();
+            var cphone = $('#phoneC').val();
+            if (cname === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Customer Name required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('cname', cname);
+                data.append('cemail', cemail);
+                data.append('caddress', caddress);
+                data.append('cgst', cgst);
+                data.append('cstate', cstate);
+                data.append('cphone', cphone);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/PostCustomerDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Customer Added Successfully.'
+                                })
+                            ;
+
+                            {#                             $("#customerTable > tbody").prepend("<tr><td>  " + cname +"</td ><td>  " + cgst +" </td><td> " + cphone +" </td></tr > ");#}
+                            customerTab.ajax.reload();
+                            $('#customerForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occured !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        var customerTab;
+        function getCustomer() {
+
+            customerTab = $('#customerTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY": "280px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2]
+                    }
+                }
+                ],
+                "columnDefs": [
+                    {"name": "name", "targets": 0, "orderable": true},
+                    {"name": "gst", "targets": 1, "orderable": true},
+                    {"name": "phone", "targets": 2, "orderable": true},
+                    {"name": "action", "targets": 3, "orderable": false},
+
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:CustomerListJson' %}"
+            });
+
+        }
+
+
+        function addSupplier() {
+            var sname = $('#nameS').val();
+            var semail = $('#emailS').val();
+            var saddress = $('#addressS').val();
+            var sgst = $('#gstS').val();
+            var sstate = $('#stateS').val();
+            var sphone = $('#phoneS').val();
+            if (sname === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Supplier Name required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('sname', sname);
+                data.append('semail', semail);
+                data.append('saddress', saddress);
+                data.append('sgst', sgst);
+                data.append('sstate', sstate);
+                data.append('sphone', sphone);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/PostSupplierDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Supplier Added Successfully.'
+                                })
+                            ;
+
+                            supplierTab.ajax.reload();
+                            $('#supplierForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occured !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        var supplierTab;
+
+        supplierTab = $('#supplierTable').DataTable({
+            dom: 'Blfrtip',
+            "scrollY": "280px",
+            buttons: [{
+                extend: 'excel',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }, {
+                extend: 'print',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }
+            ],
+            "columnDefs": [
+                {"name": "name", "targets": 0, "orderable": true},
+                {"name": "gst", "targets": 1, "orderable": true},
+                {"name": "phone", "targets": 2, "orderable": true},
+                {"name": "action", "targets": 3, "orderable": false},
+
+            ],
+            aaSorting: [[0, 'asc']],
+            "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+            "pageLength": 8,
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'homeApp:SupplierListJson' %}"
+        });
+
+
+        function getType(index) {
+            if (index === 'customer') {
+
+            }
+            if (index === 'supplier') {
+                supplierTab.ajax.reload(null, false);
+            }
+
+        }
+
+        function GetCustomerDetail(id) {
+            $('#addCustomerBtn').css('display', 'none');
+            $('#updateCustomerBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCustomerDetail/' + id + '/',
+
+                success: function (response) {
+                    console.log(response);
+                    $('#nameC').val(response.data['Name']);
+                    $('#gstC').val(response.data['Gst']);
+                    $('#phoneC').val(response.data['Phone']);
+                    $('#emailC').val(response.data['Email']);
+                    $('#stateC').val(response.data['State']);
+                    $('#addressC').val(response.data['Address']);
+                    $('#idC').val(response.data['ID']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occured !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function editCustomer() {
+            var idC = $('#idC').val();
+            var cname = $('#nameC').val();
+            var cemail = $('#emailC').val();
+            var caddress = $('#addressC').val();
+            var cgst = $('#gstC').val();
+            var cstate = $('#stateC').val();
+            var cphone = $('#phoneC').val();
+            if (cname === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Customer Name required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('idC', idC);
+                data.append('cname', cname);
+                data.append('cemail', cemail);
+                data.append('caddress', caddress);
+                data.append('cgst', cgst);
+                data.append('cstate', cstate);
+                data.append('cphone', cphone);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_customer" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Customer Detail Updated Successfully.'
+                                })
+                            ;
+                            customerTab.ajax.reload();
+                            $('#customerForm').trigger('reset')
+                            $('#addCustomerBtn').css('display', '');
+                            $('#updateCustomerBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occured !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        function delCustomer(id) {
+            $('#delCustomerModal')
+                .modal('show')
+            ;
+            $('#CUserID').val(id)
+        }
+
+        function deleteCustomer() {
+            var id = $('#CUserID').val();
+            var formdata = new FormData();
+            formdata.append('userID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_customer' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Customer Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        customerTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occured !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        //supplier
+        function GetSupplierDetail(id) {
+            $('#addSupplierBtn').css('display', 'none');
+            $('#updateSupplierBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetSupplierDetail/' + id + '/',
+
+                success: function (response) {
+                    $('#nameS').val(response.data['Name']);
+                    $('#gstS').val(response.data['Gst']);
+                    $('#phoneS').val(response.data['Phone']);
+                    $('#emailS').val(response.data['Email']);
+                    $('#stateS').val(response.data['State']);
+                    $('#addressS').val(response.data['Address']);
+                    $('#idS').val(response.data['ID']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occured !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function editSupplier() {
+            var idC = $('#idS').val();
+            var cname = $('#nameS').val();
+            var cemail = $('#emailS').val();
+            var caddress = $('#addressS').val();
+            var cgst = $('#gstS').val();
+            var cstate = $('#stateS').val();
+            var cphone = $('#phoneS').val();
+            if (cname === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Supplier Name required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('idC', idC);
+                data.append('cname', cname);
+                data.append('cemail', cemail);
+                data.append('caddress', caddress);
+                data.append('cgst', cgst);
+                data.append('cstate', cstate);
+                data.append('cphone', cphone);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_supplier" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Supplier Detail Updated Successfully.'
+                                })
+                            ;
+                            supplierTab.ajax.reload();
+                            $('#supplierForm').trigger('reset');
+                            $('#addSupplierBtn').css('display', '');
+                            $('#updateSupplierBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occured !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        function delSupplier(id) {
+            $('#delSupplierModal')
+                .modal('show')
+            ;
+            $('#SUserID').val(id)
+        }
+
+        function deleteSupplier() {
+            var id = $('#SUserID').val();
+            var formdata = new FormData();
+            formdata.append('userID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_supplier' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Supplier Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        supplierTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occured !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occured !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+    </script>
+
+
+{% endblock %}

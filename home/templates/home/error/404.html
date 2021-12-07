@@ -1,0 +1,27 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Page Not Foumd</title>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+{% block body %}
+
+     <div class="row" style="padding-left: 50px; padding-right: 50px">
+            <div class="ui placeholder segment">
+                <div class="ui icon header">
+                    <i class="ban icon red"></i>
+                    <p>Page Not Found</p>
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui center aligned segment">
+                                    <a href="{% url 'homeApp:homepage' %}" class="ui primary button">Back To Home</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+{% endblock %}

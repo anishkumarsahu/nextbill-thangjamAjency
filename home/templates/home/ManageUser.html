@@ -1,0 +1,612 @@
+{% extends 'home/settings.html' %}
+{% block title %}
+         <title>ManageUser</title>
+    {% endblock %}
+
+{% block setting %}
+
+    <div style="padding-left: 50px; padding-right: 50px">
+<div style="float:right; padding-top: 18px"> <button class="ui google plus button right" onclick="showUserModal()" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+  <i class="plus square outline icon"></i>
+  Add User
+</button></div>
+    <div class="wide" style="padding-top: 80px">
+        <table class="ui sortable celled very compact table" id="UserTable" style="margin-top: 5px">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Zip</th>
+                    <th>State</th>
+                    <th>Email</th>
+                    <th>Company</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+<div class="ui modal" id="myModal">
+  <i class="close icon"></i>
+  <div class="header">
+    User Details
+  </div>
+  <div class="content">
+
+    <form class="ui form">{% csrf_token %}
+
+
+    <div class="two fields">
+        <div class="fourteen wide field">
+        <label>Name</label>
+            <input type="text" name="Name" placeholder="Full Name" id="CompanyUserName">
+        </div>
+        <div class="field">
+          <label>Company</label>
+            <select id="UserCompany" style="color: black"></select>
+        </div>
+        </div>
+
+    <div class="two fields">
+        <div class="field">
+          <label>Phone No.</label>
+            <input type="number" name="Phone" id="UserPhoneNo">
+        </div>
+        <div class="field">
+          <label>Email</label>
+            <input type="text" name="Email" id="UserEmail">
+        </div>
+    </div>
+
+      <div class="field">
+        <label>Address</label>
+        <div class="fields">
+          <div class="twelve wide field">
+            <input type="text" name="shipping[address]" placeholder="Street Address" id="UserAddress">
+          </div>
+          <div class="four wide field">
+            <input type="text" name="shipping[address-2]" placeholder="ZIP" id="UserZip">
+          </div>
+        </div>
+      </div>
+  <div class="two fields">
+    <div class="field">
+      <label>State</label>
+      <select class="ui fluid dropdown" id="UserState">
+                                <option value="" hidden selected>State</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                <option value="Jarkhand">Jarkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Maharastra">Maharastra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Orissa">Orissa</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Utter Pradesh">Utter Pradesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>      </select>
+    </div>
+
+        <div class="field">
+          <label>City</label>
+            <input type="text" name="city" id="UserCity">
+        </div>
+  </div>
+     <div class="two fields">
+        <div class="field">
+          <label>Password</label>
+            <input type="password" name="Password" id="UserPwd">
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+            <input type="password" name="Password" id="ConfirmPwd">
+        </div>
+    </div>
+
+
+</form>
+
+  <div class="actions" style="padding-top: 20px; padding-bottom: 20px ;float: right">
+      <div class="ui cancel button">Cancel</div>
+    <button class="ui right labeled icon button green" onclick="addUser()">
+                    Submit
+                    <i class="checkmark icon"></i>
+                </button>
+    </div>
+  </div>
+</div>
+</div>
+
+    <div class="ui basic modal custom" id="deleteUser">
+  <div class="ui icon header">
+    <i class="archive icon"></i>
+    User Details will be Deleted
+  </div>
+  <div class="content">
+    <p style="text-align: center">The User will be deleted, are you sure to delete this User?</p>
+  </div>
+  <div class="actions">
+    <div class="ui red basic cancel inverted button">
+      <i class="remove icon"></i>
+      No
+    </div>
+      <input type="hidden" id="UserID">
+    <div class="ui green ok inverted button" onclick="deleteUser()">
+      <i class="checkmark icon"></i>
+      Yes
+    </div>
+  </div>
+</div>
+
+    <div class="ui modal" id="userModal">
+  <i class="close icon"></i>
+  <div class="header">
+    Edit User
+  </div>
+  <div class="content">
+
+    <form class="ui form">{% csrf_token %}
+
+        <input type="hidden" id="EditUserId">
+    <div class="two fields">
+        <div class="fourteen wide field">
+        <label>Name</label>
+            <input type="text" name="Name" placeholder="Full Name" id="EditCompanyUserName">
+        </div>
+        <div class="field">
+          <label>Company</label>
+            <select id="EditUserCompany" style="color: black"></select>
+        </div>
+        </div>
+
+    <div class="two fields">
+        <div class="field">
+          <label>Phone No.</label>
+            <input type="number" name="Phone" id="EditUserPhoneNo">
+        </div>
+        <div class="field">
+          <label>Email</label>
+            <input type="text" name="Email" id="EditUserEmail">
+        </div>
+    </div>
+
+      <div class="field">
+        <label>Address</label>
+        <div class="fields">
+          <div class="twelve wide field">
+            <input type="text" name="shipping[address]" placeholder="Street Address" id="EditUserAddress">
+          </div>
+          <div class="four wide field">
+            <input type="text" name="shipping[address-2]" placeholder="ZIP" id="EditUserZip">
+          </div>
+        </div>
+      </div>
+  <div class="two fields">
+    <div class="field">
+      <label>State</label>
+      <select class="cwide dropdown" id="EditUserState">
+                                <option value="" hidden selected>State</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                <option value="Jarkhand">Jarkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Maharastra">Maharastra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Orissa">Orissa</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Utter Pradesh">Utter Pradesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>      </select>
+    </div>
+
+        <div class="field">
+          <label>City</label>
+            <input type="text" name="city" id="EditUserCity">
+        </div>
+  </div>
+
+
+
+</form>
+
+  <div class="actions" style="padding-top: 20px; padding-bottom: 20px ;float: right">
+      <div class="ui cancel button">Cancel</div>
+    <button class="ui right labeled icon button green" onclick="EditCompanyUser()">
+                    Update
+                    <i class="checkmark icon"></i>
+                </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        function showUserModal(){
+            $('#myModal').modal('show');
+        }
+
+        function EditUser() {
+            $('')
+
+        }
+    </script>
+
+    <script>
+        function addUser() {
+            //for User
+             var CompanyUserName = $('#CompanyUserName').val();
+             var UserCompany = $('#UserCompany').val();
+             var UserPhoneNo = $('#UserPhoneNo').val();
+             var UserEmail = $('#UserEmail').val();
+             var UserAddress = $('#UserAddress').val();
+             var UserZip = $('#UserZip').val();
+             var UserState = $('#UserState').val();
+             var UserCity = $('#UserCity').val();
+             var UserPwd = $('#UserPwd').val();
+             var ConfirmPwd = $('#ConfirmPwd').val();
+
+
+             if (CompanyUserName === '' || UserCompany === '' || UserPhoneNo === '' || UserEmail === '' ||
+                 UserAddress === '' || UserZip === '' || UserState === '' || UserCity === '' || UserPwd === '' || ConfirmPwd === '') {
+                 $('body')
+                     .toast({
+                         class: 'orange',
+                         message: "User Name, Phone Number, Email, Address ... are required !"
+                     })
+                 ;
+             } else {
+
+                 var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                 data = new FormData();
+                 data.append('CompanyUserName', CompanyUserName);
+                 data.append('UserCompany', UserCompany);
+                 data.append('UserPhoneNo', UserPhoneNo);
+                 data.append('UserEmail', UserEmail);
+                 data.append('UserAddress', UserAddress);
+                 data.append('UserZip', UserZip);
+                 data.append('UserState', UserState);
+                 data.append('UserCity', UserCity);
+                 data.append('UserPwd', UserPwd);
+
+
+                 data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                 $.ajax({
+                     type: 'post',
+                     url: '/api/PostUserDetail/',
+                     data: data,
+                     contentType: false,
+                     cache: false,
+                     processData: false,
+
+
+                     success: function (response) {
+                         if (response.message === 'success') {
+                             {#$('#myModal').modal('hide');#}
+                             {#$("#AddCompanyForm")[0].reset();#}
+                             $('body')
+                                 .toast({
+                                     class: 'success',
+                                     message: "Company Added Successfully."
+                                 })
+                             ;
+
+
+                             userTab.ajax.reload();
+                             $('#formtest').trigger('reset')
+                         } else {
+                             $('body')
+                                 .toast({
+                                     class: 'error',
+                                     message: "An error occured !"
+                                 })
+                             ;
+
+                         }
+
+                         return response;
+                     },
+                     error: function () {
+                         $('body')
+                             .toast({
+                                 class: 'error',
+                                 message: "An error occured !"
+                             })
+                         ;
+                     }
+                 });
+
+
+             }
+
+         }
+
+         $(getCompany());
+
+        function getCompany() {
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCompanyList/',
+
+                success: function (response) {
+                    $('#UserCompany').html('');
+                    $('#EditUserCompany').html('');
+                    var i;
+                    for(i=0;i<response.data.length; i++){
+
+                        $('#UserCompany').append('<option value="'+response.data[i]["ID"]+'">'+response.data[i]["CompanyName"]+'</option>');
+                        $('#EditUserCompany').append('<option value="'+response.data[i]["ID"]+'">'+response.data[i]["CompanyName"]+'</option>');
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: "An error occured !"
+                        })
+                    ;
+                }
+            });
+        }
+
+
+        $(getuser());
+       var userTab;
+        function getuser() {
+            userTab = $('#UserTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY":"245px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2,3,4]
+                    }},{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2,3,4]
+                    }}
+                ],
+                "columnDefs": [
+                    {"name": "name", "targets": 0, "orderable": true},
+                    {"name": "phone", "targets": 1, "orderable": true},
+                    {"name": "address", "targets": 2, "orderable": true},
+                    {"name": "city", "targets": 3, "orderable": true},
+                    {"name": "zip", "targets": 4, "orderable": true},
+                    {"name": "state", "targets": 5, "orderable": true},
+                    {"name": "email", "targets": 6, "orderable": true},
+                    {"name": "company_ID", "targets": 7, "orderable": true},
+                    {"name": "action", "targets": 8, "orderable": false},
+
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:UserListJson' %}"
+            });
+        }
+
+
+    //delete user
+    function delUser(id) {
+   $('#deleteUser')
+  .modal('show')
+;
+   $('#UserID').val(id)
+}
+
+function deleteUser() {
+    var id = $('#UserID').val();
+    console.log(id+'testing')
+    var formdata = new FormData();
+    formdata.append('userID', id);
+    debugger;
+
+     $.ajax({
+                    url: "/api/delete_user/",
+                    type: "post",
+                    data: formdata,
+             contentType: false,
+                         cache: false,
+                         processData: false,
+
+                     success: function (response) {
+                         if (response.message === 'success') {
+                             $('body')
+                                 .toast({
+                                     class: 'success',
+                                     message: "User Deleted Successfully."
+                                 })
+                             ;
+
+
+                             userTab.ajax.reload();
+                         } else {
+                             $('body')
+                                 .toast({
+                                     class: 'error',
+                                     message: "An error occured !"
+                                 })
+                             ;
+
+                         }
+
+                         return response;
+                     },
+                     error: function () {
+                         $('body')
+                             .toast({
+                                 class: 'error',
+                                 message: "An error occured !"
+                             })
+                         ;
+                     }
+                            });
+
+}
+
+        function GetUserDetails(id){
+                $('#userModal').modal('show');
+                $.ajax({
+                type: 'get',
+                url: '/api/get_User_detail/'+id+'/',
+
+                success: function (response) {
+                    console.log(response);
+                    $('#EditUserId').val(response.data['ID']);
+                    $('#EditCompanyUserName').val(response.data['UserName']);
+                    $('#EditUserCompany').val(response.data['UserCompany']);
+                    $('#EditUserPhoneNo').val(response.data['UserPhone']);
+                    $('#EditUserEmail').val(response.data['UserEmail']);
+                    $('#EditUserAddress').val(response.data['UserAddress']);
+                    $('#EditUserZip').val(response.data['UserZip']);
+                    $('#EditUserState').val(response.data['UserState']);
+                    $('#EditUserCity').val(response.data['UserCity']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: "An error occured !"
+                        })
+                    ;
+                }
+            });
+            };
+
+        function EditCompanyUser() {
+
+             var ID = $('#EditUserId').val();
+             var EditCompanyUserName = $('#EditCompanyUserName').val();
+             var EditUserCompany = $('#EditUserCompany').val();
+             var EditUserPhoneNo = $('#EditUserPhoneNo').val();
+             var EditUserEmail = $('#EditUserEmail').val();
+             var EditUserAddress = $('#EditUserAddress').val();
+             var EditUserZip = $('#EditUserZip').val();
+             var EditUserState = $('#EditUserState').val();
+             var EditUserCity = $('#EditUserCity').val();
+
+
+             if (EditCompanyUserName === '' || EditUserCompany === '' || EditUserPhoneNo === '' ||
+                 EditUserEmail === '' || EditUserAddress === '' || EditUserZip === '' || EditUserState === '' || EditUserCity === '') {
+                 $('body')
+                     .toast({
+                         class: 'orange',
+                         message: "User Name, Phone Number, Email, Address ... are required !"
+                     })
+                 ;
+             } else {
+
+                 var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                 data = new FormData();
+                 data.append('UserID', ID);
+                 data.append('EditCompanyUserName', EditCompanyUserName);
+                 data.append('EditUserCompany', EditUserCompany);
+                 data.append('EditUserPhoneNo', EditUserPhoneNo);
+                 data.append('EditUserEmail', EditUserEmail);
+                 data.append('EditUserAddress', EditUserAddress);
+                 data.append('EditUserZip', EditUserZip);
+                 data.append('EditUserState', EditUserState);
+                 data.append('EditUserCity', EditUserCity);
+
+                 data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                 $.ajax({
+                     type: 'post',
+                     url: '/api/EditUserDetail/',
+                     data: data,
+                     contentType: false,
+                     cache: false,
+                     processData: false,
+
+
+                     success: function (response) {
+                         if (response.message === 'success') {
+                             {#$('#myModal').modal('hide');#}
+                             {#$("#AddCompanyForm")[0].reset();#}
+                             $('body')
+                                 .toast({
+                                     class: 'success',
+                                     message: "User Edited Successfully."
+                                 })
+                             ;
+
+
+                             userTab.ajax.reload();
+                             $('#formtest').trigger('reset')
+                         } else {
+                             $('body')
+                                 .toast({
+                                     class: 'error',
+                                     message: "An error occured !"
+                                 })
+                             ;
+
+                         }
+
+                         return response;
+                     },
+                     error: function () {
+                         $('body')
+                             .toast({
+                                 class: 'error',
+                                 message: "An error occured !"
+                             })
+                         ;
+                     }
+                 });
+
+
+             }
+
+         }
+    </script>
+{% endblock %}

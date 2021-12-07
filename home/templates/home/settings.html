@@ -1,0 +1,1903 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Settings</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+
+    <style>
+        .sidenav {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 40px;
+            left: 0;
+            background-color: #000000;
+            overflow-x: hidden;
+            padding-top: 10px;
+        }
+
+        .sidenav a {
+            padding: 15px 12px 15px 16px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        #CompanyTable_filter, #UserTable_filter {
+            position: absolute;
+            right: 65px;
+
+        }
+
+        #WareHouseTable_filter, #unitTable_filter {
+            position: absolute;
+            right: 65px;
+
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 225px;
+        }
+
+        #CompanyTable_length, #UserTable_length, #WareHouseTable_length, #unitTable_length {
+            float: left;
+        }
+    </style>
+
+    <div class="ui right aligned basic  grid">
+        <div class="sixteen wide column">
+            <div class="ui  pointing secondary menu">
+                <div style="cursor: pointer;" class="item active" data-tab="company"
+                     onclick="getSettingData('company')">Manage Company</div>
+                <div style="cursor: pointer;" class="item" data-tab="user"
+                     onclick="getSettingData('user')">Manage user</div>
+                <div style="cursor: pointer;" class="item" data-tab="ware"
+                     onclick="getSettingData('ware')">Manage Ware House</div>
+                <div style="cursor: pointer;" class="item" data-tab="units"
+                     onclick="getSettingData('units')">Manage Units</div>
+                <div style="cursor: pointer;" class="item" data-tab="backup">BackUp</div>
+            </div>
+            <div class="ui tab  active" data-tab="company">
+                <div class="row" style="padding-right: 50px; padding-left: 50px">
+                    <div class="" style="float:right;">
+                        <button class="ui green plus button right" onclick="showModal()"
+                                style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <i class="plus square outline icon"></i>
+                            Add Company
+                        </button>
+                    </div>
+                    <div style="padding-top: 50px">
+                        <h5 class="ui horizontal left aligned divider header">
+                            <i class="left align icon"></i>
+                            Company List
+                        </h5>
+                        <table class="ui sortable celled very compact table" id="CompanyTable" style="margin-top: 5px">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>GST</th>
+                                <th>City</th>
+                                <th>Zip</th>
+                                <th>State</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="ui modal" id="myModal">
+                    <i class="close icon"></i>
+                    <div class="header">
+                        Company Details
+                    </div>
+                    <div class="content">
+
+                        <form class="ui form" id="AddCompanyForm">{% csrf_token %}
+
+                            <div class="two fields">
+                                <div class="twelve wide field">
+                                    <label>Company Name</label>
+                                    <input type="text" name="companyName" id="companyName">
+                                </div>
+                                <div class="four wide field">
+                                    <label>GST Reg.</label>
+                                    <input type="text" name="gstNo" id="gstNo">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Phone No.</label>
+                                    <input type="number" name="companyPhone" id="companyPhone">
+                                </div>
+                                <div class="field">
+                                    <label>Email</label>
+                                    <input type="text" name="companyEmail" id="companyEmail">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label>Address</label>
+                                <div class="fields">
+                                    <div class="twelve wide field">
+                                        <input type="text" name="companyAddress" placeholder="Street Address"
+                                               id="companyAddress">
+                                    </div>
+                                    <div class="four wide field">
+                                        <input type="number" name="zip" placeholder="ZIP" id="zip">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>State</label>
+                                    <select class="cwide  dropdown" id="state">
+                                        <option value="" hidden selected>State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                        <option value="Jarkhand">Jarkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharastra">Maharastra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Orissa">Orissa</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Utter Pradesh">Utter Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label>City</label>
+                                    <input type="text" name="city" id="city">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Name</label>
+                                    <input type="text" name="Name" placeholder="Account holder Name"
+                                           id="accountHolderName">
+                                </div>
+                                <div class="field">
+                                    <label>Bank</label>
+                                    <input type="text" name="Bank" placeholder="Name of Bank" id="bankName">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Branch</label>
+                                    <input type="text" name="branch" placeholder="Bank of the Branch" id="branch">
+                                </div>
+
+                                <div class="field">
+                                    <label>Account Type</label>
+                                    <select class="ui fluid dropdown" id="account_type">
+                                        <option value="" hidden selected>Choose account type</option>
+                                        <option value="">None</option>
+                                        <option value="Current Account">Current Account</option>
+                                        <option value="Saving Account">Saving Account</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Account No.</label>
+                                    <input type="number" name="Name" placeholder="Account Number" id="accountNo">
+                                </div>
+                                <div class="field">
+                                    <label>IFSC Code</label>
+                                    <input type="text" name="ifsc" placeholder="IFSC Code" id="ifsc">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label> Bank Address</label>
+                                <input type="text" placeholder="Full Address" id="bankAddress">
+                            </div>
+
+
+                        </form>
+
+                        <div class="actions" style="padding-top: 20px; padding-bottom: 20px ;float: right">
+                            <div class="ui cancel button">Cancel</div>
+                            <button class="ui right labeled icon button green" onclick="addCompany()">
+                                Submit
+                                <i class="checkmark icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="ui modal" id="editCompany">
+                    <i class="close icon"></i>
+                    <div class="header">
+                        Edit Company
+                    </div>
+                    <div class="content">
+
+                        <form class="ui form" id="EditCompanyForm">{% csrf_token %}
+                            <input type="hidden" id="EcompId">
+                            <div class="two fields">
+                                <div class="twelve wide field">
+                                    <label>Company Name</label>
+                                    <input type="text" name="companyName" id="EditCompanyName">
+                                </div>
+                                <div class="four wide field">
+                                    <label>GST Reg.</label>
+                                    <input type="text" name="gstNo" id="EditGstNo">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Phone No.</label>
+                                    <input type="number" name="companyPhone" id="EditCompanyPhone">
+                                </div>
+                                <div class="field">
+                                    <label>Email</label>
+                                    <input type="text" name="companyEmail" id="EditCompanyEmail">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label>Address</label>
+                                <div class="fields">
+                                    <div class="twelve wide field">
+                                        <input type="text" name="companyAddress" placeholder="Street Address"
+                                               id="EditCompanyAddress">
+                                    </div>
+                                    <div class="four wide field">
+                                        <input type="number" name="zip" placeholder="ZIP" id="EditZip">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>State</label>
+                                    <select class="cwide  dropdown" id="EditState">
+                                        <option value="" hidden selected>State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                        <option value="Jarkhand">Jarkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharastra">Maharastra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Orissa">Orissa</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Utter Pradesh">Utter Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label>City</label>
+                                    <input type="text" name="city" id="EditCity">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Name</label>
+                                    <input type="text" name="Name" placeholder="Account holder Name"
+                                           id="EditAccountHolderName">
+                                </div>
+                                <div class="field">
+                                    <label>Bank</label>
+                                    <input type="text" name="Bank" placeholder="Name of Bank" id="EditBankName">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Branch</label>
+                                    <input type="text" name="branch" placeholder="Bank of the Branch" id="EditBranch">
+                                </div>
+
+                                <div class="field">
+                                    <label>Account Type</label>
+                                    <select class="ui fluid dropdown" id="EditAccount_type">
+                                        <option value="" hidden selected>Choose account type</option>
+                                        <option value="">None</option>
+                                        <option value="Current Account">Current Account</option>
+                                        <option value="Saving Account">Saving Account</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Account No.</label>
+                                    <input type="number" name="Name" placeholder="Account Number" id="EditAccountNo">
+                                </div>
+                                <div class="field">
+                                    <label>IFSC Code</label>
+                                    <input type="text" name="ifsc" placeholder="IFSC Code" id="EDitIfsc">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label> Bank Address</label>
+                                <input type="text" placeholder="Full Address" id="EditBankAddress">
+                            </div>
+
+
+                        </form>
+
+                        <div class="actions" style="padding-top: 20px; padding-bottom: 20px ;float: right">
+                            <div class="ui cancel button">Cancel</div>
+                            <button class="ui right labeled icon button green" onclick="EditCompany()">
+                                Update
+                                <i class="checkmark icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui basic modal custom" id="deleteCompany">
+                    <div class="ui icon header">
+                        <i class="archive icon"></i>
+                        Archive Company
+                    </div>
+                    <div class="content">
+                        <p>Do you like to delete the company details? Deleting the company detail will delete all
+                            the details related with the compnay.</p>
+                    </div>
+                    <div class="actions">
+                        <div class="ui red basic cancel inverted button">
+                            <i class="remove icon"></i>
+                            No
+                        </div>
+                        <input type="hidden" id="companyID">
+                        <div class="ui green ok inverted button" onclick="deleteCompany()">
+                            <i class="checkmark icon"></i>
+                            Yes
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="ui basic modal custom" id="BankDetails">
+                    <div class="ui raised very padded text container segment" style="color: #0f0f10">
+                        <a class="item">
+                            <i class="edit icon" style="float: right"></i></a>
+
+                        <h3 class="header" style="text-align: center; text-decoration: underline; color: #ff7043">BANK
+                            DETAILS</h3>
+
+                        <div class="ui basic segments">
+
+                            <div class="ui segment">
+                                <span style="font-weight: bold; color: #37474f">Account Holder Name :</span><span
+                                    id="AccHolder" style="margin-left: 30px; font-weight: bold; color: #616161"></span>
+                            </div>
+
+                            <div class="ui segment">
+                                <span style="font-weight: bold; color: #37474f">Account Number :</span><span
+                                    id="AccNumber"
+                                    style="margin-left: 30px; font-weight: bold; color: #616161"></span>
+                            </div>
+
+                            <div class="ui segment">
+                                <span style="font-weight: bold; color: #37474f">Branch :</span><span id="Branch"
+                                                                                                     style="margin-left: 30px; font-weight: bold; color: #616161"></span>
+                            </div>
+
+                            <div class="ui segment">
+                                <span style="font-weight: bold; color: #37474f">Account Type :</span><span id="AccType"
+                                                                                                           style="margin-left: 30px; font-weight: bold; color: #616161"></span>
+                            </div>
+
+                            <div class="ui segment">
+                                <span style="font-weight: bold; color: #37474f">IFSC CODE :</span><span id="ifscCode"
+                                                                                                        style="margin-left: 30px; font-weight: bold; color: #616161"></span>
+                            </div>
+
+                            <div class="ui segment">
+                                <span style="font-weight: bold; color: #37474f"> Address :</span><span
+                                    id="HolderAddress"
+                                    style="margin-left: 30px; font-weight: bold; color: #616161"></span>
+                            </div>
+                            <div class="ui segment"></div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="ui tab " data-tab="user">
+
+                <div class="row" style="padding-left: 50px; padding-right: 50px">
+                    <div style="float:right; ">
+                        <button class="ui green plus button right" onclick="showUserModal()"
+                                style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <i class="plus square outline icon"></i>
+                            Add User
+                        </button>
+                    </div>
+                    <div class="wide" style="padding-top: 50px">
+                        <h5 class="ui horizontal left aligned divider header">
+                            <i class="left align icon"></i>
+                            User List
+                        </h5>
+                        <table class="ui sortable celled very compact table" id="UserTable" style="margin-top: 5px">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>PhoneNo.</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>Zip</th>
+                                <th>State</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>D_Target</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="ui modal" id="myModalUser">
+                        <i class="close icon"></i>
+                        <div class="header">
+                            User Details
+                        </div>
+                        <div class="content">
+
+                            <form class="ui form" id="addUserForm">{% csrf_token %}
+
+
+                                <div class="two fields">
+                                    <div class="fourteen wide field">
+                                        <label>Name</label>
+                                        <input type="text" name="Name" placeholder="Full Name" id="CompanyUserName">
+                                    </div>
+                                    <div class="field">
+                                        <label>Company</label>
+                                        <select id="UserCompany" style="color: black"></select>
+                                    </div>
+                                </div>
+
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label>Phone No.</label>
+                                        <input type="number" name="Phone" id="UserPhoneNo">
+                                    </div>
+                                    <div class="field">
+                                        <label>Email</label>
+                                        <input type="text" name="Email" id="UserEmail">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+
+                                    <div class="fields">
+
+                                        <div class="twelve wide field">
+                                            <label>Address</label>
+                                            <input type="text" name="shipping[address]" placeholder="Street Address"
+                                                   id="UserAddress">
+                                        </div>
+
+                                        <div class="four wide field">
+                                            <label>Zip</label>
+                                            <input type="text" name="shipping[address-2]" placeholder="ZIP"
+                                                   id="UserZip">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label>State</label>
+                                        <select class="ui fluid dropdown" id="UserState">
+                                            <option value="" hidden>State</option>
+                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                            <option value="Assam">Assam</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                            <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                            <option value="Jarkhand">Jarkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                            <option value="Maharastra">Maharastra</option>
+                                            <option value="Manipur" selected>Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Orissa">Orissa</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Utter Pradesh">Utter Pradesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label>City</label>
+                                        <input type="text" name="city" id="UserCity">
+                                    </div>
+                                </div>
+                                <div class="three fields">
+                                    <div class="field">
+                                        <label>Password</label>
+                                        <input type="password" name="Password" id="UserPwd">
+                                    </div>
+                                    <div class="field">
+                                        <label>Confirm Password</label>
+                                        <input type="password" name="Password" id="ConfirmPwd">
+                                    </div>
+                                      <div class="field">
+                                        <label>Set Daily Target(Rs.)</label>
+                                        <input type="number" name="Target" id="Target" value="0">
+                                    </div>
+                                </div>
+
+
+                            </form>
+
+                            <div class="actions" style="padding-top: 20px; padding-bottom: 20px ;float: right">
+                                <div class="ui cancel button">Cancel</div>
+                                <button class="ui right labeled icon button green" onclick="addUser()">
+                                    Submit
+                                    <i class="checkmark icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui basic modal custom" id="deleteUser">
+                    <div class="ui icon header">
+                        <i class="archive icon"></i>
+                        User Details will be Deleted
+                    </div>
+                    <div class="content">
+                        <p style="text-align: center">The User will be deleted, are you sure to delete this User?</p>
+                    </div>
+                    <div class="actions">
+                        <div class="ui red basic cancel inverted button">
+                            <i class="remove icon"></i>
+                            No
+                        </div>
+                        <input type="hidden" id="UserID">
+                        <div class="ui green ok inverted button" onclick="deleteUser()">
+                            <i class="checkmark icon"></i>
+                            Yes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui modal" id="userModal">
+                    <i class="close icon"></i>
+                    <div class="header">
+                        Edit User
+                    </div>
+                    <div class="content">
+
+                        <form class="ui form" id="editUserForm">{% csrf_token %}
+
+                            <input type="hidden" id="EditUserId">
+                            <div class="two fields">
+                                <div class="fourteen wide field">
+                                    <label>Name</label>
+                                    <input type="text" name="Name" placeholder="Full Name" id="EditCompanyUserName">
+                                </div>
+                                <div class="field">
+                                    <label>Company</label>
+                                    <select id="EditUserCompany" style="color: black"></select>
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Phone No.</label>
+                                    <input type="number" name="Phone" id="EditUserPhoneNo">
+                                </div>
+                                <div class="field">
+                                    <label>Email</label>
+                                    <input type="text" name="Email" id="EditUserEmail">
+                                </div>
+                            </div>
+
+                            <div class="field">
+
+                                <div class="fields">
+
+                                    <div class="twelve wide field">
+                                        <label>Address</label>
+                                        <input type="text" name="shipping[address]" placeholder="Street Address"
+                                               id="EditUserAddress">
+                                    </div>
+
+                                    <div class="four wide field">
+                                        <label>Zip</label>
+                                        <input type="text" name="shipping[address-2]" placeholder="ZIP"
+                                               id="EditUserZip">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="three fields">
+                                <div class="field">
+                                    <label>State</label>
+                                    <select class="cwide dropdown" id="EditUserState">
+                                        <option value="" hidden selected>State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                        <option value="Jarkhand">Jarkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharastra">Maharastra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Orissa">Orissa</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Utter Pradesh">Utter Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label>City</label>
+                                    <input type="text" name="city" id="EditUserCity">
+                                </div>
+
+                                 <div class="field">
+                                    <label>Set Daily Target(Rs.)</label>
+                                    <input type="number" name="EditUserTarget" id="EditUserTarget">
+                                </div>
+                            </div>
+
+
+                        </form>
+
+                        <div class="actions" style="padding-top: 20px; padding-bottom: 20px ;float: right">
+                            <div class="ui cancel button">Cancel</div>
+                            <button class="ui right labeled icon button green" onclick="EditCompanyUser()">
+                                Update
+                                <i class="checkmark icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui tab " data-tab="ware">
+                <div class="row" style="padding-left: 50px; padding-right: 50px">
+
+                    <div class="ui bottom attached segment">
+
+                        <h4 class="ui left aligned dividing header">WARE-HOUSE</h4>
+                        <form class="ui tiny form" id="categoryForm">{% csrf_token %}
+                            <div class="three fields">
+
+                                <div class="field">
+                                    <label style="font-size: small;float: left">Ware-House Name</label>
+                                    <input type="text" name="WareHouseName" id="WareHouseName" placeholder="Name">
+                                </div>
+
+                                <div class="field">
+                                    <label style="font-size: small;float: left;">Address</label>
+                                    <input type="text" name="WareHouseAddress" id="WareHouseAddress"
+                                           placeholder="Address">
+                                    <input type="hidden" id="WareID">
+                                </div>
+
+                                <div class="field" style="padding-top: 1.666em;width: 50%;">
+                                    <button id="addWareBtn" class="ui green button" type="button"
+                                            onclick="AddWareHouse()">
+                                        <i class="icon plus square"></i>
+                                        Add
+                                    </button>
+                                    <button style="display: none" type="button" id="updateWareBtn" onclick="editWare()"
+                                            class="ui orange button">
+                                        <i class="icon redo"></i>
+                                        Update
+                                    </button>
+                                    <button class="ui red button" type="button" onclick="clearWareForm()">
+                                        <i class="icon times circle"></i>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Warehouse List
+                    </h5>
+                    <table class="ui sortable selectable compact celled table" id="WareHouseTable"
+                           style="margin-top: 5px;">
+                        <thead>
+                        <tr>
+                            <th class="">Ware House</th>
+                            <th class="">Address</th>
+                            <th class="">Date</th>
+                            <th class="">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                    <div class="ui basic modal custom" id="delWareHouse">
+                        <div class="ui icon header">
+                            <i class="archive icon"></i>
+                            Ware House will be Deleted
+                        </div>
+                        <div class="content">
+                            <p style="text-align: center">The Ware House detail will be deleted, are you sure to delete
+                                this Ware House?</p>
+                        </div>
+                        <div class="actions">
+                            <div class="ui red basic cancel inverted button">
+                                <i class="remove icon"></i>
+                                No
+                            </div>
+                            <input type="hidden" id="WareHouseID">
+                            <div class="ui green ok inverted button" onclick="deleteWareHouse()">
+                                <i class="checkmark icon"></i>
+                                Yes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="ui tab " data-tab="units">
+                <div class="row" style="padding-left: 50px; padding-right: 50px">
+
+                    <div class="ui bottom attached segment">
+
+                        <h4 class="ui left aligned dividing header">UNITS</h4>
+                        <form class="ui tiny form" id="unitForm">{% csrf_token %}
+                            <div class="three fields">
+
+                                <div class="field">
+                                    <label style="font-size: small;float: left;">unit Name</label>
+                                    <input type="text" name="unitName" id="unitName" placeholder="Unit Name">
+                                    <input type="hidden" id="uniID">
+                                </div>
+
+
+                                <div class="field" style="padding-top: 1.666em;width: 100%;">
+                                    <button id="addUnitBtn" class="ui green button" type="button" onclick="AddUnit()">
+                                        <i class="icon plus square"></i>
+                                        Add
+                                    </button>
+                                    <button style="display: none" type="button" id="updateUnitBtn" onclick="editUnit()"
+                                            class="ui orange button">
+                                        <i class="icon redo"></i>
+                                        Update
+                                    </button>
+                                    <button class="ui red button" type="button" onclick="clearUnitForm()">
+                                        <i class="icon times circle"></i>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Unit List
+                    </h5>
+                    <table class="ui sortable selectable compact celled table" id="unitTable"
+                           style="margin-top: 5px;">
+                        <thead>
+                        <tr>
+                            <th class="">Unit</th>
+                            <th class="">Date</th>
+                            <th class="">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                    <div class="ui basic modal custom" id="delUnit">
+                        <div class="ui icon header">
+                            <i class="archive icon"></i>
+                            Unit will be Deleted
+                        </div>
+                        <div class="content">
+                            <p style="text-align: center">The Unit detail will be deleted, are you sure to delete
+                                this Unit?</p>
+                        </div>
+                        <div class="actions">
+                            <div class="ui red basic cancel inverted button">
+                                <i class="remove icon"></i>
+                                No
+                            </div>
+                            <input type="hidden" id="UnitID">
+                            <div class="ui green ok inverted button" onclick="deleteUnit()">
+                                <i class="checkmark icon"></i>
+                                Yes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="ui tab " data-tab="backup">
+                <div class="row" style="padding-left: 50px; padding-right: 50px">
+                    <div class="ui placeholder segment">
+                        <div class="ui icon header">
+                            <i class="hdd outline icon"></i>
+                            Take daily backup of your data for data security and integrity.
+                        </div>
+                        <a href="{% url 'homeApp:download_backup' %}" class="ui primary button">Download Back-Up Now</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+     <script src="/static/jsMain/custom/setting.js"></script>
+ <script>
+        $('.menu .item').tab();
+        var userTab;
+        var productTab;
+        var wareHouseTab;
+        var unitTab;
+        $(getProduct());
+        // company detail
+        function getProduct() {
+
+
+            productTab = $('#CompanyTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY": "245px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }, {
+                    extend: 'colvis',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }
+                ],
+                "columnDefs": [
+                    {"name": "name", "targets": 0, "orderable": true},
+                    {"name": "gst", "targets": 1, "orderable": true},
+                    {"name": "city", "targets": 2, "orderable": true},
+                    {"name": "zip", "targets": 3, "orderable": true},
+                    {"name": "state", "targets": 4, "orderable": true},
+                    {"name": "phone", "targets": 5, "orderable": true},
+                    {"name": "address", "targets": 6, "orderable": true},
+                    {"name": "email", "targets": 7, "orderable": true},
+                    {"name": "action", "targets": 8, "orderable": false},
+
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+                "pageLength": 8,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'homeApp:CompanyListJson' %}"
+            });
+        }
+        $('.tabular.menu .item').tab();
+
+
+        function getSettingData(index) {
+            if (index === 'user') {
+                userTab.ajax.reload(null, false);
+
+            }
+            if (index === 'ware') {
+                wareHouseTab.ajax.reload(null, false);
+
+            }
+
+
+        }
+
+
+        function showUserModal() {
+            $('#myModalUser').modal('show');
+        }
+
+        function EditUser() {
+            $('')
+        }
+
+        function addUser() {
+            //for User
+            var CompanyUserName = $('#CompanyUserName').val();
+            var UserCompany = $('#UserCompany').val();
+            var UserPhoneNo = $('#UserPhoneNo').val();
+            var UserEmail = $('#UserEmail').val();
+            var UserAddress = $('#UserAddress').val();
+            var UserZip = $('#UserZip').val();
+            var UserState = $('#UserState').val();
+            var UserCity = $('#UserCity').val();
+            var UserPwd = $('#UserPwd').val();
+            var ConfirmPwd = $('#ConfirmPwd').val();
+            var Target = $('#Target').val();
+
+
+            if (CompanyUserName === '' || UserCompany === '' || UserPhoneNo === '' || UserEmail === '' ||
+                UserAddress === '' || Target === '' || UserZip === '' || UserState === '' || UserCity === '' || UserPwd === '' || ConfirmPwd === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'User Name, Phone Number, Email, Address ... are required !'
+                    })
+                ;
+            } else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('CompanyUserName', CompanyUserName);
+                data.append('UserCompany', UserCompany);
+                data.append('UserPhoneNo', UserPhoneNo);
+                data.append('UserEmail', UserEmail);
+                data.append('UserAddress', UserAddress);
+                data.append('UserZip', UserZip);
+                data.append('UserState', UserState);
+                data.append('UserCity', UserCity);
+                data.append('UserPwd', UserPwd);
+                data.append('Target', Target);
+
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/PostUserDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            {#$('#myModal').modal('hide');#}
+                            {#$("#AddCompanyForm")[0].reset();#}
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'New User Added Successfully.'
+                                })
+                            ;
+
+
+                            userTab.ajax.reload();
+                            $('#addUserForm').trigger('reset');
+                            $('#myModalUser').modal('toggle');
+                        } else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        $(getCompany());
+
+
+        function getCompany() {
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCompanyList/',
+
+                success: function (response) {
+                    $('#UserCompany').html('');
+                    $('#EditUserCompany').html('');
+                    var i;
+                    for (i = 0; i < response.data.length; i++) {
+
+                        $('#UserCompany').append('<option value="' + response.data[i]["ID"] + '">' + response.data[i]["CompanyName"] + '</option>');
+                        $('#EditUserCompany').append('<option value="' + response.data[i]["ID"] + '">' + response.data[i]["CompanyName"] + '</option>');
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+
+        // user Details
+
+        userTab = $('#UserTable').DataTable({
+            dom: 'Blfrtip',
+            "scrollY": "245px",
+            buttons: [{
+                extend: 'excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10]
+                }
+            }, {
+                extend: 'print',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10]
+                }
+            },
+                {
+                    extend: 'colvis',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10]
+                    }
+                }
+            ],
+            "columnDefs": [
+                {"name": "name", "targets": 0, "orderable": true},
+                {"name": "username", "targets": 1, "orderable": true},
+                {"name": "userPassword", "targets": 2, "orderable": true},
+                {"name": "phone", "targets": 3, "orderable": true},
+                {"name": "address", "targets": 4, "orderable": true},
+                {"name": "city", "targets": 5, "orderable": true},
+                {"name": "zip", "targets": 6, "orderable": true},
+                {"name": "state", "targets": 7, "orderable": true},
+                {"name": "email", "targets": 8, "orderable": true},
+                {"name": "company_ID", "targets": 9, "orderable": true},
+                {"name": "target", "targets": 10, "orderable": true},
+                {"name": "action", "targets": 11, "orderable": false}
+
+            ],
+            aaSorting: [[0, 'asc']],
+            "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+            "pageLength": 8,
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'homeApp:UserListJson' %}"
+        });
+
+
+        function delUser(id) {
+            $('#deleteUser')
+                .modal('show')
+            ;
+            $('#UserID').val(id)
+        }
+
+        function deleteUser() {
+            var id = $('#UserID').val();
+            console.log(id + 'testing')
+            var formdata = new FormData();
+            formdata.append('userID', id);
+            debugger;
+
+            $.ajax({
+                url: "/api/delete_user/",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'User Deleted Successfully.'
+                            })
+                        ;
+
+
+                        userTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+        function GetUserDetails(id) {
+            $('#userModal').modal('show');
+            $.ajax({
+                type: 'get',
+                url: '/api/get_User_detail/' + id + '/',
+
+                success: function (response) {
+                    console.log(response);
+                    $('#EditUserId').val(response.data['ID']);
+                    $('#EditCompanyUserName').val(response.data['UserName']);
+                    $('#EditUserCompany').val(response.data['UserCompany']);
+                    $('#EditUserPhoneNo').val(response.data['UserPhone']);
+                    $('#EditUserEmail').val(response.data['UserEmail']);
+                    $('#EditUserAddress').val(response.data['UserAddress']);
+                    $('#EditUserZip').val(response.data['UserZip']);
+                    $('#EditUserState').val(response.data['UserState']);
+                    $('#EditUserCity').val(response.data['UserCity']);
+                    $('#EditUserTarget').val(response.data['Target']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        };
+
+        function EditCompanyUser() {
+
+            var ID = $('#EditUserId').val();
+            var EditCompanyUserName = $('#EditCompanyUserName').val();
+            var EditUserCompany = $('#EditUserCompany').val();
+            var EditUserPhoneNo = $('#EditUserPhoneNo').val();
+            var EditUserEmail = $('#EditUserEmail').val();
+            var EditUserAddress = $('#EditUserAddress').val();
+            var EditUserZip = $('#EditUserZip').val();
+            var EditUserState = $('#EditUserState').val();
+            var EditUserCity = $('#EditUserCity').val();
+            var EditUserTarget = $('#EditUserTarget').val();
+
+
+            if (EditCompanyUserName === '' || EditUserCompany === '' || EditUserPhoneNo === '' ||
+                EditUserTarget === '' || EditUserEmail === '' || EditUserAddress === '' || EditUserZip === '' || EditUserState === '' || EditUserCity === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'User Name, Phone Number, Email, Address ... are required !'
+                    })
+                ;
+            } else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('UserID', ID);
+                data.append('EditCompanyUserName', EditCompanyUserName);
+                data.append('EditUserCompany', EditUserCompany);
+                data.append('EditUserPhoneNo', EditUserPhoneNo);
+                data.append('EditUserEmail', EditUserEmail);
+                data.append('EditUserAddress', EditUserAddress);
+                data.append('EditUserZip', EditUserZip);
+                data.append('EditUserState', EditUserState);
+                data.append('EditUserCity', EditUserCity);
+                data.append('EditUserTarget', EditUserTarget);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/EditUserDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            {#$('#myModal').modal('hide');#}
+                            {#$("#AddCompanyForm")[0].reset();#}
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'User Edited Successfully.'
+                                })
+                            ;
+
+
+                            userTab.ajax.reload();
+                            $('#editUserForm').trigger('reset');
+                            $('#userModal').modal('toggle');
+                        } else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+
+        //wareHouseList
+        function AddWareHouse() {
+            var WareHouseName = $('#WareHouseName').val();
+            var WareHouseAddress = $('#WareHouseAddress').val();
+
+            if (WareHouseName === '' || WareHouseAddress === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Ware House Name and Address Number are required !'
+                    })
+                ;
+            } else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('WareHouseName', WareHouseName);
+                data.append('WareHouseAddress', WareHouseAddress);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/add_warehouse/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            {#$('#myModal').modal('hide');#}
+                            {#$("#AddCompanyForm")[0].reset();#}
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Ware-House Added Successfully.'
+                                })
+                            ;
+
+
+                            wareHouseTab.ajax.reload();
+                            $('#categoryForm').trigger('reset')
+                        } else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        wareHouseTab = $('#WareHouseTable').DataTable({
+            dom: 'Blfrtip',
+            "scrollY": "170px",
+            buttons: [{
+                extend: 'excel',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }, {
+                extend: 'print',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }, {
+                extend: 'colvis',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }
+            ],
+            "columnDefs": [
+                {"name": "wareHouseName", "targets": 0, "orderable": true},
+                {"name": "wareHouseAddress", "targets": 1, "orderable": true},
+                {"name": "datetime", "targets": 2, "orderable": true},
+                {"name": "action", "targets": 3, "orderable": false},
+            ],
+            aaSorting: [[0, 'asc']],
+            "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+            "pageLength": 8,
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'homeApp:WareHouseListJson' %}"
+        });
+
+        function delWareHouse(id) {
+            $('#delWareHouse')
+                .modal('show')
+            ;
+            $('#WareHouseID').val(id)
+        }
+
+        function deleteWareHouse() {
+            var id = $('#WareHouseID').val();
+
+            var formdata = new FormData();
+            formdata.append('WareHouseID', id);
+            debugger;
+
+            $.ajax({
+                url: "/api/delete_wareHouse/",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'User Deleted Successfully.'
+                            })
+                        ;
+
+                        wareHouseTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function clearWareForm() {
+            $('#categoryForm').trigger('reset')
+            $('#addWareBtn').css('display', '');
+            $('#updateWareBtn').css('display', 'none');
+
+        }
+
+        function GetWareDetails(id) {
+            $('#addWareBtn').css('display', 'none');
+            $('#updateWareBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetWareHouseDetail/' + id + '/',
+
+                success: function (response) {
+                    $('#WareHouseName').val(response.data['WareHouseName']);
+                    $('#WareHouseAddress').val(response.data['WareHouseAddress']);
+                    $('#WareID').val(response.data['WareID']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+        function editWare() {
+            var WareID = $('#WareID').val();
+            var WareHouseName = $('#WareHouseName').val();
+            var WareHouseAddress = $('#WareHouseAddress').val();
+
+            if (WareHouseName === '' || WareHouseAddress === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Ware House Name and Address Number are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('WareID', WareID);
+                data.append('WareHouseName', WareHouseName);
+                data.append('WareHouseAddress', WareHouseAddress);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_warehouse" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'WareHouse Detail Updated Successfully.'
+                                })
+                            ;
+                            wareHouseTab.ajax.reload();
+                            $('#categoryForm').trigger('reset');
+                            $('#addWareBtn').css('display', '');
+                            $('#updateWareBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+
+        //Units
+        function AddUnit() {
+            var unitName = $('#unitName').val();
+
+            if (unitName === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Unit Name is required !'
+                    })
+                ;
+            } else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('unitName', unitName);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/add_unit/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            {#$('#myModal').modal('hide');#}
+                            {#$("#AddCompanyForm")[0].reset();#}
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Unit Added Successfully.'
+                                })
+                            ;
+
+
+                            unitTab.ajax.reload();
+                            $('#unitForm').trigger('reset')
+                        } else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        unitTab = $('#unitTable').DataTable({
+            dom: 'Blfrtip',
+            "scrollY": "170px",
+            buttons: [{
+                extend: 'excel',
+                exportOptions: {
+                    columns: [0, 1]
+                }
+            }, {
+                extend: 'print',
+                exportOptions: {
+                    columns: [0, 1]
+                }
+            }, {
+                extend: 'colvis',
+                exportOptions: {
+                    columns: [0, 1]
+                }
+            }
+            ],
+            "columnDefs": [
+                {"name": "name", "targets": 0, "orderable": true},
+                {"name": "datetime", "targets": 1, "orderable": true},
+                {"name": "action", "targets": 2, "orderable": false},
+            ],
+            aaSorting: [[0, 'asc']],
+            "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
+            "pageLength": 8,
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'homeApp:UnitsListJson' %}"
+        });
+
+        function delUnit(id) {
+            $('#delUnit')
+                .modal('show')
+            ;
+            $('#UnitID').val(id)
+        }
+
+        function deleteUnit() {
+            var id = $('#UnitID').val();
+
+            var formdata = new FormData();
+            formdata.append('UnitID', id);
+
+
+            $.ajax({
+                url: "/api/delete_unit/",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'User Deleted Successfully.'
+                            })
+                        ;
+
+                        unitTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+        function clearUnitForm() {
+            $('#unitForm').trigger('reset')
+            $('#addUnitBtn').css('display', '');
+            $('#updateUnitBtn').css('display', 'none');
+
+        }
+
+        function GetUnitDetails(id) {
+            $('#addUnitBtn').css('display', 'none');
+            $('#updateUnitBtn').css('display', '');
+            $.ajax({
+                type: 'get',
+                url: '/api/GetUnitDetail/' + id + '/',
+
+                success: function (response) {
+                    $('#unitName').val(response.data['UnitName']);
+                    $('#uniID').val(response.data['uniID']);
+
+
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+        function editUnit() {
+            var uniID = $('#uniID').val();
+            var unitName = $('#unitName').val();
+
+            if (unitName === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Unit Name is required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('uniID', uniID);
+                data.append('unitName', unitName);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:edit_unit" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Unit Detail Updated Successfully.'
+                                })
+                            ;
+                            unitTab.ajax.reload();
+                            $('#unitForm').trigger('reset');
+                            $('#addUnitBtn').css('display', '');
+                            $('#updateUnitBtn').css('display', 'none');
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+    </script>
+
+{% endblock %}

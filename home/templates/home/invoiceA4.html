@@ -1,0 +1,578 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Invoice</title>
+    <link rel="stylesheet" href="{% static 'cssMain/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'print/invoiceMain.css' %}">
+    <link rel="stylesheet" type="text/css" media="print" href="{% static 'print/printinvoice.css' %}">
+    <script src="{% static 'jsMain/jquery.min.js' %}"></script>
+</head>
+<body onload="myFunction()">
+
+<div class="maindiv">
+    <span class="taxinvoice">Tax Invoice</span>
+</div>
+<div class="panel panel-default panelstyle">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="row ">
+                    <span class="customername rowmargin" id="CompanyName">N/A</span> <br>
+                    <span class="rowmargin" id="CompanyAddress">N/A</span>, Phone: <span id="CompanyPhone">N/A</span>
+                    <br>
+                    <span class="rowmargin" id="CompanyGst">N/A</span> <br>
+                    <span class="rowmargin">State: <span id="CompanyState">N/A</span>, Code: 14</span><br>
+                    <span class="rowmargin" id="CompanyEmail">N/A</span>
+                    <hr class="marginForLeft">
+                </div>
+
+                <div class="row ">
+                    <span class="rowmargin">Buyer:</span> # <span id="CustomerID"></span> <br>
+                    <span class="customername rowmargin" id="CustomerName">N/A</span> <br>
+                    <span class="rowmargin" id="CustomerAddress">N/A</span>, Phone: <span id="CustomerPhone">N/A</span>
+                    <br>
+                    <span class="rowmargin" id="CustomerGst">N/A</span> <br>
+                    <span class="rowmargin">State: <span id="CustomerState">N/A</span>, Code: 14</span><br>
+                    <span class="rowmargin" id="CustomerEmail">N/A</span>
+                </div>
+
+            </div>
+
+            <div class="col-sm-0">
+                <div class="vl"></div>
+
+            </div>
+
+            <div class="col-sm-7">
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <div class="row smallrow">
+                            <span class="customername rowmargin">Invoice No.</span>
+                            <span class="rowmargin" id="Invoice"> N/A</span><br>
+                            <hr>
+                        </div>
+
+                        <div class="row smallrow">
+                            <span class="rowmargin">Delivery Note</span> <br>
+                            <span class="rowmargin" id="DeliveryNote">N/A</span><br>
+                            <hr>
+                        </div>
+
+                        <div class="row smallrow">
+                            <span class="rowmargin">Supplier's Ref.</span> <br>
+                            <span class="rowmargin" id="SupplierReference"></span><br>
+                            <hr>
+                        </div>
+                        <div class="row smallrow">
+                            <span class="rowmargin">Buyer's Order No.</span> <br>
+                            <span class="rowmargin" id="BuyersOrderNumber"></span><br>
+                            <hr>
+                        </div>
+                        <div class="row smallrow">
+                            <span class="rowmargin">Disptach Document No.</span> <br>
+                            <span class="rowmargin" id="DispatchDocumentNumber"></span><br>
+                            <hr>
+                        </div>
+
+                        <div class="row smallrow">
+                            <span class="rowmargin">Disptach Through</span> <br>
+                            <span class="rowmargin" id="DispatchThrough"></span><br>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-sm-0">
+                        <div class="vl"></div>
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <div class="row smallrow">
+                            <span class="customername rowmargin">Date: </span>
+                            <span class="rowmargin" id="InvoiceDate">21/06/2019</span><br>
+                            <hr>
+                        </div>
+
+                        <div class="row smallrow">
+                            <span class="rowmargin">Other Ref.</span> <br>
+                            <span class="rowmargin" id="OtherReference"></span><br>
+                            <hr>
+                        </div>
+                        <div class="row smallrow">
+                            <span class="rowmargin">Disptach Note Date</span> <br>
+                            <span class="rowmargin" id="DispatchNoteDate"></span><br>
+                            <hr>
+                        </div>
+
+                        <div class="row smallrow">
+                            <span class="rowmargin">Destination</span> <br>
+                            <span class="rowmargin" id="Destination"></span><br>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+<div class="panel panel-default panelstyle">
+    <div class="panel-body">
+        <div style="" class="row tabletextaling">
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Sl No.</span>
+                    <hr>
+                    <span id="itemSerial">
+
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-3">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Product/Description</span>
+                    <hr>
+
+                    <span id="products"></span>
+
+                    <span class="rowmargin boldtext margintabletext">Other charges</span><br>
+                    <span class="rowmargin boldtext margintabletext">ISGT</span><br>
+                    <span class="rowmargin boldtext margintabletext">IGST</span><br>
+                    <span class="rowmargin boldtext margintabletext">Round off(+/-)</span><br>
+                    <span class="rowmargin boldtext margintabletext">Discount (-)</span><br>
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext">Total</span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">HSN/SAC</span>
+                    <hr>
+                    <span id="hsn">
+
+                    </span>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">GST Rate</span>
+                    <hr>
+                    <span id="gst">
+
+                    </span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Quantity</span>
+                    <hr>
+                    <span id="quantity">
+
+                    </span>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Rate</span>
+                    <hr>
+                    <span id="rate">
+
+                    </span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Per</span>
+                    <hr>
+                    <span id="unit">
+
+                    </span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Discount %</span>
+                    <hr>
+                    <span class="rowmargin margintabletext"></span><br>
+                    <span class="rowmargin margintabletext" id="discount"></span><br>
+                    <span class="rowmargin margintabletext"> </span><br>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vltwo"></div>
+            </div>
+
+
+            <div class="col-sm-2">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Amount</span>
+                    <hr>
+                    <span id="item_total">
+
+                    </span>
+
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext" id="OtherCharges"></span> <br>
+                    <span class="rowmargin boldtext margintabletext" id="IGST"></span> <br>
+                    <span class="rowmargin boldtext margintabletext" id="CGST"></span> <br>
+                    <span class="rowmargin boldtext margintabletext" id="RoundOff"></span> <br>
+                    <span class="rowmargin boldtext margintabletext" id="PersonalDiscount"></span> <br>
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext">Rs <span id="TotalFinal"></span></span>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+</div>
+
+<div class="panel panel-default panelstyle">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-6"><span>Amount chargeable(in words)</span></div>
+            <div class="col-sm-6 righttext"><span>E & O.E</span></div>
+        </div>
+        <span class="boldtext" id="TotalInWords"></span>
+    </div>
+</div>
+
+
+<div class="panel panel-default panelstyle">
+    <div class="panel-body">
+        <div style="" class="row tabletextaling">
+            <div class="col-sm-3">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">HSN/SAC</span>
+                    <hr>
+                    <span id="hsnTax">
+
+                                    </span>
+
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext">Total</span>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+
+            <div class="col-sm-5">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Taxable Value</span>
+                    <hr>
+                    <span id="item_totalTax">
+
+                                    </span>
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext" id="taxableTotal">341243</span>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Rate %</span>
+                    <hr>
+                    <span id="rateTax">
+
+                                    </span>
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext"></span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+
+            <div class="col-sm-1">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Amount</span>
+                    <hr>
+                    <span id="item_gst_amount">
+
+                                    </span>
+
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext" id="BillGstSub"></span>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+
+            <div class="col-sm-2">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Total Amount</span>
+                    <hr>
+                    <span id="item_gst_amount_total">
+
+                                    </span>
+                    <hr>
+                    <span class="rowmargin boldtext margintabletext" id="BillGst"></span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="panel panel-default panelstyle">
+    <div class="panel-body">
+        <span>Tax amount(in words): <strong id="item_gst_amountInWords"></strong></span>
+
+        <div class="row">
+
+            <hr>
+
+
+            <div class="col-sm-6">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext">Customer's (Signature/Seal)</span>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+
+            <div class="col-sm-6">
+
+                <div class="row smallrow">
+                    <span class="customername rowmargin margintabletext"> <span id="CompanyNameSeal"></span> (Signature/Seal)</span>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-0">
+                <div class="vlthree"></div>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+<div class=" centertext">
+    <span>This is a computer generated invoice.</span>
+
+</div>
+
+<script>
+    function GetSaleDetail(id) {
+        $.ajax({
+            type: 'get',
+            url: '/api/get_sales_detail_for_invoice/' + id + '/',
+
+            success: function (response) {
+
+                $('#CompanyName').html(response.data.Basic['CompanyName']);
+                $('#CompanyGst').html(response.data.Basic['CompanyGst']);
+                $('#CompanyPhone').html(response.data.Basic['CompanyPhone']);
+                $('#CompanyAddress').html(response.data.Basic['CompanyAddress']);
+                $('#CompanyEmail').html(response.data.Basic['CompanyEmail']);
+                $('#CompanyState').html(response.data.Basic['CompanyState']);
+
+                $('#CustomerName').html(response.data.Basic['CustomerName']);
+                $('#CustomerGst').html(response.data.Basic['CustomerGst']);
+                $('#CustomerPhone').html(response.data.Basic['CustomerPhone']);
+                $('#CustomerAddress').html(response.data.Basic['CustomerAddress']);
+                $('#CustomerEmail').html(response.data.Basic['CustomerEmail']);
+                $('#CustomerState').html(response.data.Basic['CustomerState']);
+
+
+                $('#Invoice').html(response.data.Basic['Invoice']);
+                $('#InvoiceDate').html(response.data.Basic['InvoiceDate']);
+
+
+                $('#DeliveryNote').html(response.data.Basic['DeliveryNote']);
+                $('#SupplierReference').html(response.data.Basic['SupplierReference']);
+                $('#BuyersOrderNumber').html(response.data.Basic['BuyersOrderNumber']);
+                $('#DispatchDocumentNumber').html(response.data.Basic['DispatchDocumentNumber']);
+                $('#DispatchThrough').html(response.data.Basic['DispatchThrough']);
+                $('#OtherReference').html(response.data.Basic['OtherReference']);
+                $('#DispatchNoteDate').html(response.data.Basic['DispatchNoteDate']);
+                $('#Destination').html(response.data.Basic['Destination']);
+                $('#OtherCharges').html(response.data.Basic['OtherCharges']);
+
+
+                $('#discount').html(response.data.Basic['Discount'] + ' %');
+                $('#RoundOff').html(response.data.Basic['RoundOff']);
+                $('#PersonalDiscount').html(response.data.Basic['PersonalDiscount']);
+                $('#TotalFinal').html(response.data.Basic['GrandTotal']);
+                $('#IGST').html(response.data['IGST']);
+                $('#CGST').html(response.data['CGST']);
+                $('#TotalInWords').html(response.data['TotalInWords']);
+                $('#BillGst').html(response.data.Basic['BillGst']);
+                $('#BillGstSub').html(response.data.Basic['BillGst']);
+                $('#taxableTotal').html(response.data.Basic['Taxable']);
+                $('#item_gst_amountInWords').html(response.data['item_gst_amountInWords']);
+                $('#CompanyNameSeal').html(response.data.Basic['CompanyName']);
+                $('#CustomerID').html(response.data.Basic['CustomerID']);
+                var i;
+                for (i = 0; i < response.data.serial.length; i++) {
+                    $('#itemSerial').append('<span class="rowmargin margintabletext"> ' + response.data.serial[i] + '</span><br>');
+                    $('#products').append('<span class="rowmargin margintabletext"> ' + response.data.product[i] + '</span><br>');
+                    $('#hsn').append('<span class="rowmargin margintabletext"> ' + response.data.hsn[i] + '</span><br>');
+                    $('#gst').append('<span class="rowmargin margintabletext"> ' + response.data.gst[i] + '</span><br>');
+                    $('#quantity').append('<span class="rowmargin margintabletext"> ' + response.data.quantity[i] + '</span><br>');
+                    $('#rate').append('<span class="rowmargin margintabletext"> ' + response.data.rate[i] + '</span><br>');
+                    $('#unit').append('<span class="rowmargin margintabletext"> ' + response.data.unit[i] + '</span><br>');
+                    $('#item_total').append('<span class="rowmargin margintabletext"> ' + response.data.item_total[i] + '</span><br>');
+                    $('#hsnTax').append('<span class="rowmargin margintabletext"> ' + response.data.hsn[i] + '</span><br>');
+                    $('#item_totalTax').append('<span class="rowmargin margintabletext"> ' + response.data.item_total[i] + '</span><br>');
+                    $('#rateTax').append('<span class="rowmargin margintabletext"> ' + response.data.gst[i] + '</span><br>');
+                    $('#item_gst_amount').append('<span class="rowmargin margintabletext"> ' + response.data.item_gst_amount[i] + '</span><br>');
+                    $('#item_gst_amount_total').append('<span class="rowmargin margintabletext"> ' + response.data.item_gst_amount[i] + '</span><br>');
+
+                }
+
+
+                window.print();
+
+            },
+
+            error: function () {
+                $('body')
+                    .toast({
+                        class: 'error',
+                        message: 'An error occurred !'
+                    })
+                ;
+            }
+        });
+
+    }
+    function myFunction() {
+        GetSaleDetail('{{ query }}');
+
+    }
+</script>
+</body>
+</html>

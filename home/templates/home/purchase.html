@@ -1,0 +1,1173 @@
+{% extends 'home/index.html' %}
+{% block title %}
+    <title>Purchase</title>
+{% endblock %}
+{% block body %}
+    <style>
+        .cwide {
+            width: 73% !important;
+        }
+    </style>
+
+    <div class="ui right aligned basic segment">
+        <div class="ui internally grid">
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                <div class="four wide column">
+                    <form class="ui mini form" id="supForm2">
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="user icon"></i>
+                            <label>Name</label>
+                                </span>
+
+
+                            <div class="ui supplierList search">
+                                <div class="ui icon input" style="width:75%;">
+                                    <input autocomplete="off" type="text" class="prompt" id="name" name="name"
+                                           placeholder="Supplier Name">
+
+                                </div>
+                                <div class="results"></div>
+                            </div>
+
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="registered icon"></i>
+                            <label>GST Reg</label>
+                            </span>
+                            <input class="cwide" type="text" name="gst" id="gst" placeholder="GST Reg"
+                            >
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="mobile icon"></i>
+
+                            <label>Phone</label>
+                            </span>
+                            <input class="cwide" type="text" name="phone" id="phone" placeholder="Phone Number"
+                            >
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="mail icon"></i>
+
+                            <label>Email</label>
+                            </span>
+                            <input class="cwide" type="text" id="email" name="email" placeholder="Email"
+                            >
+                            <input type="hidden" name="supplierID" id="supplierID" value="NaN">
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="four wide column">
+                    <form class="ui tiny form" id="supForm">
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="map marker alternate icon"></i>
+                            <label>Address</label>
+                                </span>
+                            <textarea name="address" id="address" class="cwide" rows="1"
+                                      style="padding-bottom: 0.4rem;padding-top: 0.3rem"
+                            ></textarea>
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="street view icon"></i>
+                            <label>State</label>
+                            </span>
+                            <select class="cwide  dropdown" id="state" name="state">
+                                <option value="" hidden selected>State</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Madhaya Pradesh">Madhaya Pradesh</option>
+                                <option value="Maharastra">Maharastra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Orissa">Orissa</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Utter Pradesh">Utter Pradesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                            </select>
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="building icon"></i>
+                            <label>Company</label>
+                            </span>
+                            <select style="    background-color: bisque;" class="cwide dropdown" id="company"
+                                    onchange="changeCompany()">
+                                {% for foo in company %}
+                                    <option value="{{ foo.pk }}">{{ foo.name }}</option>
+                                {% endfor %}
+
+
+                            </select>
+                        </div>
+
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="cart arrow down icon"></i>
+                            <label>Type</label>
+                            </span>
+                            <select style="    background-color: bisque;" class="cwide dropdown" id="pType"
+                                    onchange="changeProductType()">
+
+                                <option value="Normal" selected>Normal</option>
+                                {% if  request.user|has_group:"Admin" %}
+                                    <option value="Jet">Jet</option>
+                                {% endif %}
+                            </select>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="six wide column">
+                    <div class="ui form">
+                        <div class="ui tiny form">
+                            <div class="inline fields">
+
+                                <i class="amazon pay icon"></i>
+                                <label for="fruit">Payment Type</label>
+                                <div class="field">
+                                    <div class="ui radio checkbox checked" onclick="showDay('n')">
+                                        <input type="radio" name="payment" checked="" value="Cash" tabindex="0"
+                                               class="hidden">
+                                        <label>Cash Bill</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio checkbox" onclick="showDay('n')">
+                                        <input type="radio" name="payment" value="Card" tabindex="0" class="hidden">
+                                        <label>Card</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio checkbox" onclick="showDay('y')">
+                                        <input type="radio" name="payment" value="Credit" tabindex="0" class="hidden">
+                                        <label>Credit</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio checkbox" onclick="showDay('c')">
+                                        <input type="radio" name="payment" value="Cheque" tabindex="0" class="hidden">
+                                        <label>Cheque</label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="field inline" id="days" style=" display: none; margin-bottom: 0.5em;">
+                            <span style="float: left">
+                            <i class="calendar check icon"></i>
+                            <label>Days</label>
+                                </span>
+                                <input style="width: 78%" type="text" name="cDays" id="cDays"
+                                       placeholder="Credit Days">
+                            </div>
+                            <div class="field inline" id="cheque" style="padding-bottom: 5px; display: none;">
+                            <span style="float: left">
+                            <i class="receipt icon"></i>
+                            <label>Cheque Detail</label>
+                                </span>
+                                <input style="width:77%" type="text" name="chequeDetail"
+                                       placeholder="Cheque Detail" id="chequeDetail">
+                            </div>
+                        </div>
+
+                        <form class="ui tiny form">
+
+
+                            <div class="ui two column grid">
+                                <div class="column">
+                                    <div class="field inline">
+                            <span style="float: left">
+                            <i class="scroll icon"></i>
+                            <label>Invoice No</label>
+                                </span>
+                                        <input style="width: 55%" name="invoiceNumber" id="invoiceNumber"
+                                               placeholder="Invoice Number">
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="field inline" id="standard_calendar">
+                            <span style="float: left">
+                            <i class="calendar alternate icon"></i>
+                            <label>Date</label>
+                            </span>
+                                        <input style="width: 70%" type="text" name="pDate" id="pDate" placeholder="Date"
+                                               autocomplete="off"
+                                        >
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+
+                <div class="two wide column">
+                    <a href="">
+
+
+                        <i class="scroll icon" style="font-size: 3rem; padding: 40px;margin-right: 50px;"></i>
+                        <p>Create New Purchase</p>
+
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="ui horizontal divider">
+
+        </div>
+        <div class="ui internally celled grid">
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+
+                <div class="eleven wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                    <form id="productForm">
+                        <div class="ui mini form">
+                            <div class="seven fields">
+                                <div class="field">
+                                    <label style="text-align: center">Product Name <i onclick="openProduct()"
+                                                                                      class="plus green icon"
+                                                                                      style="cursor:pointer"></i></label>
+
+                                    <div class="ui productList search">
+                                        <div class="ui icon input">
+                                            <input type="text" class="prompt" id="productName" name="productName"
+                                                   placeholder="Product Name" onfocus="proSearch()">
+                                            <i class="shopping bag icon"></i>
+                                            <input type="hidden" id="itemID">
+
+
+                                        </div>
+                                        <div class="results"></div>
+                                    </div>
+
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">Amount (Without Tax)(₹)</label>
+                                    <input placeholder="Total" type="text" id="total">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">Quantity</label>
+                                    <input placeholder="Quantity" type="text" id="quantity"
+                                    >
+                                </div>
+
+                                <div class="field">
+                                    <label style="text-align: center">Unit</label>
+                                    <input placeholder="Unit" type="text"
+                                           id="unit" readonly style="background-color: lightgray;">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">Price(₹)</label>
+                                    <input placeholder="Price" type="text" id="Price">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">GST</label>
+                                    <input placeholder="GST" type="text" id="GST">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">Net Price(₹)</label>
+                                    <input placeholder="Net Price" type="text" id="netPrice">
+                                </div>
+
+                            </div>
+                            <div class="7 fields">
+
+                                <div class="field">
+                                    <label style="text-align: center">Category <i onclick="openCategory()"
+                                                                                  class="plus green icon"
+                                                                                  style="cursor:pointer"></i></label>
+                                    <input placeholder="Category" type="text" id="category" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">HSN</label>
+                                    <input placeholder="HSN" type="text" id="hsn" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">Stock</label>
+                                    <input placeholder="Stock" type="text" id="stock" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">MRP(₹)</label>
+                                    <input placeholder="MRP" type="text" id="mrp">
+                                </div>
+
+                                <div class="field" style="    padding-top: 1.3rem;">
+                                    <div class="ui buttons">
+                                        <button class="ui positive button" id="addItemBtn" type="button"
+                                                onclick="addSubItems()"><i
+                                                class="plus icon"></i>Add
+                                        </button>
+                                        <button style="display: none" type="button" id="updateItemBtn"
+                                                onclick="updateSubItems()"
+                                                class="ui orange button">
+                                            <i class="icon redo"></i>
+                                            Update
+                                        </button>
+                                        <div class="or"></div>
+                                        <button class="ui button red" type="button" onclick="ClearData()"><i
+                                                class="minus icon"></i>
+                                            Clear
+                                        </button>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="five wide  column" style="padding-top: 0!important;padding-bottom: 0;">
+
+                    <form class="16 ui mini form" id="totalForm">
+                        <div class="ui mini form">
+                            <div class="two fields">
+                                <div class="field">
+                                    <label style="float: left"> <i class="percent icon"></i> Taxable(₹)</label>
+                                    <input placeholder="Taxable" id="GrandTaxable" type="number" value="0" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field">
+
+                                    <label style="float: left"><i class="registered icon"></i> GST(₹)</label>
+                                    <input name="gst" placeholder="GST" id="GrandGst" type="number" value="0" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui mini form">
+                            <div class="three fields">
+                                <div class="field">
+                                    <label style="float: left"> <i class="people carry icon"></i> Other
+                                        Charges(₹)</label>
+                                    <input placeholder="Other Charges" id="otherCharges" name="otherCharges"
+                                           type="number" value="0">
+                                </div>
+                                <div class="field">
+                                    <label style="float: left"> <i class="balance scale icon"></i> Round Off(₹)</label>
+                                    <input placeholder="Round Off" id="roundOff" name="roundOff" type="number"
+                                           value="0">
+                                </div>
+                                <div class="field">
+
+                                    <label style="float: left"><i class="wallet icon"></i> Total(₹)</label>
+                                    <input name="Total" placeholder="Total" id="GrandTotal" type="number" value="0"
+                                           readonly style="background-color: lightgray;">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                    <table class="ui very compact table " id="itemTable">
+                        <thead>
+                        <tr>
+                            <th>Sl No.</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>HSN</th>
+                            <th>Qty</th>
+                            <th>Unit</th>
+                            <th>Rate(₹)</th>
+                            <th>GST %</th>
+                            <th>Net Rate(₹)</th>
+                            <th>Total(₹)</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="four wide column">
+                    <div class="ui center aligned basic segment">
+                        <button class="ui mini primary button" onclick="AddExtraDetail()">
+                            Add Extra Details
+                        </button>
+                        <div class="ui segment">
+                            <div class="ui  column very relaxed grid">
+                                <div class="column">
+                                    <a onclick="purchaseSave()" style="cursor: pointer;">
+                                        <i class="save icon" style="font-size: 2rem"></i>
+                                        <p>Save</p>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="ui basic modal custom" id="delItemModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Item will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Item detail will be deleted, are you sure to delete
+                this Item?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="itemDelID">
+            <div class="ui green ok inverted button" onclick="deleteItem()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+    <div class="ui modal" id="ExtraDetails">
+        <i class="close icon"></i>
+        <div class="header">
+            Add Extra Details
+        </div>
+        <div class="image content">
+            <div class="description">
+                <form class="ui form" id="AddCompanyForm">{% csrf_token %}
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Delivery Note</label>
+                            <input type="text" name="deliveryNote" id="deliveryNote" placeholder="deliveryNote">
+                        </div>
+                        <div class="field">
+                            <label>Supplier Reference</label>
+                            <input type="text" name="supplierReference" id="supplierReference"
+                                   placeholder="Supplier Reference">
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Buyer's Order Number</label>
+                            <input type="text" name="orderNumber" placeholder="Buyer's Order Number"
+                                   id="orderNumber">
+                        </div>
+                        <div class="field">
+                            <label>Dispatch Document Number</label>
+                            <input type="text" name="dispatchNumber" placeholder="Dispatch Document Number"
+                                   id="dispatchNumber">
+                        </div>
+                    </div>
+
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Dispatch Through</label>
+                            <input type="text" name="dispatchThrough" placeholder="Dispatch Through"
+                                   id="dispatchThrough">
+                        </div>
+                        <div class="field">
+                            <label>Other Reference</label>
+                            <input type="text" name="otherReference" placeholder="Other Reference" id="otherReference">
+                        </div>
+                    </div>
+                    <div class="two fields">
+                        <div class="field" id="calender2">
+                            <label>Dispatch Note Date</label>
+                            <input type="text" name="dispatchNoteDate" placeholder="Dispatch Note Date"
+                                   id="dispatchNoteDate">
+                        </div>
+                        <div class="field">
+                            <label>Destination</label>
+                            <input type="text" name="destination" placeholder="Destination" id="destination">
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Close
+            </div>
+            <div class="ui positive right labeled icon button">
+                Done adding
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('.ui.radio.checkbox')
+            .checkbox();
+        var today = new Date();
+        $('#standard_calendar')
+            .calendar({
+                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    }
+                }
+            );
+        $('#calender2')
+            .calendar({
+                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    },
+                    popupOptions: {
+                        observeChanges: false
+                    }
+
+                }
+            );
+
+        var pType;
+        pType = $('#pType').val();
+
+        function changeProductType() {
+            pType = $('#pType').val();
+            $('#itemTable tbody tr').remove();
+            var GrandTaxable = $('#GrandTaxable').val('0.00');
+            var GrandGst = $('#GrandGst').val('0.00');
+            var GrandTotal = $('#GrandTotal').val('0.00');
+
+
+            if (pType === 'Jet') {
+                $('#productForm').trigger('reset');
+                proSearch();
+                $('#invoiceNumber').val('N/A').attr('readonly', true).css('background-color', 'lightgray');
+                $('#GST').val('0').attr('readonly', true).css('background-color', 'lightgray');
+                $('#GrandTaxable').val('0').attr('readonly', true).css('background-color', 'lightgray');
+                $('#GrandGst').val('0').attr('readonly', true).css('background-color', 'lightgray');
+
+            }
+            else {
+                $('#productForm').trigger('reset')
+                proSearch()
+                $('#invoiceNumber').val('').attr('readonly', false).css('background-color', 'white');
+                $('#GST').val('0').attr('readonly', false).css('background-color', 'white');
+                $('#GrandTaxable').val('0').attr('readonly', false).css('background-color', 'white');
+                $('#GrandGst').val('0').attr('readonly', false).css('background-color', 'white');
+
+            }
+        }
+
+        function ClearData() {
+
+            $('#addItemBtn').css('display', '');
+            $('#updateItemBtn').css('display', 'none');
+
+
+            $('#productName').val('');
+            $('#quantity').val('');
+            $('#unit').val('');
+            $('#Price').val('');
+            $('#GST').val('');
+            $('#netPrice').val('');
+            $('#total').val('');
+            $('#barCode').val('');
+            $('#category').val('');
+            $('#hsn').val('');
+            $('#stock').val('');
+            $('#mrp').val('');
+            $('#itemID').val('');
+        }
+
+
+        $('.ui.supplierList')
+            .search({
+                apiSettings: {
+                    url: '/api/GetSupplierList/?q={query}'
+                },
+                fields: {
+                    results: 'data',
+                    title: 'Name',
+                    "price": "Gst",
+                    "description": "Address",
+                },
+                onSelect: function (result) {
+
+                    $('#supplierID').val(result.ID);
+                    getSupplierDetail();
+
+
+                },
+                cache: false,
+                minCharacters: 1
+            });
+        function getSupplierDetail() {
+            var supplierID = $('#supplierID').val();
+            $.ajax({
+                type: 'get',
+                url: '/api/GetSupplierDetailByName/?q=' + supplierID,
+
+                success: function (response) {
+                    $('#supplierID').val(response.data['ID']);
+                    $('#gst').val(response.data['Gst']);
+                    $('#phone').val(response.data['Phone']);
+                    $('#email').val(response.data['Email']);
+                    $('#address').val(response.data['Address']);
+                    $('#state').val(response.data['State']);
+                    $('#name').val(response.data['Name']);
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+        function proSearch() {
+            p = $('#pType').val();
+            company = $('#company').val();
+            $('.ui.productList').search({
+
+                apiSettings: {
+                    url: '/api/GetProductList/?q={query}&type=' + p + '&company=' + company
+                },
+                fields: {
+                    results: 'data',
+                    title: 'ProductName',
+                    "price": "Brand",
+                    "description": "Company",
+                },
+                minCharacters: 1,
+                onSelect: function (result) {
+                    ClearData();
+                    $('#itemID').val(result.ID);
+                    getProductDetailByName();
+
+
+                },
+                cache: false,
+            });
+        }
+
+        function getProductDetailByName() {
+            var name = $('#itemID').val();
+            var pType = $('#pType').val();
+
+
+            $.ajax({
+                type: 'get',
+                url: '/api/GetProductDetailByName/?q=' + name + '&pType=' + pType,
+
+                success: function (response) {
+                    if (pType === 'Jet') {
+                        $('#itemID').val(response.data['ID']);
+                        $('#productName').val(response.data['ProductName']);
+                        $('#category').val(response.data['Category']);
+                        $('#Price').val(response.data['Price']);
+                        $('#GST').val('0');
+                        $('#hsn').val(response.data['Hsn']);
+                        $('#mrp').val(response.data['Mrp']);
+                        $('#stock').val(response.data['Stock']);
+                        $('#unit').val(response.data['ActualUnit']);
+
+                    }
+                    else {
+                        $('#productName').val(response.data['ProductName']);
+                        $('#itemID').val(response.data['ID']);
+                        $('#category').val(response.data['Category']);
+                        $('#Price').val(response.data['Price']);
+                        $('#GST').val(response.data['Gst']);
+                        $('#hsn').val(response.data['Hsn']);
+                        $('#mrp').val(response.data['Mrp']);
+                        $('#stock').val(response.data['Stock']);
+                        $('#unit').val(response.data['ActualUnit']);
+
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+        function basicRateCalc() {
+            var t = $('#total').val();
+            var q = $('#quantity').val();
+            var gst = $('#GST').val();
+            var newPrice = parseFloat(t) / parseFloat(q)
+            var netPriceCal = (parseFloat(newPrice) * parseFloat(gst) / 100) + parseFloat(newPrice);
+            $('#Price').val(newPrice.toFixed(2));
+            $('#netPrice').val(netPriceCal.toFixed(2));
+        }
+
+        $("#total").keyup(function () {
+            basicRateCalc();
+
+
+        });
+        $("#quantity").keyup(function () {
+            basicRateCalc();
+
+
+        });
+
+
+        $("#GST").keyup(function () {
+            basicRateCalc();
+
+        });
+
+        $("#otherCharges").keyup(function () {
+
+            var otherCharges = $('#otherCharges').val();
+            var GrandTaxable = $('#GrandTaxable').val();
+            var GrandGst = $('#GrandGst').val();
+            if (otherCharges !== '') {
+                var gTotal = parseFloat(otherCharges) + parseFloat(GrandTaxable) + parseFloat(GrandGst);
+            }
+            else {
+                var gTotal = parseFloat(GrandTaxable) + parseFloat(GrandGst);
+            }
+
+
+            var roundNumber = Math.round(gTotal.toFixed(2));
+
+            var roundOfNumber = roundNumber - gTotal.toFixed(2);
+            $('#roundOff').val(roundOfNumber.toFixed(2))
+
+
+            var grandTotal = parseFloat(gTotal) + parseFloat(roundOfNumber.toFixed(2));
+            $('#GrandTotal').val(grandTotal.toFixed(2))
+
+
+        });
+
+
+        $("#name").keyup(function () {
+            var charName = $('#name').val();
+            if (charName.length === 0) {
+                $('#supForm2').trigger('reset');
+                $('#supForm').trigger('reset');
+                $('#supplierID').val('NaN');
+            }
+
+
+        });
+
+
+        function addSubItems() {
+            var itemID = $('#itemID').val();
+            var productName = $('#productName').val();
+            var Quantity = $('#quantity').val();
+            var Unit = $('#unit').val();
+            var Price = $('#Price').val();
+            var GST = $('#GST').val();
+            var NetPrice = $('#netPrice').val();
+            var Total = $('#total').val();
+            var barCode = $('#barCode').val();
+            var category = $('#category').val();
+            var hsn = $('#hsn').val();
+            var stock = $('#stock').val();
+            var mrp = $('#mrp').val();
+            if (productName === '' || Quantity === '' || Price === '' ||
+                Total === '' || category === '' || mrp === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Product Name, Category, MRP, Quantity and Total are required !'
+                    })
+                ;
+            }
+            else {
+                $('#' + itemID).remove();
+                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                ClearData();
+                calTaxAndTotal()
+            }
+
+        }
+
+
+        function GetItemDetail(id) {
+            $('#addItemBtn').css('display', 'none');
+            $('#updateItemBtn').css('display', '');
+            var product = $('#product' + id).html();
+            var category = $('#category' + id).html();
+            var hsn = $('#hsn' + id).html();
+            var quantity = $('#quantity' + id).html();
+            var unit = $('#unit' + id).html();
+            var price = $('#price' + id).html();
+            var gst = $('#gst' + id).html();
+            var netprice = $('#netprice' + id).html();
+            var total = $('#total' + id).html();
+            $('#productName').val(product);
+            $('#quantity').val(quantity);
+            $('#unit').val(unit);
+            $('#Price').val(price);
+            $('#GST').val(gst);
+            $('#netPrice').val(netprice);
+            $('#total').val(total);
+            $('#category').val(category);
+            $('#hsn').val(hsn);
+            $('#itemID').val(id);
+            var pType = $('#pType').val();
+
+            $.ajax({
+                type: 'get',
+                url: '/api/GetProductDetailByName/?q=' + product + '&pType=' + pType,
+
+                success: function (response) {
+                    $('#mrp').val(response.data['Mrp']);
+                    $('#stock').val(response.data['Stock']);
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+
+        function updateSubItems() {
+
+            var id = $('#itemID').val();
+            var productName = $('#productName').val();
+            var Quantity = $('#quantity').val();
+            var Unit = $('#unit').val();
+            var Price = $('#Price').val();
+            var GST = $('#GST').val();
+            var NetPrice = $('#netPrice').val();
+            var Total = $('#total').val();
+            var barCode = $('#barCode').val();
+            var category = $('#category').val();
+            var hsn = $('#hsn').val();
+            var stock = $('#stock').val();
+            var mrp = $('#mrp').val();
+
+            if (productName === '' || Quantity === '' || Price === '' ||
+                Total === '' || category === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Product Name, Category, MRP, Quantity and Total are required !'
+                    })
+                ;
+            }
+            else {
+                $('#product' + id).html(productName);
+                $('#category' + id).html(category);
+                $('#hsn' + id).html(hsn);
+                $('#quantity' + id).html(Quantity);
+                $('#unit' + id).html(Unit);
+                $('#price' + id).html(Price);
+                $('#gst' + id).html(GST);
+                $('#netprice' + id).html(NetPrice);
+                $('#total' + id).html(Total);
+
+                ClearData();
+                calTaxAndTotal()
+            }
+
+        }
+
+        function delItem(id) {
+            $('#delItemModal')
+                .modal('show')
+            ;
+            $('#itemDelID').val(id)
+        }
+
+        function deleteItem() {
+            var id = $('#itemDelID').val();
+            $('#' + id).remove();
+            calTaxAndTotal();
+
+
+        }
+        function calTaxAndTotal() {
+            var taxable = 0.0;
+            var gstTotal = 0.0;
+            var TotalAmount = 0.0;
+            var roundOff = 0.0;
+            var otherCharges = $('#otherCharges').val();
+
+            $('#itemTable tbody tr').each(function () {
+                var id = $(this).closest('tr').attr('id');
+                var total = $('#total' + id).html();
+                var gst = $('#gst' + id).html();
+                var gstT = (parseFloat(total) * parseFloat(gst) / 100);
+                gstTotal = gstTotal + gstT;
+
+                taxable = taxable + parseFloat(total)
+
+
+            });
+
+            $('#GrandTaxable').val(taxable.toFixed(2));
+            $('#GrandGst').val(gstTotal.toFixed(2));
+
+            var GrandTaxable = $('#GrandTaxable').val();
+            var GrandGst = $('#GrandGst').val();
+            if (otherCharges !== '') {
+                var gTotal = parseFloat(otherCharges) + parseFloat(GrandTaxable) + parseFloat(GrandGst);
+            }
+            else {
+                var gTotal = parseFloat(GrandTaxable) + parseFloat(GrandGst);
+            }
+
+
+            var roundNumber = Math.round(gTotal.toFixed(2));
+
+            var roundOfNumber = roundNumber - gTotal.toFixed(2);
+            $('#roundOff').val(roundOfNumber.toFixed(2))
+
+
+            var grandTotal = parseFloat(gTotal) + parseFloat(roundOfNumber.toFixed(2));
+            $('#GrandTotal').val(grandTotal.toFixed(2))
+
+        }
+        function showDay(p) {
+            if (p === 'n') {
+                $('#days').css('display', 'none');
+                $('#cheque').css('display', 'none')
+            }
+            else if (p === 'y') {
+                $('#days').css('display', '')
+                $('#cheque').css('display', 'none')
+            } else {
+                $('#days').css('display', 'none')
+                $('#cheque').css('display', '')
+
+            }
+
+        }
+
+        function purchaseSave() {
+            var supplierID = $('#supplierID').val();
+            var name = $('#name').val();
+            var gst = $('#gst').val();
+            var phone = $('#phone').val();
+            var email = $('#email').val();
+            var address = $('#address').val();
+            var state = $('#state').val();
+            var pType = $('#pType').val();
+            var payment = $('input[name="payment"]:checked').val();
+            var cDays = $('#cDays').val();
+            var invoiceNumber = $('#invoiceNumber').val();
+            var pDate = $('#pDate').val();
+            var GrandTaxable = $('#GrandTaxable').val();
+            var GrandGst = $('#GrandGst').val();
+            var GrandTotal = $('#GrandTotal').val();
+            var chequeDetail = $('#chequeDetail').val();
+
+            var company = $('#company').val();
+            var deliveryNote = $('#deliveryNote').val();
+            var supplierReference = $('#supplierReference').val();
+            var orderNumber = $('#orderNumber').val();
+            var dispatchNumber = $('#dispatchNumber').val();
+            var dispatchThrough = $('#dispatchThrough').val();
+            var otherReference = $('#otherReference').val();
+            var dispatchNoteDate = $('#dispatchNoteDate').val();
+            var destination = $('#destination').val();
+            var roundOff = $('#roundOff').val();
+            var otherCharges = $('#otherCharges').val();
+
+            var datas = '';
+            $('#itemTable tbody tr').each(function () {
+                var id = $(this).closest('tr').attr('id');
+                var pro = $('#product' + id).html();
+                var cat = $('#category' + id).html();
+                var hs = $('#hsn' + id).html();
+                var qty = $('#quantity' + id).html();
+                var pri = $('#price' + id).html();
+                var gs = $('#gst' + id).html();
+                var netp = $('#netprice' + id).html();
+                var tot = $('#total' + id).html();
+                var unit = $('#unit' + id).html();
+
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + unit + '@'
+
+
+            });
+            if (name === '' || pDate === '' || GrandTotal === '' ||
+                datas === '' || payment === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Seller Name, Invoice Date, Items and Total are required !'
+                    })
+                ;
+            }
+            else {
+
+
+                data = new FormData();
+                data.append('supplierID', supplierID);
+                data.append('name', name);
+                data.append('gst', gst);
+                data.append('phone', phone);
+                data.append('email', email);
+                data.append('address', address);
+                data.append('state', state);
+                data.append('pType', pType);
+                data.append('payment', payment);
+                data.append('cDays', cDays);
+                data.append('invoiceNumber', invoiceNumber);
+                data.append('pDate', pDate);
+                data.append('GrandTaxable', GrandTaxable);
+                data.append('GrandGst', GrandGst);
+                data.append('GrandTotal', GrandTotal);
+                data.append('datas', datas);
+                data.append('chequeDetail', chequeDetail);
+                data.append('company', company);
+                data.append('deliveryNote', deliveryNote);
+                data.append('supplierReference', supplierReference);
+                data.append('orderNumber', orderNumber);
+                data.append('dispatchNumber', dispatchNumber);
+                data.append('dispatchThrough', dispatchThrough);
+                data.append('otherReference', otherReference);
+                data.append('dispatchNoteDate', dispatchNoteDate);
+                data.append('destination', destination);
+                data.append('roundOff', roundOff);
+                data.append('otherCharges', otherCharges);
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/AddNewPurchaseDetail/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'New purchase added Successfully.'
+                                });
+
+                            $('#itemTable tbody tr').remove();
+                            $('body').find('input').val('');
+                            $('body').find('textarea').val('');
+
+
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+        }
+        function changeCompany() {
+            $('#itemTable tbody tr').remove();
+            $('#totalForm').trigger('reset');
+
+        }
+        function AddExtraDetail() {
+
+            $('#ExtraDetails')
+                .modal('show')
+            ;
+
+        }
+        function openProduct() {
+
+            window.open('{% url "homeApp:product" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function openCategory() {
+
+            window.open('{% url "homeApp:hsn" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+    </script>
+{% endblock %}

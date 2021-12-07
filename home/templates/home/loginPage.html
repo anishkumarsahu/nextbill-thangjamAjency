@@ -1,0 +1,75 @@
+{% extends 'home/index.html' %}
+ {% block title %}
+         <title>Login Page</title>
+    {% endblock %}
+
+{% block body %}
+
+<style>
+    body{
+         background-color: #DADADA;
+    }
+
+
+    .ui.grid {
+        display: flex;
+        justify-content: center;
+        padding: 150px;
+        padding-right: 380px;
+        padding-left: 380px;
+    }
+    .ui.form {
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    </style>
+
+
+    <div class=" ui center aligned basic segment grid">
+  <div class="column">
+
+    <form class="ui large form" id="userLoginForm" action="{% url 'homeApp:UserLogin' %}" method="post">{% csrf_token %}
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="userName" placeholder="E-mail/User-ID" id="userName">
+          </div>
+        </div>
+
+        <div class="field">
+             <div class="ui right icon left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password" id="password">
+          </div>
+        </div>
+        <button class="ui fluid large teal submit button" onclick="UserLogin()">Login</button>
+      </div>
+
+    </form>
+
+    <div class="ui message">
+      New to us? <a href="#">Sign Up</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+         function UserLogin() {
+        var username = $('#userName').val();
+        var password = $('#password').val();
+
+        keys : ['Enter'];
+        if(username===""||password===""){
+                alert("Field Required!")
+
+            }
+            else{
+                $('#userLoginForm').submit();
+            }
+    }
+    </script>
+{% endblock %}

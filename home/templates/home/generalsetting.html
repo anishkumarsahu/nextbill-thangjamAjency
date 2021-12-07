@@ -1,0 +1,283 @@
+{% extends 'home/index.html' %}
+{% block title %}
+    <title>General Setting</title>
+{% endblock %}
+
+{% block body %}
+
+    <div class="column">
+        <div class="ui two item stackable tabs menu">
+            <div class="item active" onclick="generalSetting(1)" id="securityTab" style="cursor: pointer">
+                <p><i class="shield alternate icon"></i>Security</p>
+            </div>
+            <div class="item" onclick="generalSetting(2)" id="printerTab" style="cursor: pointer">
+                <p><i class="print icon"></i>Printer</p>
+            </div>
+
+        </div>
+    </div>
+    <BR>
+    <div class="ui main container">
+        <div class="ui grid">
+            <div class="four wide column"></div>
+            <div class="eight wide column">
+                <div id="security" class="ui intro tab active" data-tap="Security">
+                    <div class="ui segment" style="background-color: #eeeeee; ">
+                        <form class="ui form" id="PForm"> {% csrf_token %}
+                            <h4 class="ui dividing header" style="text-align: center">Changing Password</h4>
+                            <div class="field">
+                                <label>Current Password</label>
+                                <div class="ui left icon input">
+                                    <input placeholder="Current Password" type="password" id="oldPassword">
+                                    <i class="lock icon"></i>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>New Password</label>
+                                <div class="ui left icon input">
+                                    <input placeholder="New Password" type="password" id="newPassword">
+                                    <i class="lock icon"></i>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Confirmed Password</label>
+                                <div class="ui left icon input">
+                                    <input placeholder="Confirmed Password" type="password" id="confirmPassword">
+                                    <i class="lock icon"></i>
+                                </div>
+                            </div>
+
+                            <div style="text-align: center">
+                                <button class="ui youtube button" onclick="changePassword()" type="button">
+                                    <i class="save icon"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <div id="printer" class="ui tab" dat-tab="Printer">
+                    <div class="ui segment "
+                         style="background-color: #eeeeee;">
+                        <h4 class="ui dividing header" style="text-align: center">Printer Setting</h4>
+
+                        <form class="ui form" id="PrinterForm"> {% csrf_token %}
+                            <div class="field">
+
+                                <select class="ui fluid dropdown" id="pID">
+                                    {% for p in printers %}
+                                        <option value="{{ p.pk }}"  {% if p.pk == myPrinter %}
+                                                selected {% endif %} >{{ p.size }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                            <div style="text-align: center">
+                                <button class="ui youtube button" onclick="changePrinter()" type="button">
+                                    <i class="save icon"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="four wide column"></div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        $('.clear.example .button')
+            .on('click', function () {
+                $('.clear.example .ui.dropdown')
+                    .dropdown('clear')
+                ;
+            })
+        ;
+        function generalSetting(a) {
+            $("#security").hide();
+            $("#printer").hide();
+
+            if (a === 1) {
+                $("#security").show();
+                $("#securityTab").addClass('active');
+                $("#printerTab").removeClass('active');
+
+            }
+
+            else if (a === 2) {
+                $("#printer").show();
+                $("#printerTab").addClass('active');
+                $("#securityTab").removeClass('active');
+
+            }
+
+        }
+
+        $('.ui.dropdown')
+            .dropdown()
+        ;
+
+        $('.tabular.menu .item').tab();
+
+
+        function changePassword() {
+            var newPassword = $('#newPassword').val();
+            var oldPassword = $('#oldPassword').val();
+            var confirmPassword = $('#confirmPassword').val();
+
+            if (newPassword === '' || oldPassword === '' || confirmPassword === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'All fields are required !'
+                    })
+                ;
+            }
+            else {
+
+                if (newPassword !== confirmPassword) {
+                    $('body')
+                        .toast({
+                            class: 'orange',
+                            message: 'Password not matched!'
+                        })
+                    ;
+                }
+
+                else {
+                    var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                    data = new FormData();
+                    data.append('newPassword', newPassword);
+                    data.append('oldPassword', oldPassword);
+                    data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                    $.ajax({
+                        type: 'post',
+                        url: '{% url "homeApp:change_password" %}',
+                        data: data,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+
+
+                        success: function (response) {
+                            if (response.message === 'success') {
+                                $('body')
+                                    .toast({
+                                        class: 'success',
+                                        message: 'Password changed successfully'
+                                    })
+                                ;
+
+                                $('#PForm').trigger('reset');
+
+                            }
+                            else {
+                                $('body')
+                                    .toast({
+                                        class: 'warning',
+                                        message: '' + response.message
+                                    })
+                                ;
+
+                            }
+
+                            return response;
+                        },
+                        error: function () {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+                        }
+                    });
+
+                }
+
+
+            }
+
+        }
+
+        function changePrinter() {
+            var printerID = $('#pID').val();
+
+
+            if (printerID === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'All fields are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('printerID', printerID);
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "homeApp:change_user_printer_setting" %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Printer setting changed successfully'
+                                })
+                            ;
+
+                            $('#PrinterForm').trigger('reset');
+
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: '' + response.message
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+            }
+        }
+
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,421 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Expense</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+  <style>
+     #expenseTable_length {
+            left: 10px;
+            position: absolute;
+        }
+
+        #expenseTable_filter {
+            float: right;
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 200px;
+        }
+  label{
+      float: left;
+  }
+    </style>
+    <div class="ui right aligned basic  segment" style="padding-top: 0;">
+                <div class="ui bottom attached segment" style="margin-top: 0;padding-bottom: 0;">
+                    <form class="ui tiny form" id="expenseForm">
+                        <h4 class="ui  left aligned  dividing header">EXPENSE</h4>
+
+                        <div class="five fields">
+
+
+                        <div class="field">
+                            <label >Expense Type</label>
+
+                            <select  class=" dropdown" id="expenseType">
+                                <option value="Direct" selected>Direct</option>
+                                <option value="In-direct">In-direct</option>
+                            </select>
+                        </div>
+
+                            <div class="field">
+                            <label >Company</label>
+
+                            <select class="dropdown" id="company">
+                                {% for foo in company %}
+                                    <option value="{{ foo.pk }}">{{ foo.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                            <div class="field">
+                                <label>Description</label>
+                                <input type="text" name="description" id="description" placeholder="Description">
+                            {% csrf_token %}
+                            </div>
+
+                             <div class="field">
+                                <label>Amount</label>
+                                <input type="number" name="amount" id="amount" placeholder="Amount">
+
+                            </div>
+                            <div class="field " id="standard_calendar">
+
+                            <label>Date</label>
+
+                                <input class="cwide" type="text" name="date" id="date" placeholder="Date">
+                            </div>
+
+                            <div class="field" style="    padding-top: 1.666em;">
+                                <button type="button" class="ui green button" onclick="addExpense()">
+                                    <i class="icon plus square"></i>
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+
+              <div class="ui internally  grid">
+                  <div class="row" style="padding-bottom: 0;">
+
+                <div class="eight wide column" >
+                    <div class="ui form">
+
+
+                        <form class="ui tiny form">
+
+                            <div class="field inline" id="custom_date">
+                            <span style="float: left;padding: 7px;">
+                            <i class="calendar alternate icon"></i>
+                            <label>Filter By Date Range</label>
+                            </span>
+                                <div class="three fields">
+                                    <div class="field">
+                                        <div class="ui calendar" id="rangestart">
+                                            <div class="ui input left icon">
+                                                <input class="" type="text" placeholder="Start Date" style="width:100%;"
+                                                       id="startDateF">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="ui calendar" id="rangeend">
+                                            <div class="ui input left icon">
+                                                <input class="" type="text" placeholder="End Date" style="width:100%;"
+                                                       id="endDateF">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="ui calendar" id="rangeend">
+                                            <div class="ui input left icon">
+                                                <button class="ui tiny active button" type="button" onclick="filterDetails()">
+                                                    <i class="funnel dollar icon"></i>
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+               </div>
+            <div class="row" style="padding-top: 0;">
+
+                <div class="sixteen wide column">
+                     <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Expense List
+                    </h5>
+                <table class="ui sortable selectable compact celled table" id="expenseTable" style="margin-top: 5px;">
+                    <thead>
+                    <tr>
+                        <th class="">Type</th>
+                        <th class="">Description</th>
+                         <th class="">Amount</th>
+                         <th class="">Company</th>
+                        <th class="">Date</th>
+                        <th class="">EntryDate</th>
+                        <th class="">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+
+                    </tr>
+                    </tbody>
+
+                </table>
+                </div>
+            </div>
+              </div>
+
+
+                </div>
+
+        </div>
+
+    </div>
+
+
+        <div class="ui basic modal custom" id="delHSNModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Expense detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Expense detail will be deleted, are you sure to delete
+                this Expense?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dHSNID">
+            <div class="ui green ok inverted button" onclick="deleteHSN()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        var today = new Date();
+        $('#standard_calendar')
+            .calendar({
+                initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                monthFirst: false,
+                type: 'date',
+                formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    }
+                }
+            );
+     $('#rangestart').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+         monthFirst: false,
+         type: 'date',
+            endCalendar: $('#rangeend'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+        $('#rangeend').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            startCalendar: $('#rangestart'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+
+     function addExpense() {
+            var description = $('#description').val();
+            var amount = $('#amount').val();
+            var date = $('#date').val();
+            var expenseType = $('#expenseType').val();
+            var company = $('#company').val();
+            if (description === '' || amount === ''|| date === ''|| expenseType === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'All fields are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('description', description);
+                data.append('amount', amount);
+                data.append('date', date);
+                data.append('expenseType', expenseType);
+                data.append('company', company);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url 'homeApp:add_expense' %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Expense Added Successfully.'
+                                })
+                            ;
+
+                            expenseTab.ajax.reload();
+                            $('#expenseForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        $(getExpense());
+        var expenseTab;
+        function getExpense() {
+                  var startDate = $('#startDateF').val();
+            var endDate = $('#endDateF').val();
+
+             expenseTab = $('#expenseTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY":"215px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2,3,4]
+                    }},{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2,3,4]
+                    }}
+                ],
+                "columnDefs": [
+                    {"name": "expenseType", "targets": 0, "orderable": true},
+                    {"name": "description", "targets": 1, "orderable": true},
+                    {"name": "amount", "targets": 2, "orderable": true},
+                    {"name": "companyID", "targets": 3, "orderable": true},
+                    {"name": "expenseDate", "targets":4, "orderable": true},
+                    {"name": "datetime", "targets":5, "orderable": true},
+                    {"name": "action", "targets":6, "orderable": true},
+
+                ],
+                aaSorting: [[4, 'desc']],
+                "lengthMenu": [[6, 25, 50, 100, -1], [6, 25, 50, 100, "All"]],
+                "pageLength": 6,
+                "processing": true,
+                "serverSide": true,
+                "ajax": '{% url 'homeApp:ExpenseListJson' %}?startDate=' + startDate + '&endDate=' + endDate
+            });
+        }
+  function filterDetails() {
+                      var startDate = $('#startDateF').val();
+                    var endDate = $('#endDateF').val();
+                    expenseTab.ajax.url( '{% url 'homeApp:ExpenseListJson' %}?startDate=' + startDate + '&endDate=' + endDate ).load();
+
+                }
+                      function delExpense(id) {
+            $('#delHSNModal')
+                .modal('show')
+            ;
+            $('#dHSNID').val(id)
+        }
+
+        function deleteHSN() {
+            var id = $('#dHSNID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_expense' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Expense Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        expenseTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+
+
+    </script>
+
+{% endblock %}

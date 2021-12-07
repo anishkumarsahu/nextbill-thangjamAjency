@@ -1,0 +1,97 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Invoice</title>
+    <link rel="stylesheet" href="{% static 'cssMain/bootstrap.min.css' %}">
+    <script src="{% static 'jsMain/jquery.min.js' %}"></script>
+    <style>
+          @media print {
+        body {
+{#            width: 80mm;#}
+{#            height: 297mm;#}
+            margin-left: 3mm;
+            margin-bottom: 3mm;
+        }
+
+    }
+    </style>
+</head>
+<body onload="myFunction()">
+
+<div id="printDiv" style="width: 80mm;padding: 2mm;">
+   <div class="row" style="text-align: center">
+       <h3> <b>{{ sale.companyID.name }}</b></h3>
+        <p style="font-weight: 400">{{ sale.companyID.address }}</p>
+        <p style="font-weight: 400">{{ sale.companyID.email }}</p>
+   </div>
+    <div class="row">
+        <div class="col-xs-6">Bill No.: {{ sale.pk|stringformat:"05d" }}</div>
+        <div class="col-xs-6"> Date: {{ sale.invoiceDate|date:"d-m-Y" }}</div>
+    </div>
+    <div class="row">
+        <table class="table table-striped" style="font-size: 12px!important;">
+    <thead>
+      <tr>
+        <th>Sl.No.</th>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Rate(₹)</th>
+        <th>Disc %</th>
+        <th>Total(₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for foo in saleProduct %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ foo.productName }}</td>
+        <td>{{ foo.quantity }} {{ foo.unit }}</td>
+        <td>{{ foo.rate }}</td>
+        <td>{{ foo.disc }}</td>
+        <td>{{ foo.total }}</td>
+      </tr>
+    {% endfor %}
+
+   <tr>
+        <td colspan="5" style="text-align: right;font-weight: bold">Sub-Total(₹)</td>
+        <td style="font-weight: bold;"> {{ sale.subTotal }}</td>
+      </tr>
+    <tr>
+    <tr>
+        <td colspan="5" style="text-align: right;font-weight: bold">GST(₹)</td>
+        <td style="font-weight: bold;"> {{ sale.gst }}</td>
+      </tr>
+    <tr>
+        <td colspan="5" style="text-align: right;font-weight: bold;border-top: none;">RoundOff(₹)</td>
+        <td style="font-weight: bold;border-top: none;"> {{ sale.roundOff }}</td>
+      </tr>
+    <tr>
+        <td colspan="5" style="text-align: right;font-weight: bold;border-top: none;">Discount(₹)</td>
+        <td style="font-weight: bold;border-top: none;"> - {{ sale.personalDiscount }}</td>
+      </tr>
+    <tr>
+        <td colspan="5" style="text-align: right;font-weight: bold;border-top: none;">Grand Total(₹)</td>
+        <td style="font-weight: bold;border-top: none;"> {{ sale.grandTotal }}</td>
+      </tr>
+
+
+    </tbody>
+  </table>
+    </div>
+    {% comment %}<div class="row" style="float: right;padding-right: 5px;">
+        <p>Total : ₹ {{ sale.grandTotal }}</p>
+    </div>{% endcomment %}
+</div>
+
+<script>
+
+    function myFunction() {
+         window.print();
+    }
+</script>
+</body>
+</html>

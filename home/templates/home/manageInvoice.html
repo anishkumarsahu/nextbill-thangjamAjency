@@ -1,0 +1,239 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block title %}
+    <title>Invoice Series</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+  <style>
+     #expenseTable_length {
+            left: 10px;
+            position: absolute;
+        }
+
+        #invoiceTable_filter {
+            float: right;
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 200px;
+        }
+  label{
+      float: left;
+  }
+    </style>
+    <div class="ui right aligned basic  segment" style="padding-top: 0;">
+                <div class="ui bottom attached segment" style="margin-top: 0;padding-bottom: 0;">
+                    <form class="ui tiny form" id="invoiceForm">
+                        <h4 class="ui  left aligned  dividing header">MANAGE INVOICE</h4>
+
+                        <div class="four fields">
+
+
+                            <div class="field">
+                            <label >Company</label>
+
+                            <select class="dropdown" id="company">
+                                {% for foo in company %}
+                                    <option value="{{ foo.pk }}">{{ foo.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label >Invoice For</label>
+
+                            <select class="dropdown" id="invoiceFor">
+                                <option value="Others">Cash and Others</option>
+                                <option value="Credit">Credit</option>
+
+                            </select>
+                        </div>
+
+                            <div class="field">
+                                <label>Invoice Series (To be appended)</label>
+                                <input type="text" name="invoiceSeries" id="invoiceSeries" placeholder="Invoice Series">
+                            {% csrf_token %}
+                            </div>
+
+                             <div class="field">
+                                <label>Invoice Limit For Series (Count)</label>
+                                <input type="number" name="invoiceLimit" id="invoiceLimit" placeholder="Invoice Limit For Series" value="9999">
+
+                            </div>
+                            <div class="field ">
+
+                            <label>Invoice Starts With</label>
+
+                                <input  type="number" name="invoiceStartWith" id="invoiceStartWith" placeholder="Invoice Starts With" value="1">
+                            </div>
+
+                            <div class="field" style="    padding-top: 1.666em;">
+                                <button type="button" class="ui green button" onclick="addInvoiceSeries()">
+                                    <i class="icon plus square"></i>
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+
+              <div class="ui internally celled grid">
+
+            <div class="row" style="padding-top: 0;">
+
+                <div class="sixteen wide column">
+                     <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Invoice Series List
+                    </h5>
+                <table class="ui sortable selectable compact celled table" id="invoiceTable" style="margin-top: 5px;">
+                    <thead>
+                    <tr>
+                        <th class="">Company</th>
+                        <th class="">Invoice For</th>
+                        <th class="">Invoice Series</th>
+                        <th class="">Invoice Max Count</th>
+                         <th class="">Invoice Start With</th>
+                        <th class="">EntryDate</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+
+                    </tr>
+                    </tbody>
+
+                </table>
+                </div>
+            </div>
+              </div>
+
+
+                </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+     function addInvoiceSeries() {
+            var invoiceSeries = $('#invoiceSeries').val();
+            var invoiceLimit = $('#invoiceLimit').val();
+            var startWith = $('#invoiceStartWith').val();
+            var invoiceFor = $('#invoiceFor').val();
+            var company = $('#company').val();
+            if (invoiceSeries === '' || invoiceLimit === ''|| startWith === ''|| company === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'All fields are required !'
+                    })
+                ;
+            }
+            else {
+
+                var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+
+                data = new FormData();
+                data.append('invoiceSeries', invoiceSeries);
+                data.append('invoiceLimit', invoiceLimit);
+                data.append('startWith', startWith);
+                data.append('company', company);
+                data.append('invoiceFor', invoiceFor);
+
+                data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{% url 'homeApp:add_invoice' %}',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Invoice Series Added Successfully.'
+                                })
+                            ;
+
+                            invoiceTab.ajax.reload();
+                            $('#invoiceForm').trigger('reset')
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    message: ''+response.message
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+        $(getInvoice());
+        var invoiceTab;
+        function getInvoice() {
+
+             invoiceTab = $('#invoiceTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollY":"215px",
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2,3,4,5]
+                    }},{
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2,3,4,5]
+                    }}
+                ],
+                "columnDefs": [
+                    {"name": "companyID", "targets": 0, "orderable": true},
+                    {"name": "invoiceType", "targets": 1, "orderable": true},
+                    {"name": "invoiceSeries", "targets": 2, "orderable": true},
+                    {"name": "invoiceMaxCount", "targets": 3, "orderable": true},
+                    {"name": "invoiceStartWith", "targets": 4, "orderable": true},
+                    {"name": "datetime", "targets":5, "orderable": true},
+
+                ],
+                aaSorting: [[4, 'desc']],
+                "lengthMenu": [[6, 25, 50, 100, -1], [6, 25, 50, 100, "All"]],
+                "pageLength": 6,
+                "processing": true,
+                "serverSide": true,
+                "ajax": '{% url 'homeApp:InvoiceListJson' %}'
+            });
+        }
+
+
+    </script>
+
+{% endblock %}

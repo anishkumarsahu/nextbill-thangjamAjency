@@ -1,0 +1,4 @@
+Django==1.11.*
+django-datatables-view==1.18.0
+django-progressive-web-app==0.1.1
+XlsxWriter==1.2.7

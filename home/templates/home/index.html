@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+        <title>Title</title>
+    {% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="icon" href="{% static 'logo/logo.png' %}" type="image/gif" sizes="16x16">
+    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/dataTables.semanticui.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/tableCss/dataTables.semanticui.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/tableCss/buttons.semanticui.min.css' %}">
+
+{% block css %}
+
+{% endblock %}
+
+    <style>
+        input {
+            border: 1px solid rgba(34, 36, 38, 0.7) !important;
+        {#            padding: 0.4em 1em !important;#}
+        }
+
+        select {
+            border: 1px solid rgba(34, 36, 38, 0.7) !important;
+        {#            padding: 0.4em 1em !important;#}
+        }
+
+        textarea {
+            border: 1px solid rgba(34, 36, 38, 0.7) !important;
+        {#            padding: 0.4em 1em !important;#}
+        }
+
+        .background {
+            background-color: #2247d024 !important;
+        }
+
+        .preloader {
+            align-items: center;
+            background: rgb(23, 22, 22);
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            left: 0;
+            position: fixed;
+            top: 0;
+            transition: opacity 0.3s linear;
+            width: 100%;
+            z-index: 9999;
+        }
+        .blink_me {
+          animation: blinker 1.5s linear infinite;
+        }
+
+        @keyframes blinker {
+          50% { opacity: 0.25; }
+        }
+        input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+    </style>
+
+</head>
+<body>
+
+<div class="ui blue nine item inverted menu topNav">
+    <a class="item" href="{% url 'homeApp:homepage' %}">
+        <i class="home icon"></i>
+        Home
+    </a>
+    <a class="item" href="{% url 'homeApp:sales' %}">
+        <i class="money check icon"></i>
+        Sales
+    </a>
+
+    <a class="item" href="{% url 'homeApp:product' %}">
+        <i class="shopping basket icon"></i>
+        Product
+    </a>
+    <a class="item" href="{% url 'homeApp:hsn' %}">
+        <i class="shopping bag icon"></i>
+        HSN
+    </a>
+    <a class="item" href="{% url 'homeApp:salesReport' %}">
+        <i class="chart line icon"></i>
+        Sales Report
+    </a>
+
+    <a class="item" href="{% url 'homeApp:contact' %}">
+        <i class="address book icon"></i>
+        Contacts
+    </a>
+
+    <a class="item" href="{% url 'homeApp:expense' %}">
+        <i class="funnel dollar icon"></i>
+        Expenses
+    </a>
+    <a class="item" href="{% url 'homeApp:generalSetting' %}">
+        <i class="cog icon"></i>
+        General Setting
+    </a>
+
+    <a class="item" href="{% url 'homeApp:logout' %}">
+        <i class="share square icon"></i>
+        Logout
+    </a>
+
+</div>
+<div class="ui floating dropdown icon" style="float: left;position: absolute;bottom: 0;left: 2%;z-index: 100;">
+
+    <i class="layer group icon" style="font-size: 2rem"></i>
+    <p>Short Cut</p>
+
+    <div class="menu">
+        {% if  request.user|has_group:"Admin" %}
+            <div class="item">
+
+                <div class="ui yellow empty circular label"></div>
+                <span class="description">N/A</span>
+                <a href="{% url 'homeApp:dashboard' %}">Dashboard</a>
+            </div>
+            <div class="item">
+                <div class="ui purple empty circular label"></div>
+                <span class="description">N/A</span>
+                <a href="{% url 'homeApp:puchase' %}">Purchase</a>
+            </div>
+            <div class="item">
+                <div class="ui pink empty circular label"></div>
+                <span class="description">N/A</span>
+                <a href="{% url 'homeApp:purchaseReport' %}">Purchase Report</a>
+            </div>
+            <div class="item">
+                <div class="ui green empty circular label"></div>
+                <span class="description">N/A</span>
+                <a href="{% url 'homeApp:report' %}">Tax Report</a>
+            </div>
+
+            <div class="item">
+                <div class="ui orange empty circular label"></div>
+                <span class="description">N/A</span>
+                <a href="{% url 'homeApp:settings' %}">Settings</a>
+            </div>
+        {% endif %}
+<div class="item">
+
+                <div class="ui green empty circular label"></div>
+                <span class="description">N/A</span>
+                <a href="{% url 'homeApp:bookingList' %}">Bookings</a>
+            </div>
+
+        <div class="item">
+            <div class="ui red empty circular label"></div>
+            <span class="description">N/A</span>
+            <a href="{% url 'homeApp:referrer' %}">Referrer</a>
+        </div><div class="item">
+            <div class="ui grey empty circular label"></div>
+            <span class="description">N/A</span>
+            <a href="{% url 'homeApp:generalSetting' %}">General Setting</a>
+        </div>
+        <div class="item">
+            <div class="ui black empty circular label"></div>
+            <span class="description">N/A</span>
+            <a href="{% url 'homeApp:expense' %}">Expenses</a>
+        </div>
+        <div class="item">
+            <div class="ui red empty circular label"></div>
+            <span class="description">Alt + C</span>
+            <a href="{% url 'homeApp:contact' %}">Contacts</a>
+        </div>
+
+        <div class="item">
+            <div class="ui teal empty circular label"></div>
+            <span class="description">Alt + H</span>
+            <a href="{% url 'homeApp:hsn' %}">Hsn & Category</a>
+        </div>
+        <div class="item">
+            <div class="ui olive empty circular label"></div>
+            <span class="description">Alt + N</span>
+            <a href="{% url 'homeApp:product' %}">Products</a>
+        </div>
+        <div class="item">
+            <div class="ui teal empty circular label"></div>
+            <span class="description">Alt + R</span>
+            <a href="{% url 'homeApp:salesReport' %}">Sales Report</a>
+        </div>
+
+        <div class="item">
+            <div class="ui green empty circular label"></div>
+            <span class="description">Alt + S</span>
+            <a href="{% url 'homeApp:sales' %}">Sales</a>
+        </div>
+        <div class="item">
+            <div class="ui yellow empty circular label"></div>
+            <span class="description">Alt + H</span>
+            <a href="{% url 'homeApp:homepage' %}">Home</a>
+        </div>
+        <div class="item">
+            <div class="ui brown empty circular label"></div>
+            <span class="description">N/A</span>
+            <a href="{% url 'homeApp:logout' %}">Logout</a>
+        </div>
+
+    </div>
+</div>
+
+
+{% block body %}
+
+{% endblock %}
+
+<div class="preloader">
+    <div class="ui active dimmer">
+    <div class="ui medium text loader">Loading</div>
+  </div>
+</div>
+
+<script src="{% static 'jsMain/jquery.min.js' %}"></script>
+<script src="{% static 'jsMain/semantic.min.js' %}"></script>
+<script src="{% static 'jsMain/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'jsMain/dataTables.semanticui.min.js' %}"></script>
+<script src="{% static 'table/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'table/buttons.semanticui.min.js' %}"></script>
+<script src="{% static 'table/jszip.min.js' %}"></script>
+<script src="{% static 'table/pdfmake.min.js' %}"></script>
+<script src="{% static 'table/buttons.html5.min.js' %}"></script>
+<script src="{% static 'table/buttons.print.min.js' %}"></script>
+<script src="{% static 'table/buttons.colVis.min.js' %}"></script>
+
+
+
+{% block js %}
+
+
+{% endblock %}
+<script>
+    $(window).on("load", function () {
+        $(".preloader").fadeOut(50);
+    });
+</script>
+<script>
+    $(function () {
+        var current = location.pathname;
+        $('.topNav a').each(function () {
+            var $this = $(this);
+            if ($this.attr('href').indexOf(current) !== -1) {
+                $this.css('background-color', 'white').css('color', 'blue');
+            }
+        })
+    })
+    $(document).ready(function () {
+        $(document).on('focus', ':input', function () {
+            $(this).attr('autocomplete', 'off');
+        });
+    });
+
+    $('.ui.dropdown')
+        .dropdown()
+    ;
+
+
+    document.onkeyup = function (e) {
+        if (e.altKey && e.keyCode == 72) document.location.href = "{% url 'homeApp:homepage' %}"; //h
+        else if (e.altKey && e.keyCode == 83) document.location.href = "{% url 'homeApp:sales' %}"; //s
+        else if (e.altKey && e.keyCode == 78) document.location.href = "{% url 'homeApp:product' %}"; //n
+        else if (e.altKey && e.keyCode == 76) document.location.href = "{% url 'homeApp:hsn' %}"; //l
+        else if (e.altKey && e.keyCode == 82) document.location.href = "{% url 'homeApp:salesReport' %}"; //r
+        else if (e.altKey && e.keyCode == 67) document.location.href = "{% url 'homeApp:contact' %}"; //c
+        else if (e.altKey && e.keyCode == 77) document.location.href = "{% url 'homeApp:settings' %}"; //m
+
+    };
+
+
+$('.mypopup')
+  .popup()
+;
+
+
+
+
+</script>
+
+</body>
+</html>
