@@ -5071,3 +5071,50 @@ def delete_product_batch(request):
         p.save()
         b.save()
         return JsonResponse({'message': 'success'}, safe=False)
+
+
+
+def download_product_sales_report(request):
+    companyID = request.GET.get('companyID')
+    eType = request.GET.get('eType')
+    sDate = request.GET.get('startDate')
+    eDate = request.GET.get('endDate')
+    startDate = datetime.strptime(sDate, '%d/%m/%Y')
+    endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="ProductSalesReport({}--{}).xlsx"'.format(sDate, eDate)
+    workbook = xlsxwriter.Workbook(response, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+
+    ex = SalesProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__gte=startDate.date(),
+                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1), companyID_id=int(companyID))
+
+    bold = workbook.add_format({'bold': True})
+    worksheet.write('A1', 'Product Name.', bold)
+    worksheet.write('B1', 'BarCode', bold)
+    worksheet.write('C1', 'Quantity', bold)
+    # worksheet.write('D1', 'Amount', bold)
+    # worksheet.write('E1', 'Description', bold)
+    # Start from the first cell. Rows and columns are zero indexed.
+    row = 1
+    col = 0
+    total = 0.0
+
+    # Iterate over the data and write it out row by row.
+    for item in ex:
+        worksheet.write(row, col, row)
+        worksheet.write(row, col + 1, item.expenseType)
+        worksheet.write(row, col + 2, str(item.expenseDate))
+        worksheet.write(row, col + 3, item.amount)
+        worksheet.write(row, col + 4, item.description)
+        row += 1
+        total = total + item.amount
+
+    # Write a total using a formula.
+    worksheet.write(row, 2, 'Total', bold)
+    worksheet.write(row, 3, total)
+
+    workbook.close()
+    # response.write(workbook)
+    return response

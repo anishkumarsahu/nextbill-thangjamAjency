@@ -12,6 +12,7 @@
         <a class="item active" data-tab="second">Purchase Report</a>
         <a class="item" data-tab="third">Sales Report</a>
         <a class="item" data-tab="fourth">Expense Report</a>
+        <a class="item" data-tab="fifth">Product Sales Report</a>
     </div>
     <div class="ui tab active" data-tab="first">
         <div class="row" style="padding-left: 50px; padding-right: 50px">
@@ -261,6 +262,70 @@
         </div>
 
     </div>
+
+    <div class="ui tab" data-tab="fifth">
+        <div class="row" style="padding-left: 50px; padding-right: 50px">
+            <div class="ui placeholder segment">
+                <div class="ui icon header">
+                   <i class="shopping basket icon"></i>
+                    Product Sales Report .
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui center aligned segment">
+                    <div class="ui tiny form">
+
+                        <div class="six fields">
+                            <div class="field"></div>
+                            <div class="field">
+                                <label>Company</label>
+                                <select class="dropdown" id="EcompanyProduct">
+                                    {% for foo in company %}
+                                        <option value="{{ foo.pk }}">{{ foo.name }}</option>
+                                    {% endfor %}
+
+
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Type</label>
+                                <select class="dropdown" id="productType">
+
+                                    <option value="Normal" selected>Normal</option>
+
+                                    {% if  request.user|has_group:"Admin" %}
+                                        <option value="Jet">Jet</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Start Date</label>
+                                <div class="ui calendar" id="rangestartEProduct">
+                                    <div class="ui input left icon">
+                                        <i class="calendar icon"></i>
+                                        <input type="text" placeholder="Start" id="EstartProduct">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>End Date</label>
+                                <div class="ui calendar" id="rangeendEProduct">
+                                    <div class="ui input left icon">
+                                        <i class="calendar icon"></i>
+                                        <input type="text" placeholder="End" id="EendProduct">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <a onclick="getProductReport()" class="ui primary button">Generate Now</a>
+            </div>
+
+        </div>
+
+    </div>
 {% endblock %}
 
 
@@ -389,6 +454,37 @@
             }
         });
 
+         $('#rangestartEProduct').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            endCalendar: $('#rangeendProduct'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+        $('#rangeendEProduct').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            startCalendar: $('#rangestartEProduct'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+
 
 
         function getExpenseReport() {
@@ -398,10 +494,6 @@
             var Eend = $('#Eend').val();
 
             window.location.href= "{% url 'homeApp:download_expense_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
-
-
-
-
 
         }
 
@@ -422,6 +514,18 @@
             var Eend = $('#SEnd').val();
 
             window.location.href= "{% url 'homeApp:download_sales_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
+
+        }
+
+
+
+        function getProductReport() {
+            var Ecompany = $('#EcompanyProduct').val();
+            var EType = $('#productType').val();
+            var Estart = $('#EstartProduct').val();
+            var Eend = $('#EendProduct').val();
+
+            window.location.href= "{% url 'homeApp:download_expense_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
 
         }
     </script>
