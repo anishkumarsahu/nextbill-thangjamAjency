@@ -166,6 +166,7 @@ urlpatterns = [
     url(r'^api/download_expense_report/$', download_expense_report, name='download_expense_report'),
     url(r'^api/download_purchase_report/$', download_purchase_report, name='download_purchase_report'),
     url(r'^api/download_sales_report/$', download_sales_report, name='download_sales_report'),
+    url(r'^api/download_product_sales_report/$', download_product_sales_report, name='download_product_sales_report'),
 
     #booking
     url(r'^api/add_booking/$', add_booking, name='add_booking'),

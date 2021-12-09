@@ -525,7 +525,7 @@
             var Estart = $('#EstartProduct').val();
             var Eend = $('#EendProduct').val();
 
-            window.location.href= "{% url 'homeApp:download_expense_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
+            window.location.href= "{% url 'homeApp:download_product_sales_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
 
         }
     </script>

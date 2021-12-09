@@ -5088,32 +5088,39 @@ def download_product_sales_report(request):
     worksheet = workbook.add_worksheet()
 
     ex = SalesProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__gte=startDate.date(),
-                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1), companyID_id=int(companyID))
+                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).order_by('productID_id')
 
     bold = workbook.add_format({'bold': True})
-    worksheet.write('A1', 'Product Name.', bold)
-    worksheet.write('B1', 'BarCode', bold)
-    worksheet.write('C1', 'Quantity', bold)
+    worksheet.write('A1', 'Serial No.', bold)
+    worksheet.write('B1', 'Product Name.', bold)
+    worksheet.write('C1', 'BarCode', bold)
+    worksheet.write('D1', 'Quantity', bold)
     # worksheet.write('D1', 'Amount', bold)
     # worksheet.write('E1', 'Description', bold)
     # Start from the first cell. Rows and columns are zero indexed.
     row = 1
     col = 0
     total = 0.0
+    p_list = []
+    for p in ex:
+        p_list.append(p.productID.pk)
 
     # Iterate over the data and write it out row by row.
-    for item in ex:
+    for item in tuple(set(p_list)):
+        p_name = Product.objects.get(pk = int(item))
+        p_sale_count = SalesProduct.objects.filter(productID_id=int(item),salesID__invoiceDate__gte=startDate.date(),
+                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).aggregate(Sum('quantity'))
         worksheet.write(row, col, row)
-        worksheet.write(row, col + 1, item.expenseType)
-        worksheet.write(row, col + 2, str(item.expenseDate))
-        worksheet.write(row, col + 3, item.amount)
-        worksheet.write(row, col + 4, item.description)
+        worksheet.write(row, col + 1, p_name.name)
+        worksheet.write(row, col + 2,p_name.barcode)
+        worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
+        # worksheet.write(row, col + 4, item.description)
         row += 1
-        total = total + item.amount
+        # total = total + item.amount
 
     # Write a total using a formula.
-    worksheet.write(row, 2, 'Total', bold)
-    worksheet.write(row, 3, total)
+    # worksheet.write(row, 2, 'Total', bold)
+    # worksheet.write(row, 3, total)
 
     workbook.close()
     # response.write(workbook)
