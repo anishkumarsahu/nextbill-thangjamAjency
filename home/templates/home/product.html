@@ -628,7 +628,8 @@
                     $('#stockWarning').val(response.data['StockWarning']);
                     $('#pc').val(response.data['Tax']);
                     changeProductType();
-
+                    GetCategoryDetail(response.data['CatID'])
+                      calcGst()
 
                 },
                 error: function () {
@@ -699,7 +700,7 @@
             });
         }
 
-        $(getUnitList())
+        $(getUnitList());
         function getUnitList() {
             $.ajax({
                 type: 'get',
@@ -760,6 +761,7 @@
                     $('#catID').val(response.data['ID']);
                     $('#gstShow').html(response.data['GST'] + ' %');
                     $('#pc').val(response.data['GST']);
+                    calcGst();
 
 
                 },
@@ -846,13 +848,16 @@
 
         }
         function calcGst() {
-            var tax = $('#taxVal').val();
+{#            var tax = $('#taxVal').val();#}
+{#            var sp = $('#sp').val();#}
+{##}
+{#            var total = parseFloat(sp) + ((parseFloat(tax) / 100.0) * parseFloat(sp));#}
+{#            $('#net').val(total);#}
+            var rate = $('#pc').val();
             var sp = $('#sp').val();
-            console.log(tax, sp)
+            var net = ((parseFloat(rate) / 100) * parseFloat(sp)) + parseFloat(sp);
 
-            var total = parseFloat(sp) + ((parseFloat(tax) / 100.0) * parseFloat(sp));
-            $('#net').val(total);
-
+            $('#net').val(net.toFixed(2));
 
         }
         //product
@@ -861,6 +866,7 @@
             $('#addProductBtn').css('display', '');
             $('#updateProductBtn').css('display', 'none');
             $('#catID').val('N/A');
+            $('#gstShow').html('');
 
         }
         function editProduct() {

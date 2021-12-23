@@ -1467,14 +1467,17 @@
 
         $("#quantity").keyup(function () {
             var q = $('#quantity').val();
-            var price = $('#Price').val();
-            {#            var gst = $('#GST').val();#}
+{#            var price = $('#Price').val();#}
+            var gst = $('#GST').val();
             var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+              var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
 
-            {#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
-            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);
-            {#            $('#netPrice').val(netPriceCal);#}
-            $('#total').val(totalPriceCal);
+{#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+{#            $('#netPrice').val(netPriceCal.toFixed(2));#}
+            $('#total').val(totalPriceCal.toFixed(2));
 
 
         });
@@ -1501,30 +1504,35 @@
             var gst = $('#GST').val();
             var disc = $('#disc').val();
 
-            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);
-            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);
-            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);
-            $('#netPrice').val(netPriceCal.toFixed(2));
+            var net = parseFloat(price) +( parseFloat(price)* (parseFloat(gst)/100));
+             $('#netPrice').val(net.toFixed(2));
+             var sp = parseFloat(net.toFixed(2)) / (1 + ((parseFloat(gst) / 100)));
+
+{#            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);#}
+{#            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);#}
+{#            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);#}
+
+{#            $('#total').val(totalPriceCal.toFixed(2));#}
+
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
             $('#total').val(totalPriceCal.toFixed(2));
 
 
         });
 
         $("#disc").keyup(function () {
-            var q = $('#quantity').val();
-            var price = $('#Price').val();
+          var q = $('#quantity').val();
             var gst = $('#GST').val();
             var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
 
-            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);
-            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);
-            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);
-
-            $('#netPrice').val(netPriceCal.toFixed(2));
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
             $('#total').val(totalPriceCal.toFixed(2));
 
-
         });
+
         $("#otherCharges").keyup(function () {
             calTaxAndTotal();
             returnCalc();
@@ -1795,7 +1803,7 @@
                 var quantity = $('#quantity' + id).html();
                 var disc = $('#disc' + id).html();
 
-                var netP = (parseFloat(price) * parseFloat(quantity)) - (parseFloat(price) * parseFloat(quantity) * (parseFloat(disc / 100.0)));
+                var netP = (parseFloat(price).toFixed(2) * parseFloat(quantity)) - (parseFloat(price).toFixed(2) * parseFloat(quantity) * (parseFloat(disc / 100.0)));
 
                 var gstT = (parseFloat(netP) * parseFloat(gst) / 100) * quantity;
 
@@ -1807,7 +1815,7 @@
                 taxable = taxable + parseFloat(afterDiscount);
 
                 // gst after discount
-                var gstPerItem = parseFloat(afterDiscount) * (parseFloat(gst) / 100);
+                var gstPerItem = parseFloat(afterDiscount).toFixed(2) * (parseFloat(gst) / 100);
                 gstTotal = gstTotal + gstPerItem
 
 

@@ -26,8 +26,9 @@ def has_group(user, group_name):
 
 
 @register.simple_tag()
-def multiply(qty, price, *args, ** kwargs):
-    return round(qty * price,2)
+def multiply(qty, price, dis ,*args, ** kwargs):
+    t = round(price - price * (dis / 100.0),2)
+    return round(qty * t,2)
 
 # ----------------- html Views--------------------------
 # ----------------- html Views--------------------------
@@ -38,11 +39,11 @@ def print_invoice(request, *args, **kwargs):
     saleProductMain = SalesProduct.objects.filter(salesID=int(query))
     saleProduct =[]
     for a in saleProductMain:
-        d_rate = float(a.rate) - ((float(a.rate) * float(a.disc)) / 100.0)
-        cA = round((d_rate * (float(a.gst) / 200)) * a.quantity, 2)
-        sA = round((d_rate * (float(a.gst) / 200)) * a.quantity, 2)
-
-        tA = round((round(d_rate * a.quantity, 2) + cA + sA), 2)
+        n_rate = (a.netRate / (1 + (a.gst/100)))
+        t_gst = (n_rate * (a.gst/100.0))* a.quantity
+        cA = round(t_gst/2, 2)
+        sA = round(t_gst/2, 2)
+        tA = round((a.total + cA + sA), 2)
         prod_dic ={
             'hsn':a.hsn,
             'name':a.productName,
@@ -84,11 +85,11 @@ def print_invoicea5(request, *args, **kwargs):
     saleProductMain = SalesProduct.objects.filter(salesID=int(query))
     saleProduct = []
     for a in saleProductMain:
-        d_rate = float(a.rate) - ((float(a.rate) * float(a.disc)) / 100.0)
-        cA = round((d_rate * (float(a.gst) / 200)) * a.quantity, 2)
-        sA = round((d_rate * (float(a.gst) / 200)) * a.quantity, 2)
-
-        tA = round((round(d_rate * a.quantity, 2) + cA + sA), 2)
+        n_rate = (a.netRate / (1 + (a.gst/100)))
+        t_gst = (n_rate * (a.gst/100.0))* a.quantity
+        cA = round(t_gst/2, 2)
+        sA = round(t_gst/2, 2)
+        tA = round((a.total + cA + sA), 2)
         prod_dic = {
             'hsn': a.hsn,
             'name': a.productName,

@@ -81,7 +81,7 @@
                 <td>{{ foo.quantity }} {{ foo.unit }}</td>
                 <td>{{ foo.netRate }}</td>
                 <td>{{ foo.disc }}</td>
-                <td>{% multiply foo.quantity foo.netRate %}</td>
+                <td style="text-align: right">{% multiply foo.quantity foo.netRate foo.disc%}</td>
             </tr>
         {% endfor %}
 
@@ -109,53 +109,53 @@
             <td rowspan="2" colspan="3">
                 In words: <span style="border-bottom: 1px dotted"> {{ TotalInWords }}</span>
             </td>
-            <td colspan="2" rowspan="2">Sub Total</td>
-            <td class="text-right" rowspan="2">{{ sale.totalFinal }}</td>
+            <td colspan="2" rowspan="2"> <b>Total : ₹</b> ({{ sale.roundOff }})</td>
+            <td class="text-right" rowspan="2">{{ sale.grandTotal }}</td>
         </tr>
-        <tr>
-
-        </tr>
-        <tr>
-            <td rowspan="3" colspan="3">
-                <div class="row">
-                    <div class="col-xs-4"> Mode of Payments: <br>
-                        {{ sale.paymentType|upper }}
-                    </div>
-                    <div class="col-xs-8">
-                        <li>Cheque No. : <span style="border-bottom: 1px dotted"></span></li>
-                        <li>Draft No.:</li>
-                        <li>RTGS/NEFT.:</li>
-                    </div>
-                </div>
-            </td>
-            <td colspan="2" rowspan="3">Other Charges</td>
-            <td class="text-right" rowspan="3">{{ sale.otherCharges }}</td>
-        </tr>
-        <tr>
-        </tr>
-        <tr>
-        </tr>
-        <tr>
-            <td rowspan="3" colspan="3">
-                <div class="row">
-                    <div class="col-xs-3"> Declaration:</div>
-                    <div class="col-xs-9">
-                        <li>All dispute subject to Manipur Jurisdiction only.</li>
-                        <li>Goods once sold will be not taken back.</li>
-                    </div>
-                </div>
-            </td>
-            <td colspan="2">Round Off (+/-)</td>
-            <td class="text-right">{{ sale.roundOff }}</td>
-        </tr>
-        <tr>
-            <td colspan="2">Discount (-)</td>
-            <td class="text-right">{{ sale.personalDiscount }}</td>
-        </tr>
-        <tr>
-            <td colspan="2">Total Amount</td>
-            <td class="text-right">{{ sale.grandTotal }}</td>
-        </tr>
+{#        <tr>#}
+{##}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td rowspan="3" colspan="3">#}
+{#                <div class="row">#}
+{#                    <div class="col-xs-4"> Mode of Payments: <br>#}
+{#                        {{ sale.paymentType|upper }}#}
+{#                    </div>#}
+{#                    <div class="col-xs-8">#}
+{#                        <li>Cheque No. : <span style="border-bottom: 1px dotted"></span></li>#}
+{#                        <li>Draft No.:</li>#}
+{#                        <li>RTGS/NEFT.:</li>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </td>#}
+{#            <td colspan="2" rowspan="3">Other Charges</td>#}
+{#            <td class="text-right" rowspan="3">{{ sale.otherCharges }}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#        </tr>#}
+{#        <tr>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td rowspan="3" colspan="3">#}
+{#                <div class="row">#}
+{#                    <div class="col-xs-3"> Declaration:</div>#}
+{#                    <div class="col-xs-9">#}
+{#                        <li>All dispute subject to Manipur Jurisdiction only.</li>#}
+{#                        <li>Goods once sold will be not taken back.</li>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </td>#}
+{#            <td colspan="2">Round Off (+/-)</td>#}
+{#            <td class="text-right">{{ sale.roundOff }}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td colspan="2">Discount (-)</td>#}
+{#            <td class="text-right">{{ sale.personalDiscount }}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td colspan="2">Total Amount</td>#}
+{#            <td class="text-right">{{ sale.grandTotal }}</td>#}
+{#        </tr>#}
 
         </tbody>
     </table>
