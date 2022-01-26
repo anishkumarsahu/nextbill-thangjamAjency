@@ -253,8 +253,21 @@ def hsn_and_category(request):
 
 
 @is_activated()
+def create_return(request):
+    if request.user.is_authenticated:
+        return render(request, 'home/return.html')
+    else:
+        return redirect('homeApp:loginPage')
+
+
+@is_activated()
 def salesReport(request):
     return render(request, 'home/salesReport.html')
+
+
+@is_activated()
+def returnReport(request):
+    return render(request, 'home/returnReport.html')
 
 
 @is_activated()
@@ -2162,6 +2175,96 @@ class SalesListJson(BaseDatatableView):
         return json_data
 
 
+class ReturnListJson(BaseDatatableView):
+    order_columns = ['salesID.customerName', 'salesID.customerGst', 'salesID.invoiceDate', 'salesID.id',
+                     'salesID.invoiceNumber', 'totalAmount',  'salesID.companyID','datetime', ]
+
+    def get_initial_queryset(self):
+        sDate = self.request.GET.get('startDate')
+        eDate = self.request.GET.get('endDate')
+        startDate = datetime.strptime(sDate, '%d/%m/%Y')
+        endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+        if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+            return SalesReturn.objects.filter(isDeleted__exact=False, datetime__gte=startDate.date(),
+                                        datetime__lte=endDate.date() + timedelta(days=1))
+        else:
+            user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+            return SalesReturn.objects.filter(isDeleted__exact=False, salesID__companyID_id=user.company_ID_id,
+                                        datetime__gte=startDate.date(),
+                                        datetime__lte=endDate.date() + timedelta(days=1))
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(salesID__customerName__icontains=search) | Q(salesID__customerGst__icontains=search) | Q(salesID__id__icontains=search)
+                | Q(salesID__invoiceDate__icontains=search) | Q(salesID__invoiceNumber__icontains=search)
+                | Q(totalAmount__icontains=search) | Q(salesID__companyID__name__icontains=search)
+            ).order_by('-id')
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            if item.salesID.customerGst is None:
+                customerGst = 'N/A'
+            else:
+                customerGst = item.salesID.customerGst
+            if item.salesID.invoiceNumber is None:
+                invoiceNumber = 'N/A'
+            else:
+                invoiceNumber = item.salesID.invoiceNumber
+            # if item.status == True:
+            #     status = '''<a class="ui green label">Paid</a>'''
+            # else:
+            #     status = '''<a class="ui red label">Due</a>'''
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+
+                action = '''<button style="font-size:10px;" onclick = "TakePayment('{}')" class="ui circular  icon button blue">
+                               <i class="undo icon"></i>
+                             </button><button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
+                               <i class="receipt icon"></i>
+                             </button>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.salesID.pk, item.pk),
+            else:
+                action = '''<button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
+                                               <i class="receipt icon"></i>
+                                             </button>'''.format(item.salesID.pk),
+
+            json_data.append([
+                escape(item.salesID.customerName),  # escape HTML for security reasons
+                customerGst,
+                escape(item.salesID.invoiceDate),
+                str(item.salesID.pk).zfill(5),
+                invoiceNumber,
+                escape(item.totalAmount),
+                escape(item.salesID.companyID.name),
+                escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
+                action
+
+                #                      < button
+                #     style = "font-size:10px;"
+                #     onclick = "GetSaleDetail('{}')"
+                #
+                #     class ="ui circular facebook icon button green" >
+                #
+                #     < i
+                #
+                #     class ="pen icon" > < / i >
+                # < / button >
+            ])
+        return json_data
+
+
+
 class SalesListByCustomerJson(BaseDatatableView):
     order_columns = ['id', 'invoiceDate', 'id', 'invoiceNumber',
                      'grandTotal', 'paidAgainstBill', 'paymentType', 'companyID', 'salesType', 'datetime', ]
@@ -2294,6 +2397,81 @@ def get_sales_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+def get_sales_detail_by_invoice_number(request):
+    try:
+        invoiceNumber = request.GET['invoice']
+        searchType = request.GET['searchType']
+        if searchType == 'invoice':
+            instance = Sales.objects.get(invoiceNumber=invoiceNumber)
+        if searchType == 'bill':
+            instance = Sales.objects.get(pk=int(invoiceNumber))
+        basic = {
+            'SalesID': instance.pk,
+            'Name': instance.customerName,
+            'Gst': instance.customerGst,
+            'Phone': instance.customerPhone,
+            'Address': instance.customerAddress,
+            'Email': instance.customerEmail,
+            'State': instance.customerState,
+            'PaymentType': instance.paymentType,
+            'Invoice': instance.invoiceNumber,
+            'InvoiceDate': instance.invoiceDate,
+            'Taxable': instance.taxable,
+            'SubTotal': instance.subTotal,
+            'Discount': instance.billDisc,
+            'GrandTotal': instance.grandTotal,
+            'RoundOff': instance.roundOff,
+            'TotalFinal': instance.totalFinal,
+            'BillGst': instance.gst,
+            'CreditDays': instance.creditDays,
+            'chequeDetail': instance.chequeDetail,
+            'deliveryNote': instance.deliveryNote,
+            'SupplierReference': instance.supplierReference,
+            'BuyersOrderNumber': instance.buyersOrderNumber,
+            'DispatchDocumentNumber': instance.dispatchDocumentNumber,
+            'DispatchThrough': instance.dispatchThrough,
+            'OtherReference': instance.otherReference,
+            'DispatchNoteDate': instance.dispatchNoteDate,
+            'Destination': instance.destination,
+            'OtherCharges': instance.otherCharges,
+            'PaidAmount': instance.paidAmount,
+            'DueOrReturnAmount': instance.dueOrReturnAmount,
+            'PaidAgainstBill': instance.paidAgainstBill,
+            'AddedBy': instance.addedBy.username,
+            'PersonalDiscount': instance.personalDiscount,
+            'BillNumber': str(instance.pk).zfill(5),
+            'BillType': instance.salesType,
+        }
+        items = SalesProduct.objects.filter(salesID_id=instance.pk)
+        item_list = []
+        for i in items:
+            item_dic = {
+                'ItemID': i.pk,
+                'ItemProductName': i.productName,
+                'ItemCategory': i.category,
+                'ItemHsn': i.hsn,
+                'ItemQuantity': i.quantity,
+                'ItemUnit': i.unit,
+                'ItemRate': i.netRate,
+                'ItemGst': i.gst,
+                'ItemDisc': i.disc,
+                'ItemnetRate': i.netRate,
+                'ItemRateAfterDiscount': round((i.total / i.quantity),2) + round((round((i.total / i.quantity),2) * i.gst/100.0),2),
+
+            }
+            item_list.append(item_dic)
+
+        data = {
+            'Basic': basic,
+            'Items': item_list
+
+        }
+        return JsonResponse({'data': data, 'message':'success'}, safe=False)
+    except:
+        return JsonResponse({'message':'error'}, safe=False)
+
+
+
 def get_sales_detail_for_invoice(request, id=None):
     instance = get_object_or_404(Sales, pk=id)
     basic = {
@@ -2393,6 +2571,30 @@ def get_sales_detail_for_invoice(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+def get_return_detail(request, id=None):
+    instance = get_object_or_404(SalesReturn, pk=id)
+    items = SalesReturnProduct.objects.filter(salesReturnID_id=instance.pk, quantity__gt=0)
+    item_list = []
+    for i in items:
+        item_dic = {
+            'ItemID': i.pk,
+            'ItemProductName': i.productID.productName,
+            'ItemCategory': i.productID.category,
+            'ItemQuantity': i.quantity,
+            'ItemRate': i.rate,
+            'ItemTotal': i.total,
+
+        }
+        item_list.append(item_dic)
+
+    data = {
+        'Items': item_list
+
+    }
+    return JsonResponse({'data': data}, safe=False)
+
+
+
 @csrf_exempt
 def delete_sales(request):
     if request.method == 'POST':
@@ -2405,6 +2607,30 @@ def delete_sales(request):
             product = Product.objects.get(pk=pro.productID_id)
             product.stock = product.stock + pro.quantity
             product.save()
+
+        return JsonResponse({'message': 'success'}, safe=False)
+
+
+@csrf_exempt
+def delete_return(request):
+    if request.method == 'POST':
+        id = request.POST.get("ID")
+        sale = SalesReturn.objects.get(pk=int(id))
+        sale.isDeleted = True
+        sale.save()
+        sales_products = SalesReturnProduct.objects.filter(salesReturnID_id=int(id))
+        for pro in sales_products:
+            product = Product.objects.get(pk=pro.productID.productID.pk)
+            ori_stock = product.stock
+            product.stock = (ori_stock - pro.quantity)
+            product.save()
+            try:
+                bat = ProductBatch.objects.get(pk=pro.productID.batchID_id)
+                ori_batch = bat.quantity
+                bat.quantity = (ori_batch - pro.quantity)
+                bat.save()
+            except:
+                pass
 
         return JsonResponse({'message': 'success'}, safe=False)
 
@@ -4836,6 +5062,11 @@ def daily_report(request):
     total_expense = 0.0
     for e in expense:
         total_expense += e.amount
+
+    return_s = SalesReturn.objects.filter(datetime__icontains=datetime.today().date())
+    total_return = 0.0
+    for e in return_s:
+        total_return += e.totalAmount
     user_data =[]
     for user in sales_user:
         cash_sale_user = 0.0
@@ -4910,7 +5141,9 @@ def daily_report(request):
         'cheque_sale_total':cheque_sale_total,
         'sale_total':cash_sale_total+card_sale_total+credit_sale_total+cheque_sale_total,
         'total_expense':total_expense,
-        'cash_in_hand':cash_sale_total-total_expense
+        'total_return': total_return,
+        'total_total_expense': total_return + total_expense,
+        'cash_in_hand': cash_sale_total - (total_expense + total_return)
     }
 
 
@@ -5126,3 +5359,42 @@ def download_product_sales_report(request):
     workbook.close()
     # response.write(workbook)
     return response
+
+
+@csrf_exempt
+def add_return_sales(request):
+    if request.method == 'POST':
+
+        salesID = request.POST.get("salesID")
+        returnAmount = request.POST.get("returnAmount")
+        datas = request.POST.get("datas")
+        sale = SalesReturn()
+        sale.salesID_id = int(salesID)
+        sale.totalAmount = float(returnAmount)
+        sale.addedBy_id = request.user.pk
+        sale.save()
+
+        splited_receive_item = datas.split("@")
+        for item in splited_receive_item[:-1]:
+            item_details = item.split('|')
+            p = SalesReturnProduct()
+            p.salesReturnID_id = sale.pk
+            p.productID_id = int(item_details[0])
+            p.rate = float(item_details[1])
+            p.quantity = float(item_details[2])
+            p.total = float(item_details[3])
+            p.save()
+            pro = Product.objects.get(pk=p.productID.productID.pk)
+            ori_stock = pro.stock
+            pro.stock = (ori_stock + p.quantity)
+            pro.save()
+
+            try:
+                bat = ProductBatch.objects.filter(pk=p.productID.batchID.pk).first()
+                ori_batch_stock = bat.quantity
+                bat.quantity = (ori_batch_stock + p.quantity)
+                bat.save()
+            except:
+                pass
+
+        return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)

@@ -14,7 +14,9 @@ urlpatterns = [
     url(r'^purchase/$', puchase, name='puchase'),
     url(r'^product/$', product, name='product'),
     url(r'^hsnCategory/$', hsn_and_category, name='hsn'),
+    url(r'^create_return/$', create_return, name='create_return'),
     url(r'^salesReport/$', salesReport, name='salesReport'),
+    url(r'^returnReport/$', returnReport, name='returnReport'),
     url(r'^bookingList/$', bookingList, name='bookingList'),
     url(r'^purchaseReport/$', purchaseReport, name='purchaseReport'),
     url(r'^contact/$', contact, name='contact'),
@@ -126,12 +128,17 @@ urlpatterns = [
     # Sales
     url(r'^SalesListByProductJson/$', SalesListByProductJson.as_view(), name='SalesListByProductJson'),
     url(r'^SalesListJson/$', SalesListJson.as_view(), name='SalesListJson'),
+    url(r'^ReturnListJson/$', ReturnListJson.as_view(), name='ReturnListJson'),
     url(r'^SalesListByCustomerJson/$', SalesListByCustomerJson.as_view(), name='SalesListByCustomerJson'),
     url(r'^api/AddNewSalesDetail/$', add_sales, name='add_sales'),
+    url(r'^api/add_return_sales/$', add_return_sales, name='add_return_sales'),
     url(r'^api/get_sales_detail/(?P<id>[0-9]+)/$', get_sales_detail, name='get_sales_detail'),
+    url(r'^api/get_return_detail/(?P<id>[0-9]+)/$', get_return_detail, name='get_return_detail'),
+    url(r'^api/get_sales_detail_by_invoice_number/$', get_sales_detail_by_invoice_number, name='get_sales_detail_by_invoice_number'),
     url(r'^api/get_sales_detail_for_invoice/(?P<id>[0-9]+)/$', get_sales_detail_for_invoice,
         name='get_sales_detail_for_invoice'),
     url(r'^api/delete_sales/$', delete_sales, name='delete_sales'),
+    url(r'^api/delete_return/$', delete_return, name='delete_return'),
     url(r'^api/take_sale_payment/$', take_sale_payment, name='take_sale_payment'),
 
     # Purchase

@@ -522,3 +522,32 @@ class ReferrerTransaction(models.Model):
     class Meta:
         verbose_name_plural = 'S) Referrer Transaction'
 
+
+class SalesReturn(models.Model):
+    salesID =  models.ForeignKey(Sales, blank=True, null=True)
+    addedBy = models.ForeignKey(User, blank=True, null=True)
+    totalAmount = models.FloatField(default=0.0)
+    datetime = models.DateTimeField(auto_now_add=True, auto_now=False)
+    lastUpdatedOn = models.DateTimeField(auto_now_add=False, auto_now=True)
+    isDeleted = models.BooleanField(default=False)
+
+
+    class Meta:
+        verbose_name_plural = 'T) Sales Return'
+
+
+class SalesReturnProduct(models.Model):
+    salesReturnID = models.ForeignKey(SalesReturn, blank=True, null=True)
+    productID = models.ForeignKey(SalesProduct, blank=True, null=True)
+    quantity = models.IntegerField(default=0)
+    rate = models.FloatField(default=0.0)
+    total = models.FloatField(default=0.0)
+    datetime = models.DateTimeField(auto_now_add=True, auto_now=False)
+    lastUpdatedOn = models.DateTimeField(auto_now_add=False, auto_now=True)
+    isDeleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.productID.productName
+
+    class Meta:
+        verbose_name_plural = 'T) Sales Return Products'

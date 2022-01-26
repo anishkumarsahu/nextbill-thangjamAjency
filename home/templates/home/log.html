@@ -7,9 +7,12 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
             <link rel="icon" href="{% static 'logo/logo.png' %}" type="image/gif" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">
-     <script src="{% static 'jsMain/jquery.min.js' %}"></script>
-    <script src="{% static 'jsMain/semantic.min.js' %}"></script>
+{#    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">#}
+{#     <script src="{% static 'jsMain/jquery.min.js' %}"></script>#}
+{#    <script src="{% static 'jsMain/semantic.min.js' %}"></script>#}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
     <title>Login</title>
 
 <style>
@@ -109,6 +112,8 @@
                     <img class="ui centered medium circular image" src="{% static 'logo/logo.png' %}" style="width: 150px;height: 150px;margin-top: 30px">
                     <br>
                     <p class="hd">NEXT BILL</p>
+                    <p class="hd" style="color:grey;font-family: serif;font-style: italic;">"branch.thangjam.com"</p>
+
                 </div>
                 <div class="column_2" style="width: 350px; padding: 05px">
                     <form id="userLoginForm" action="{% url 'homeApp:UserLogin' %}" method="post">{% csrf_token %}

@@ -6,11 +6,14 @@
     <meta charset="UTF-8">
     <title>Home</title>
     {% progressive_web_app_meta %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=no">
     <link rel="icon" href="{% static 'logo/logo.png' %}" type="image/gif" sizes="16x16">
-    <script src="{% static 'jsMain/jquery.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">
-    <script src="{% static 'jsMain/semantic.min.js' %}"></script>
+{#    <script src="{% static 'jsMain/jquery.min.js' %}"></script>#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">#}
+{#    <script src="{% static 'jsMain/semantic.min.js' %}"></script>#}
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
     <script src="{% static 'sw/app.js' %}"></script>
 </head>
 <body >
@@ -34,14 +37,14 @@
     text-shadow: 2px 8px 6px rgba(0,0,0,0.2),
                  0px -5px 35px rgba(255,255,255,0.3);
     margin-bottom: 0;"
-            >A Billing Software<span style="font-size: 12px">  (V 2.1.0) </span></p>
+            >A Billing Software<span style="font-size: 12px">  (V 2.5.1) </span></p>
             <img src="{% static 'logo/nextbill.png' %}" alt="" width="80" height="80">
 
-            {#            <p style="color:grey;font-family: serif;font-style: italic;">"By Ziva Infotech"</p>#}
+{#                        <p style="color:grey;font-family: serif;font-style: italic;">"By Ziva Infotech"</p>#}
         </div>
 
     </div>
-    <div class="five column row">
+    <div class="seven column row">
 
         <div class="column">
             <a href="{% url 'homeApp:sales' %}">
@@ -52,11 +55,20 @@
             <a href="{% url 'homeApp:bookingList' %}">
                 <p><i class="box icon" style="font-size: 5rem;"></i><br>BOOKINGS </p>
             </a>
+        </div><div class="column">
+            <a href="{% url 'homeApp:create_return' %}">
+                <p><i class="undo icon" style="font-size: 5rem;"></i><br>RETURN </p>
+            </a>
         </div>
 
         <div class="column">
             <a href="{% url 'homeApp:salesReport' %}">
                 <p><i class="chart line icon" style="font-size: 5rem;"></i><br>SALES REPORT </p>
+            </a>
+        </div>
+        <div class="column">
+            <a href="{% url 'homeApp:returnReport' %}">
+                <p><i class="tasks icon" style="font-size: 5rem;"></i><br>RETURN REPORT </p>
             </a>
         </div>
 
