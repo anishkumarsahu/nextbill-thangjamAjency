@@ -2130,17 +2130,19 @@ class SalesListJson(BaseDatatableView):
 
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
 
-                action = '''<button style="font-size:10px;" onclick = "TakePayment('{}')" class="ui circular  icon button blue">
+                action = '''<span style="display:flex;"><button style="font-size:10px;" onclick = "TakePayment('{}')" class="ui circular  icon button blue">
                                <i class="hand holding usd icon"></i>
                              </button><button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
                                <i class="receipt icon"></i>
                              </button>
-
+                        <a style="font-size:10px;" href="/edit_sale/{}/" class="ui circular yellow icon button" style="margin-left: 3px">
+                              <i class="pen icon"></i>
+                             </a>
 
 
                              <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
                                <i class="trash alternate icon"></i>
-                             </button>'''.format(item.pk, item.pk, item.pk),
+                             </button></span>'''.format(item.pk, item.pk, item.pk, item.pk),
             else:
                 action = '''<button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
                                                <i class="receipt icon"></i>
@@ -4338,7 +4340,7 @@ def BookingSale(request, id=None):
 
 
 @csrf_exempt
-def update_booking(request):
+def  update_booking(request):
     if request.method == 'POST':
         bookingID = request.POST.get("bookingID")
         customerID = request.POST.get("customerID")
@@ -5329,6 +5331,7 @@ def download_product_sales_report(request):
     worksheet.write('B1', 'Product Name.', bold)
     worksheet.write('C1', 'BarCode', bold)
     worksheet.write('D1', 'Quantity', bold)
+    worksheet.write('E1', 'Unit', bold)
     # worksheet.write('D1', 'Amount', bold)
     # worksheet.write('E1', 'Description', bold)
     # Start from the first cell. Rows and columns are zero indexed.
@@ -5348,7 +5351,7 @@ def download_product_sales_report(request):
         worksheet.write(row, col + 1, p_name.name)
         worksheet.write(row, col + 2,p_name.barcode)
         worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
-        # worksheet.write(row, col + 4, item.description)
+        worksheet.write(row, col + 4, p_name.unitID.name)
         row += 1
         # total = total + item.amount
 
@@ -5398,3 +5401,28 @@ def add_return_sales(request):
                 pass
 
         return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
+
+
+def edit_sale(request, id=None):
+    if request.user.is_authenticated:
+        instance = get_object_or_404(Sales, pk=id)
+        pro = SalesProduct.objects.filter(salesID_id = instance.pk)
+
+
+        # if request.groups.filter(name='Staff').is_authenticated:
+
+        if 'Admin' in request.user.groups.values_list('name', flat=True):
+            company = CompanyProfile.objects.filter(isDeleted__exact=False)
+        else:
+            user = CompanyUser.objects.get(user_ID_id=request.user.pk)
+            company = CompanyProfile.objects.filter(pk=user.company_ID_id, isDeleted__exact=False)
+
+        context = {
+            'sale': instance,
+            'Products': pro,
+            'company': company,
+        }
+
+        return render(request, 'home/EditSale.html', context)
+    else:
+        return redirect('homeApp:loginPage')

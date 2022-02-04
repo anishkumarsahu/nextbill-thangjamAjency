@@ -1,0 +1,2618 @@
+{% extends 'home/index.html' %}
+{% block title %}
+    <title>Edit Sales</title>
+{% endblock %}
+{% block body %}
+    <style>
+        .cwide {
+            width: 73% !important;
+        }
+
+        .ui.search > .results {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            -webkit-transform-origin: center top;
+            transform-origin: center top;
+            white-space: normal;
+            text-align: left;
+            text-transform: none;
+            background: #fff;
+            margin-top: .5em;
+            width: 25em;
+            border-radius: .28571429rem;
+            -webkit-box-shadow: 0 2px 4px 0 rgba(34, 36, 38, .12), 0 2px 10px 0 rgba(34, 36, 38, .15);
+            box-shadow: 0 2px 4px 0 rgba(34, 36, 38, .12), 0 2px 10px 0 rgba(34, 36, 38, .15);
+            border: 1px solid #d4d4d5;
+            z-index: 998;
+        }
+
+        .ui.search > .results .result {
+            cursor: pointer;
+            display: block;
+            overflow: hidden;
+            font-size: 1.3em;
+            padding: .85714286em 1.14285714em;
+            color: rgba(0, 0, 0, .87);
+            line-height: 1.33;
+            border-bottom: 1px solid rgba(34, 36, 38, .1);
+        }
+    </style>
+
+    <h5 class="ui horizontal left aligned divider header" style="margin-top: 0">
+                        <i class="left align icon"></i>
+                       Edit Sale
+                    </h5>
+    <div class="ui right aligned basic segment">
+
+        <div class="ui internally grid">
+
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                <div class="four wide column">
+                    <form class="ui mini form" id="formtest">
+
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="user icon"></i>
+                            <label>Name</label>
+                                </span>
+
+                            <div class="ui customerList search">
+                                <div class="ui  icon input" style="width:75%;">
+                                    <input autocomplete="off" type="text" class="prompt" id="customerName"
+                                           name="customerName"
+                                           placeholder="customer Name" value="{{ sale.customerName }}">
+
+                                </div>
+                                <div class="results"></div>
+                            </div>
+                        </div>
+
+                        <div class="field  inline">
+                            <span style="float: left">
+                            <i class="mobile icon"></i>
+
+                            <label>Phone</label>
+                            </span>
+                            <input value="{{ sale.customerPhone }}" class="cwide tiny" type="text" id="phone" name="phone"
+                                   placeholder="Phone Number">
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="registered icon"></i>
+                            <label>GST Reg</label>
+                            </span>
+                            <input value="{{ sale.customerGst }}" class="cwide" type="text" name="gst" id="gst"
+                                   placeholder="GST Reg"
+                            >
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="mail icon"></i>
+
+                            <label>Email</label>
+                            </span>
+                            <input value="{{ sale.customerEmail }}" class="cwide" type="text" id="email" name="email"
+                                   placeholder="Email">
+                            <input type="hidden" name="customerID" id="customerID" value="{{ sale.customerID_id }}">
+                            <input type="hidden" name="bookingID" id="bookingID" value="{{ sale.pk }}">
+                            <input type="hidden" name="referrerID" id="referrerID" value="NaN">
+                            <input type="hidden" name="invoiceChoose" id="invoiceChoose"
+                                   value="{{ sale.invoiceSeriesID.invoiceType }}">
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="four wide column">
+                    <form class="ui mini form" id="formtest2">
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="map marker alternate icon"></i>
+                            <label>Address</label>
+                                </span>
+                            <textarea class="cwide" rows="1" id="address"
+                                      style="padding-bottom: 0.4rem;padding-top: 0.3rem"></textarea>
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="street view icon"></i>
+                            <label>State</label>
+                            </span>
+                            <select class="cwide  dropdown" id="state">
+                                <option value="" hidden>State</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+                                <option value="Jarkhand">Jarkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Maharastra">Maharastra</option>
+                                <option value="Manipur" selected>Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Orissa">Orissa</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Utter Pradesh">Utter Pradesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                            </select>
+                        </div>
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="building icon"></i>
+                            <label>Company</label>
+                            </span>
+                            <select style="    background-color: bisque;" class="cwide dropdown" id="company"
+                                    onchange="changeCompany()">
+                                {% for foo in company %}
+                                    <option value="{{ foo.pk }}">{{ foo.name }}</option>
+                                {% endfor %}
+
+
+                            </select>
+                        </div>
+
+
+                        <div class="field inline">
+                            <span style="float: left">
+                            <i class="cart arrow down icon"></i>
+                            <label>Type</label>
+                            </span>
+                            <select style="    background-color: bisque;" class="cwide dropdown" id="pType"
+                                    onchange="changeProductType()">
+
+
+                                <option value="Normal">Normal</option>
+                                {% if  request.user|has_group:"Admin" %}
+{#                                    <option value="Jet">Jet</option>#}
+                                {% endif %}
+
+
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="six wide column">
+                    <div class="ui form">
+                        <div class="ui mini form">
+                            <div class="inline fields">
+                                <i class="amazon pay icon"></i>
+                                <label>Payment Type</label>
+                                <div class="field">
+                                    <div class="ui radio checkbox checked" onclick="showDay('n')">
+                                        <input type="radio" name="payment" checked="" value="Cash" tabindex="0"
+                                               class="hidden">
+                                        <label>Cash Bill</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio  checkbox" onclick="showDay('n')">
+                                        <input type="radio" name="payment" value="Card" tabindex="0" class="hidden">
+                                        <label>Card</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio checkbox" onclick="showDay('y')">
+                                        <input type="radio" name="payment" value="Credit" tabindex="0" class="hidden">
+                                        <label>Credit</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui radio checkbox" onclick="showDay('c')">
+                                        <input type="radio" name="payment" value="Cheque" tabindex="0" class="hidden">
+                                        <label>Cheque</label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="field inline" id="days" style=" display: none; margin-bottom: 0.5em;">
+                            <span style="float: left">
+                            <i class="calendar check icon"></i>
+                            <label>Days</label>
+                                </span>
+                                <input style="width: 78%" type="text" name="cDays" id="cDays"
+                                       placeholder="Credit Days" value="{{ sale.creditDays }}">
+                            </div>
+                            <div class="field inline" id="cheque" style="padding-bottom: 5px; display: none;">
+                            <span style="float: left">
+                            <i class="receipt icon"></i>
+                            <label>Cheque Detail</label>
+                                </span>
+                                <input style="width: 77%" type="text" name="chequeDetail"
+                                       placeholder="Cheque Detail" id="chequeDetail" value="{{ sale.chequeDetail }}">
+                            </div>
+
+                        </div>
+                        <form class="ui tiny form" id="formtest3">
+
+                            <div class="ui two column grid">
+                                <div class="ten column" style="width: 60%">
+                                    <div class="field inline">
+                            <span style="float: left">
+                            <i class="scroll icon"></i>
+                            <label>Invoice No</label>
+                                </span>
+
+                                        <div class="ui left labeled  input" style="width: 65%; ">
+                                            <div class="ui dropdown teal label" id="invoiceSeriesChoose">
+                                                <div class="text" id="defaultInvoiceSeries">N/A</div>
+                                                <i class="dropdown icon"></i>
+                                                <input type="hidden" id="invoiceSeriesID" value="N/A">
+                                                <div class="menu" id="otherInvoiceSeries">
+
+                                                </div>
+                                            </div>
+                                            <input type="text" placeholder="Invoice Number" id="invoiceNo" value="{{ sale.invoiceNumber }}"
+                                                   name="nainvoiceme" style="width: 17%;background-color: lightgrey;" readonly>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <div class=" six column" style="width: 40%">
+                                    <div class="field inline" id="standard_calendar">
+                            <span style="float: left">
+                            <i class="calendar alternate icon"></i>
+                            <label>Date</label>
+                            </span>
+                                        <input style="width: 60%" type="text" name="gst" placeholder="Date"
+                                               autocomplete="off"
+                                               id="date">
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="field inline" id="cheque" style="margin-top: 6px;">
+                            <span style="float: left">
+                            <i class="handshake icon"></i>
+                            <label>Referral</label>
+                                </span>
+
+                                <div class="ui referrerList search">
+                                    <div class="ui icon input" style="width:81%;">
+                                        <input autocomplete="off" type="text" class="prompt" id="referrerName"
+                                               name="referrerName"
+                                               placeholder="Referrer Name">
+
+                                    </div>
+                                    <div class="results"></div>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="two wide column">
+                    <a href="{% url 'homeApp:sales' %}">
+                        <i class="scroll icon" style="font-size: 3rem; padding: 40px;margin-right: 50px;"></i>
+                        <p>Create New Invoice</p>
+                    </a>
+                    <div id="getLastSale">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui horizontal divider">
+        </div>
+        <div class="ui internally celled grid">
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+
+                <div class="eleven wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0">
+                    <div class="ui mini form">
+                        <div class="seven fields">
+                            <div class="field" style="width: 15%">
+                                <label style="text-align: center">Product Name <i onclick="openProduct()"
+                                                                                  class="plus green icon"
+                                                                                  style="cursor:pointer"></i></label>
+                                <div class="ui productList search">
+                                    <div class="ui icon input">
+                                        <input type="text" class="prompt" id="productName" name="productName"
+                                               placeholder="Product Name" onfocus="proSearch()">
+                                        <i class="shopping bag icon"></i>
+                                        <input type="hidden" id="itemID">
+
+
+                                    </div>
+                                    <div class="results"></div>
+                                </div>
+                            </div>
+                            <div class="field" style="width: 30%">
+                                <label style="text-align: center">Batch Number</label>
+                                <select class="ui fluid dropdown search" id="batchList"
+                                        style="border-color:black!important;">
+                                    <option value="Default">Default</option>
+
+                                </select>
+                            </div>
+                            <div class="field" style="width: 9%">
+                                <label style="text-align: center">Quantity</label>
+                                <input placeholder="Quantity" type="text"
+                                       id="quantity">
+                            </div>
+                            <div class="field" style="width: 9%">
+                                <label style="text-align: center">Unit</label>
+                                <input placeholder="Unit" type="text"
+                                       id="unit" readonly style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width: 10%">
+                                <label style="text-align: center">Net Price(₹)</label>
+                                <input placeholder="Net Price" type="number" id="netPrice" step="0.01">
+                            </div>
+
+
+                            <div class="field" style="width: 13%">
+                                <label style="text-align: center">Rate(₹) <span class="ui red text" id="lsp"
+                                                                                data-tooltip="Last selling price of the product to a customer"
+                                                                                data-position="top center"></span></label>
+                                <input placeholder="Price" type="number" id="Price">
+                            </div>
+
+                            <div class="field" style="width: 13%">
+                                <label style="text-align: center">Total (Without Tax)(₹)</label>
+                                <input placeholder="Total" type="number" id="total">
+                            </div>
+                        </div>
+
+
+                        <div class="8 fields">
+                            <div class="field">
+                                <label style="text-align: center">Bar Code</label>
+                                <input placeholder="Bar Code" type="text" id="barCode">
+                            </div>
+                            <div class="field">
+                                <label style="text-align: center">Category <i onclick="openCategory()"
+                                                                              class="plus green icon"
+                                                                              style="cursor:pointer"></i></label>
+                                <input placeholder="Category" type="text" id="category" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width: 8%">
+                                <label style="text-align: center">GST%</label>
+                                <input placeholder="GST" type="number" id="GST">
+                            </div>
+                            <div class="field" style="width:10%;">
+                                <label style="text-align: center">HSN</label>
+                                <input placeholder="HSN" type="text" id="hsn" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width:10%;">
+                                <label style="text-align: center">Stock</label>
+                                <input placeholder="Stock" type="number" id="stock" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width:10%;">
+                                <label style="text-align: center">MRP(₹)</label>
+                                <input placeholder="MRP" type="number" id="mrp" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width:8%;">
+                                <label style="text-align: center">Item Dics%</label>
+                                <input placeholder="Item Disc%" type="number" id="disc" value="0">
+                            </div>
+                            {% comment %} <div class="field">
+                                <label style="text-align: center">Bill Disc%</label>
+                                <input placeholder="Bill Disc%" type="text" id="bill_disc">
+                            </div>{% endcomment %}
+
+                            <div class="field" style="    padding-top: 1.6rem;">
+                                <div class="ui tiny buttons">
+                                    <button class="ui positive  button" id="addItemBtn" type="button"
+                                            onclick="addSubItems()"><i class="plus icon"></i>Add
+                                    </button>
+                                    <button style="display: none" type="button" id="updateItemBtn"
+                                            onclick="updateSubItems()" class="ui orange button">
+                                        <i class="icon redo"></i>
+                                        Update
+                                    </button>
+                                    <div class="or"></div>
+                                    <button class="ui button red" type="button" onclick="ClearData()"><i
+                                            class="minus icon"></i>
+                                        Clear
+                                    </button>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="five wide column">
+                    <div class="ui grid">
+                        <div class="eight wide column" style="padding-top: 0; padding-bottom: 0;">
+                            <div class="ui vertical menu"
+                                 style="width: 99%;float: right;position: absolute;text-align: left;">
+                                <a class="teal item">
+                                    Sub Total :
+                                    <div class="ui teal left pointing label" id="subTotal">{{ sale.subTotal }}</div>
+                                </a>
+                                <a class="item" style="display: none">
+                                    Disc 0% :
+                                    <div class="ui violet label" id="billDiscount"
+                                         contentEditable="true">{{ sale.billDisc }}</div>
+                                </a>
+                                <a class="item" id="taxDiv">
+                                    Taxable :
+                                    <div class="ui teal left pointing label" id="taxable">{{ sale.taxable }}</div>
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="eight wide column" style="padding-top: 0; padding-bottom: 0;">
+                            <div class="ui vertical menu"
+                                 style="width: 99%;float: right;position: absolute;text-align: left;">
+                                <a class="teal item" id="gstDiv">
+                                    GST :
+                                    <div class="ui teal left pointing label" id="taxableGST">{{ sale.gst }}</div>
+                                </a>
+                                <a class="item ">
+                                    Total :
+                                    <div class="ui teal left pointing label"
+                                         id="totalAfterGst">{{ sale.totalFinal }}</div>
+                                </a>
+                                <a class="item">
+                                    Round Off :
+                                    <div class="ui teal left pointing label" id="roundOff">{{ sale.roundOff }}</div>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                <div class="twelve wide column"
+                     style="padding-top: 0!important;padding-bottom: 0;overflow-x: auto;padding-left: 0">
+                    <table class="ui very compact table " id="itemTable" style="font-size: 0.8em">
+                        <thead>
+                        <tr>
+                            <th>Sl No.</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>HSN</th>
+                            <th>Qty</th>
+                            <th>Unit</th>
+                            <th>Rate(₹)</th>
+                            <th>GST %</th>
+                            <th>Item Disc %</th>
+                            <th>Net Rate(₹)</th>
+                            <th>Total(₹)</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in Products %}
+                            <tr id="{{ product.productID_id }}">
+                                <td id="row{{ product.productID_id }}">#</td>
+                                <td id="product{{ product.productID_id }}">{{ product.productName }}</td>
+                                <td id="category{{ product.productID_id }}">{{ product.category }}</td>
+                                <td id="hsn{{ product.productID_id }}">{{ product.hsn }}</td>
+                                <td id="quantity{{ product.productID_id }}">{{ product.quantity }}</td>
+                                <td id="unit{{ product.productID_id }}">{{ product.unit }}</td>
+                                <td id="price{{ product.productID_id }}">{{ product.rate }}</td>
+                                <td id="gst{{ product.productID_id }}">{{ product.gst }}</td>
+                                <td id="disc{{ product.productID_id }}">{{ product.disc }}</td>
+                                <td id="netprice{{ product.productID_id }}">{{ product.netRate }}</td>
+                                <td id="total{{ product.productID_id }}">{{ product.total }}</td>
+                                {% if product.batchID %}
+                                    <td style="display:none;"
+                                        id="batch{{ product.productID_id }}">{{ product.batchID.pk }}</td>
+                                {% else %}
+                                    <td style="display:none;" id="batch{{ product.productID_id }}">Default}</td>
+                                {% endif %}
+                                <td>
+                                    <button style="font-size:10px;"
+                                            onclick="GetItemDetail('{{ product.productID_id }}')"
+                                            class="ui circular facebook icon button green"><i class="pen icon"></i>
+                                    </button>
+                                    <button style="font-size:10px;" onclick="delItem('{{ product.productID_id }}')"
+                                            class="ui circular youtube icon button"><i class="trash alternate icon"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="four wide column" style="text-align: center;padding-top: 0.5em;padding-bottom: 0em;">
+                    <button class="ui mini primary button" onclick="AddExtraDetail()">
+                        Add Extra Details
+                    </button>
+                    <div class="ui vertical menu" style="width: 99%;float: right;position: absolute;text-align: left;margin-bottom: 0;
+    margin-top: 0.5em;">
+                        <a class="teal item ">
+                            <strong style="color: black;">Other Charges (₹) :</strong>
+                            <div class="ui violet label" id="otherCharges"
+                                 contentEditable="true">{{ sale.otherCharges }}</div>
+                        </a>
+                        <a class="teal item ">
+                            <strong style="color: black;">Personal Discount (₹) :</strong>
+                            <div class="ui violet label" id="personalDiscount"
+                                 contentEditable="true">{{ sale.personalDiscount }}</div>
+                        </a><a class="teal item active">
+                        <strong style="color: black;">Grand Total (₹) :</strong>
+                        <div class="ui blue label" id="GrandTotal">{{ sale.grandTotal }}</div>
+                    </a>
+                        <div class="ui mini form">
+                            <div class="three fields">
+                                <div class="field">
+                                    <label>Paid Against Bill</label>
+                                    <input placeholder="Paid Against Bill" type="number" id="paidAgainstBill"
+                                           value="{{ sale.paidAgainstBill }}">
+                                </div>
+
+                                <div class="field" style="background: lightgrey;">
+                                    <label>Paid</label>
+                                    <input placeholder="Paid" type="number" id="paidMoney" value="0">
+                                </div>
+                                <div class="field" style="background: lightgrey;">
+                                    <label id="returnLabel">Due/Return</label>
+                                    <input placeholder="Due/Return" type="number" id="dueOrReturn" value="0">
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui center aligned basic segment"
+                         style="margin-top: 200px;padding-top: 0;padding-bottom: 0;">
+
+
+                        <div class="ui segment" style="padding-bottom: 0">
+                            <div class="ui two column very relaxed grid" style="padding-bottom: 0;">
+                                <div class="column">
+                                    <a onclick="salesSave()" style="cursor: pointer;">
+                                        <i class="save icon" style="font-size: 2rem"></i>
+                                        <p>Sale Now</p>
+                                    </a>
+                                </div>
+                                <div class="column">
+                                    <a onclick="saleLater()" style="cursor: pointer;">
+                                        <i class="box icon" style="font-size: 2rem"></i>
+                                        <p> Update Sale Later</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ui vertical divider">
+                                OR
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="ui basic modal custom" id="delItemModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Item will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Item detail will be deleted, are you sure to delete
+                this Item?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="itemDelID">
+            <div class="ui green ok inverted button" onclick="deleteItem()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="ui modal" id="ExtraDetails">
+        <i class="close icon"></i>
+        <div class="header">
+            Add Extra Details
+        </div>
+        <div class="image content">
+            <div class="description">
+                <form class="ui form" id="AddCompanyForm">{% csrf_token %}
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Delivery Note</label>
+                            <input type="text" name="deliveryNote" id="deliveryNote" placeholder="deliveryNote"
+                                   value="{{ sale.deliveryNote }}">
+                        </div>
+                        <div class="field">
+                            <label>Supplier Reference</label>
+                            <input type="text" name="supplierReference" id="supplierReference"
+                                   placeholder="Supplier Reference" value="{{ sale.supplierReference }}">
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Buyer's Order Number</label>
+                            <input type="text" name="orderNumber" placeholder="Buyer's Order Number"
+                                   id="orderNumber" value="{{ sale.buyersOrderNumber }}">
+                        </div>
+                        <div class="field">
+                            <label>Dispatch Document Number</label>
+                            <input type="text" name="dispatchNumber" placeholder="Dispatch Document Number"
+                                   id="dispatchNumber" value="{{ sale.dispatchDocumentNumber }}">
+                        </div>
+                    </div>
+
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Dispatch Through</label>
+                            <input type="text" name="dispatchThrough" placeholder="Dispatch Through"
+                                   id="dispatchThrough" value="{{ sale.dispatchThrough }}">
+                        </div>
+                        <div class="field">
+                            <label>Other Reference</label>
+                            <input type="text" name="otherReference" placeholder="Other Reference" id="otherReference"
+                                   value="{{ sale.otherReference }}">
+                        </div>
+                    </div>
+                    <div class="two fields">
+                        <div class="field" id="calender2">
+                            <label>Dispatch Note Date</label>
+                            <input type="text" name="dispatchNoteDate" placeholder="Dispatch Note Date"
+                                   id="dispatchNoteDate">
+                        </div>
+                        <div class="field">
+                            <label>Destination</label>
+                            <input type="text" name="destination" placeholder="Destination" id="destination"
+                                   value="{{ sale.destination }}">
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Close
+            </div>
+            <div class="ui positive right labeled icon button">
+                Done adding
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui overlay fullscreen modal front transition scrolling win">
+        <div class="header">
+            Sales <span class="ui teal text">Detail.</span> <span id="billDetail"></span>
+            <input type="hidden" id="salesID">
+            <div class="ui small basic icon buttons" style="float: right;">
+                <button class="ui button" onclick="printInvoice()" data-tooltip="Print Invoice A4"
+                        data-position="bottom right"><i class="print icon"></i>
+                </button>
+                <button class="ui button" onclick="printInvoicea5()" data-tooltip="Print Invoice A5"
+                        data-position="bottom right"><i class="print icon"></i>
+                </button>
+                <button class="ui button" onclick="printBill()" data-tooltip="Print Bill A4"
+                        data-position="bottom right">
+                    <i class="sticky note icon"></i></button>
+                <button class="ui button" onclick="printBillA5()" data-tooltip="Print Bill A5"
+                        data-position="bottom right">
+                    <i class="sticky note icon"></i></button>
+                <button class="ui button" onclick="printBillThermals()" data-tooltip="Print Bill Thermal"
+                        data-position="bottom right"><i class="receipt icon"></i></button>
+            </div>
+        </div>
+        <div class="content" style="padding-top: 0!important;">
+            <div class="description">
+                <div class="ui right aligned basic segment">
+
+                    <div class="ui pointing secondary menu">
+                        <a class="item active" data-tab="first">Basic Details</a>
+                        <a class="item" data-tab="second">Addition Details</a>
+                    </div>
+                    <div class="ui tab segment active" data-tab="first">
+                        <div class="ui internally grid">
+                            <div class="row" style="padding-bottom: 5px!important;padding-top: 5px!important;">
+                                <div class="three wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="user icon"></i>
+                                            <div class="content">
+                                                <a class="header">Name:</a>
+                                                <div class="description" id="CustName">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="registered icon"></i>
+                                            <div class="content">
+                                                <a class="header">GST Reg :</a>
+                                                <div class="description" id="custGst">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="mobile icon"></i>
+                                            <div class="content">
+                                                <a class="header">Phone Number:</a>
+                                                <div class="description" id="custPhone">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="mail icon"></i>
+                                            <div class="content">
+                                                <a class="header">Email:</a>
+                                                <div class="description" id="custEmail">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="map marker alternate icon"></i>
+                                            <div class="content">
+                                                <a class="header">Address:</a>
+                                                <div class="description" id="custAddress">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="street view icon"></i>
+                                            <div class="content">
+                                                <a class="header">State :</a>
+                                                <div class="description" id="custState">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="two wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="amazon pay icon"></i>
+                                            <div class="content">
+                                                <a class="header">Payment Type:</a>
+                                                <div class="description" id="sPaymentType">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="scroll icon"></i>
+                                            <div class="content">
+                                                <a class="header"> Invoice No:</a>
+                                                <div class="description" id="sInvoice">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="calendar alternate icon"></i>
+                                            <div class="content">
+                                                <a class="header">Date :</a>
+                                                <div class="description" id="sInvoiceDate">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="two wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="sticky note outline icon"></i>
+                                            <div class="content">
+                                                <a class="header">Sub Total:</a>
+                                                <div class="description" id="sSubTotal">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="percent icon"></i>
+                                            <div class="content">
+                                                <a class="header">Discount Pc:</a>
+                                                <div class="description" id="sDiscount">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="pencil alternate icon"></i>
+                                            <div class="content">
+                                                <a class="header">Taxable :</a>
+                                                <div class="description" id="sTaxable">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="two wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="registered icon"></i>
+                                            <div class="content">
+                                                <a class="header">GST:</a>
+                                                <div class="description" id="sBillGst">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="bullseye icon"></i>
+                                            <div class="content">
+                                                <a class="header">Round Off:</a>
+                                                <div class="description" id="sRoundOff">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="people carry icon"></i>
+                                            <div class="content">
+                                                <a class="header">Other Charges :</a>
+                                                <div class="description" id="sOtherCharges">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="two wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="gem icon"></i>
+                                            <div class="content">
+                                                <a class="header">Personal Discount:</a>
+                                                <div class="description" id="sPersonalDiscount">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="wallet icon"></i>
+                                            <div class="content">
+                                                <a class="header">Total :</a>
+                                                <div class="description" id="sGrandTotal">N/A</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="money bill wave icon"></i>
+                                            <div class="content">
+                                                <a class="header">Paid Amount:</a>
+                                                <div class="description" id="PaidAgainstBill">N/A</div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui  tab segment" data-tab="second">
+                        <div class="ui internally grid">
+                            <div class="row" style="padding-bottom: 5px!important;padding-top: 5px!important;">
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="handshake icon"></i>
+                                            <div class="content">
+                                                <a class="header">Credit Days:</a>
+                                                <div class="description" id="CreditDays">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="file alternate outline icon"></i>
+                                            <div class="content">
+                                                <a class="header">Cheque Detail :</a>
+                                                <div class="description" id="chequeDetail">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="paperclip icon"></i>
+                                            <div class="content">
+                                                <a class="header">Delivery Note:</a>
+                                                <div class="description" id="deliveryNote">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="check double icon"></i>
+                                            <div class="content">
+                                                <a class="header">Supplier Reference:</a>
+                                                <div class="description" id="SupplierReference">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="clipboard check icon"></i>
+                                            <div class="content">
+                                                <a class="header">Buyers Order Number:</a>
+                                                <div class="description" id="BuyersOrderNumber">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="clipboard list icon"></i>
+                                            <div class="content">
+                                                <a class="header">Dispatch Document Number :</a>
+                                                <div class="description" id="DispatchDocumentNumber">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="shipping fast icon"></i>
+                                            <div class="content">
+                                                <a class="header">Dispatch Through:</a>
+                                                <div class="description" id="DispatchThrough">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="pen fancy icon"></i>
+                                            <div class="content">
+                                                <a class="header"> Other Reference:</a>
+                                                <div class="description" id="OtherReference">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="calendar check icon"></i>
+                                            <div class="content">
+                                                <a class="header">Dispatch Note Date :</a>
+                                                <div class="description" id="DispatchNoteDate">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="four wide column" style="text-align: left;">
+                                    <div class="ui very relaxed list">
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="warehouse icon"></i>
+                                            <div class="content">
+                                                <a class="header">Destination:</a>
+                                                <div class="description" id="Destination">N/A</div>
+                                            </div>
+                                        </div>
+                                        <div class="item" style="padding-bottom: 0;">
+                                            <i class="user circle icon"></i>
+                                            <div class="content">
+                                                <a class="header">AddedBy:</a>
+                                                <div class="description" id="AddedBy">N/A</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <h4 style="text-align: left">LIST OF SALES ITEMS:</h4>
+                    <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                            <table class="ui very compact table" id="itemTableReport">
+                                <thead>
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>HSN</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Rate</th>
+                                    <th>Gst %</th>
+                                    <th>Discount %</th>
+                                    <th>Net Rate</th>
+                                    <th>Total</th>
+                                </tr>
+                                </thead>
+                                <tbody id="my_body">
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+
+            <div class="ui primary approve button">
+                Close
+                <i class="compress arrows alternate icon"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <i onclick="getProductStock()" class=" blink_me circular pink custom button shopping bag icon"
+       style="top:50px;position: fixed;right: 10px;cursor: pointer;z-index: 100"></i>
+
+    <div class="ui custom popup top left transition hidden" style="height: 450px;overflow-y: scroll">
+        <h2 class="ui header">
+            <i class="shopping bag icon"></i>
+            <div class="content">
+                Products running out of stocks
+            </div>
+        </h2>
+        <div class="ui divided items" id="runningStock">
+            <div class="item">
+                <div class="content">
+                    <h5 class="ui sub header">Product name<span class="meta cinema"> (Brand) </span></h5>
+                    <div class="meta">
+                        <span class="cinema">Stock Avialable: <div class="ui label">IMAX</div></span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <div class="ui modal tiny " id="PrintOption">
+        <i class="close icon" onclick="goTosale()"></i>
+        <div class="header">
+            Select Printing Option
+            <input type="hidden" id="printSaleID">
+        </div>
+        <div class="image content">
+            <div class="description">
+                <div class="ui center aligned basic segment">
+
+
+                    <div class="ui segment">
+                        <div class="ui three column very relaxed grid">
+                            <div class="column" style="padding-left: 0;padding-right: 0">
+                                <a onclick="printInvoiceA4()" style="cursor: pointer;">
+                                    <i class="print icon" style="font-size: 2rem"></i>
+                                    <p>Print Invoice A4</p>
+                                </a>
+                            </div>
+                            <div class="column" style="padding-left: 0;padding-right: 0">
+                                <a onclick="printInvoiceA5()" style="cursor: pointer;">
+                                    <i class="print icon" style="font-size: 2rem"></i>
+                                    <p>Print Invoice A5</p>
+                                </a>
+                            </div>
+                            <div class="column" style="padding-left: 0;padding-right: 0">
+                                <a onclick="printBillA4()" style="cursor: pointer;">
+                                    <i class="print icon" style="font-size: 2rem"></i>
+                                    <p>Print Bill A4</p>
+                                </a>
+                            </div>
+                            <div class="column" style="padding-left: 0;padding-right: 0">
+                                <a onclick="printBillA55()" style="cursor: pointer;">
+                                    <i class="print icon" style="font-size: 2rem"></i>
+                                    <p>Print Bill A5</p>
+                                </a>
+                            </div>
+                            <div class="column" style="padding-left: 0;padding-right: 0">
+                                <a onclick="printBillThermal()" style="cursor: pointer;">
+                                    <i class="print icon" style="font-size: 2rem"></i>
+                                    <p>Print Bill Thermal</p>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button" onclick="goTosale()">
+                Close
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(initVal())
+        function changeProductTypeOnload() {
+            pType = $('#pType').val();
+
+            if (pType === 'Jet') {
+                $('#productForm').trigger('reset');
+                proSearch();
+
+                $('#invoiceNo').val('N/A').attr('readonly', true).css('background-color', 'lightgray');
+                $('#GST').val('0').attr('readonly', true).css('background-color', 'lightgray');
+                $('#taxDiv').attr('readonly', true).css('background-color', 'lightgray');
+                $('#gstDiv').attr('readonly', true).css('background-color', 'lightgray');
+                $('#defaultInvoiceSeries').html('N/A');
+                $('#invoiceSeriesID').val('N/A');
+
+            }
+            else {
+                proSearch()
+                $('#invoiceNo').val('').attr('readonly', true).css('background-color', 'lightgrey');
+                $('#GST').val('0').attr('readonly', true).css('background-color', 'lightgray');
+                $('#taxDiv').attr('readonly', false).css('background-color', 'white');
+                $('#gstDiv').attr('readonly', false).css('background-color', 'white');
+
+                getInvoiceSeries();
+
+            }
+        }
+
+
+        function initVal() {
+            $('#address').val('{{ sale.customerAddress }}');
+            $('#state').val('{{ sale.customerState }}');
+            $('#company').val('{{ sale.companyID_id }}');
+            $('#pType').val('{{ sale.salesType }}');
+            $('[name=payment]').val(['{{ sale.paymentType }}']);
+            changeProductTypeOnload();
+
+
+        }
+        $('.menu .item').tab();
+        $('.ui.radio.checkbox').checkbox();
+        var today = new Date();
+        $('#standard_calendar')
+            .calendar({
+                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+
+                            if (!date) return '';
+                            var day = String(date.getDate());
+                            var month = String(date.getMonth() + 1);
+                            var year = date.getFullYear();
+                            return '{{ sale.invoiceDate|date:'d/m/Y' }}';
+                        }
+                    }
+                }
+            );
+
+
+        $('#calender2')
+            .calendar({
+                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                    monthFirst: false,
+                    type: 'date',
+                    formatter: {
+                        date: function (date, settings) {
+                            if (!date) return '';
+                            var day = date.getDate();
+                            var month = date.getMonth() + 1;
+                            var year = date.getFullYear();
+                            return day + '/' + month + '/' + year;
+                        }
+                    },
+                    popupOptions: {
+                        observeChanges: false
+                    }
+
+                }
+            );
+
+        var pType;
+        pType = $('#pType').val();
+        {#        $(changeProductType())#}
+        function changeProductType() {
+            pType = $('#pType').val();
+            $('#itemTable tbody tr').remove();
+            var subTotal = $('#subTotal').html('0.00');
+            var taxable = $('#taxable').html('0.00');
+            var totalFinal = $('#totalAfterGst').html('0.00');
+            var roundOff = $('#roundOff').html('0.00');
+            var taxableGST = $('#taxableGST').html('0.00');
+            var bill_disc = $('#billDiscount').html('0.00');
+
+            var GrandTotal = $('#GrandTotal').html('0.00');
+            ClearData();
+
+            if (pType === 'Jet') {
+                $('#productForm').trigger('reset');
+                proSearch();
+
+                $('#invoiceNo').val('N/A').attr('readonly', true).css('background-color', 'lightgray');
+                $('#GST').val('0').attr('readonly', true).css('background-color', 'lightgray');
+                $('#taxDiv').attr('readonly', true).css('background-color', 'lightgray');
+                $('#gstDiv').attr('readonly', true).css('background-color', 'lightgray');
+                $('#defaultInvoiceSeries').html('N/A');
+                $('#invoiceSeriesID').val('N/A');
+
+            }
+            else {
+                $('#productForm').trigger('reset');
+                proSearch()
+                $('#invoiceNo').val('').attr('readonly', true).css('background-color', 'white');
+                $('#GST').val('0').attr('readonly', true).css('background-color', 'lightgray');
+                $('#taxDiv').attr('readonly', false).css('background-color', 'white');
+                $('#gstDiv').attr('readonly', false).css('background-color', 'white');
+
+                getInvoiceSeries();
+
+            }
+        }
+
+
+        function changeCompany() {
+            pType = $('#pType').val();
+            $('#itemTable tbody tr').remove();
+            var subTotal = $('#subTotal').html('0.00');
+            var taxable = $('#taxable').html('0.00');
+            var totalFinal = $('#totalAfterGst').html('0.00');
+            var roundOff = $('#roundOff').html('0.00');
+            var taxableGST = $('#taxableGST').html('0.00');
+            var bill_disc = $('#billDiscount').html('0.00');
+
+            var GrandTotal = $('#GrandTotal').html('0.00');
+
+
+            $('#productForm').trigger('reset');
+            proSearch()
+            $('#invoiceNo').val('').attr('readonly', true).css('background-color', 'white');
+            $('#GST').val('').attr('readonly', false).css('background-color', 'white');
+            $('#taxDiv').attr('readonly', false).css('background-color', 'white');
+            $('#gstDiv').attr('readonly', false).css('background-color', 'white');
+            changeProductType();
+            getInvoiceSeries();
+        }
+
+        $('.ui.customerList')
+            .search({
+                apiSettings: {
+                    url: '/api/GetCustomerList/?q={query}'
+                },
+                fields: {
+                    results: 'data',
+                    title: 'Name',
+                    "price": "Gst",
+                    "description": "Address",
+                },
+                onSelect: function (result) {
+
+                    $('#customerID').val(result.ID);
+                    getCustomerDetail();
+
+
+                },
+                cache: false,
+                minCharacters: 1
+            });
+
+
+        $('.ui.referrerList')
+            .search({
+                apiSettings: {
+                    url: '/api/get_referrer_list/?q={query}'
+                },
+                fields: {
+                    results: 'data',
+                    title: 'Name',
+                    "price": "Commission",
+                    "description": "Address",
+                },
+                onSelect: function (result) {
+
+                    $('#referrerID').val(result.ID);
+                    getReferrerDetail();
+
+
+                },
+                cache: false,
+                minCharacters: 1
+            });
+        function getCustomerDetail() {
+            var customerID = $('#customerID').val();
+            $.ajax({
+                type: 'get',
+                url: '/api/GetCustomerDetailByName/?q=' + customerID,
+
+                success: function (response) {
+                    $('#sID').val(response.data['ID']);
+                    $('#gst').val(response.data['Gst']);
+                    $('#phone').val(response.data['Phone']);
+                    $('#email').val(response.data['Email']);
+                    $('#address').val(response.data['Address']);
+                    $('#state').val(response.data['State']);
+                    $('#customerName').val(response.data['Name']);
+
+                    if (response.data['SaleID'] === 'N/A') {
+                        $('#getLastSale').html('');
+                    }
+                    else {
+                        $('#getLastSale').html('');
+                        $('#getLastSale').append('<button onclick="GetSaleDetail(' + response.data['SaleID'] + ')" class="fluid mini ui purple button" > <i class="scroll icon"></i> View Last Sale </button>')
+
+                    }
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+
+        function getReferrerDetail() {
+            var customerID = $('#referrerID').val();
+            $.ajax({
+                type: 'get',
+                url: '/api/get_referrer_detail_by_name/?q=' + customerID,
+
+                success: function (response) {
+                    $('#referrerName').val(response.data['Name']);
+
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+        function proSearch() {
+            p = $('#pType').val();
+            company = $('#company').val();
+            $('.ui.productList').search({
+
+                apiSettings: {
+                    url: '/api/GetProductList/?q={query}&type=' + p + '&company=' + company
+                },
+                fields: {
+                    results: 'data',
+                    title: 'ProductName',
+                    "price": "Brand",
+                    "description": "Company",
+                },
+                minCharacters: 1,
+                onSelect: function (result) {
+                    ClearData();
+                    $('#itemID').val(result.ID);
+                    getProductLSP();
+                    getProductDetailByName();
+
+
+                },
+                cache: false,
+            });
+        }
+
+        function getProductDetailByName() {
+            var name = $('#itemID').val();
+            var pType = $('#pType').val();
+
+
+            $.ajax({
+                type: 'get',
+                url: '/api/GetProductDetailByName/?q=' + name + '&pType=' + pType,
+
+                success: function (response) {
+                    if (pType === 'Jet') {
+
+                        $('#itemID').val(response.data['ID']);
+                        $('#productName').val(response.data['ProductName']);
+
+                        $('#category').val(response.data['Category']);
+                        {#                        $('#Price').val(response.data['Price']);#}
+                        $('#GST').val('0');
+                        $('#hsn').val(response.data['Hsn']);
+                        $('#mrp').val(response.data['Mrp']);
+                        $('#stock').val(response.data['Stock']);
+                        $('#unit').val(response.data['ActualUnit']);
+                        $('#netPrice').val(response.data['Sp']);
+                        $('#Price').val(response.data['Sp']);
+                        $('#barCode').val(response.data['BarCode']);
+
+                    }
+                    else {
+                        $('#itemID').val(response.data['ID']);
+                        $('#productName').val(response.data['ProductName']);
+
+                        $('#category').val(response.data['Category']);
+                        {#                        $('#Price').val(response.data['Price']);#}
+                        $('#GST').val(response.data['Gst']);
+                        $('#hsn').val(response.data['Hsn']);
+                        $('#mrp').val(response.data['Mrp']);
+                        $('#stock').val(response.data['Stock']);
+                        $('#unit').val(response.data['ActualUnit']);
+                        $('#netPrice').val(response.data['Net']);
+                        $('#Price').val(response.data['Sp']);
+                        $('#barCode').val(response.data['BarCode']);
+                        getproductBatchList(response.data['ID']);
+
+                    }
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+
+        function showDay(p) {
+            if (p === 'n') {
+                $('#days').css('display', 'none')
+                $('#cheque').css('display', 'none')
+                $('#invoiceChoose').val('Others');
+                getInvoiceSeries();
+
+            }
+            else if (p === 'y') {
+                $('#days').css('display', '')
+                $('#cheque').css('display', 'none')
+                $('#invoiceChoose').val('Credit');
+                getInvoiceSeries();
+
+            } else {
+                $('#days').css('display', 'none')
+                $('#cheque').css('display', '')
+                $('#invoiceChoose').val('Others');
+                getInvoiceSeries();
+
+            }
+
+        }
+
+        $("#barCode").on("keyup", function (event) {
+            var name = $('#barCode').val();
+            var pType = $('#pType').val();
+
+
+            $.ajax({
+                type: 'get',
+                url: '/api/get_product_detail_by_barcode/?q=' + name + '&pType=' + pType,
+
+                success: function (response) {
+                    if (pType === 'Jet') {
+
+                        $('#itemID').val(response.data['ID']);
+                        $('#productName').val(response.data['ProductName']);
+
+                        $('#category').val(response.data['Category']);
+                        {#                        $('#Price').val(response.data['Price']);#}
+                        $('#GST').val('0');
+                        $('#hsn').val(response.data['Hsn']);
+                        $('#mrp').val(response.data['Mrp']);
+                        $('#stock').val(response.data['Stock']);
+                        $('#unit').val(response.data['ActualUnit']);
+                        $('#netPrice').val(response.data['Sp']);
+                        $('#Price').val(response.data['Sp']);
+                        {#                        $('#barCode').val(response.data['BarCode']);#}
+                        getproductBatchList(response.data['ID']);
+
+                    }
+                    else {
+                        $('#itemID').val(response.data['ID']);
+                        $('#productName').val(response.data['ProductName']);
+
+                        $('#category').val(response.data['Category']);
+                        {#                        $('#Price').val(response.data['Price']);#}
+                        $('#GST').val(response.data['Gst']);
+                        $('#hsn').val(response.data['Hsn']);
+                        $('#mrp').val(response.data['Mrp']);
+                        $('#stock').val(response.data['Stock']);
+                        $('#unit').val(response.data['ActualUnit']);
+                        $('#netPrice').val(response.data['Net']);
+                        $('#Price').val(response.data['Sp']);
+                        {#                        $('#barCode').val(response.data['BarCode']);#}
+                       getproductBatchList(response.data['ID']);
+                    }
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        });
+$("#quantity").keyup(function () {
+            var q = $('#quantity').val();
+{#            var price = $('#Price').val();#}
+            var gst = $('#GST').val();
+            var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+              var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
+
+{#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+{#            $('#netPrice').val(netPriceCal.toFixed(2));#}
+            $('#total').val(totalPriceCal.toFixed(2));
+
+
+        });
+
+
+        $('#netPrice').keyup(function () {
+            var q = $('#quantity').val();
+            var gst = $('#GST').val();
+            var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
+
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+            $('#total').val(totalPriceCal.toFixed(2));
+
+
+        });
+
+
+        $("#Price").keyup(function () {
+            var q = $('#quantity').val();
+            var price = $('#Price').val();
+            var gst = $('#GST').val();
+            var disc = $('#disc').val();
+
+            var net = parseFloat(price) +( parseFloat(price)* (parseFloat(gst)/100));
+             $('#netPrice').val(net.toFixed(2));
+             var sp = parseFloat(net.toFixed(2)) / (1 + ((parseFloat(gst) / 100)));
+
+{#            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);#}
+{#            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);#}
+{#            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);#}
+
+{#            $('#total').val(totalPriceCal.toFixed(2));#}
+
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+            $('#total').val(totalPriceCal.toFixed(2));
+
+
+        });
+
+        $("#disc").keyup(function () {
+          var q = $('#quantity').val();
+            var gst = $('#GST').val();
+            var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
+
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+            $('#total').val(totalPriceCal.toFixed(2));
+
+        });
+
+        $("#otherCharges").keyup(function () {
+            calTaxAndTotal();
+            returnCalc();
+
+
+        });
+        $("#personalDiscount").keyup(function () {
+            calTaxAndTotal();
+            returnCalc();
+
+
+        });
+
+        function returnCalc() {
+            var GrandTotal = $('#GrandTotal').html();
+            var paidMoney = $('#paidMoney').val();
+            var dueOrReturn = parseFloat(paidMoney) - parseFloat(GrandTotal);
+            $('#dueOrReturn').val(dueOrReturn)
+
+            if (dueOrReturn < 0) {
+                $('#returnLabel').html('Due')
+
+            }
+            else {
+                $('#returnLabel').html('Return')
+            }
+
+        }
+
+        $("#paidAgainstBill").keyup(function () {
+
+            var paidAgainstBill = $('#paidAgainstBill').val();
+            var paidMoney = $('#paidMoney').val(paidAgainstBill);
+
+            returnCalc();
+
+
+        });
+        $("#paidMoney").keyup(function () {
+            returnCalc();
+
+
+        });
+
+        $("#billDiscount").keyup(function () {
+            calTaxAndTotal();
+            returnCalc();
+        });
+
+        $("#customerName").keyup(function () {
+            var charName = $('#customerName').val();
+            if (charName.length === 0) {
+                $('#formtest').trigger('reset');
+                $('#formtest2').trigger('reset');
+                $('#customerID').val('NaN');
+                $('#getLastSale').html('')
+            }
+
+
+        });
+        $("#referrerName").keyup(function () {
+            var charName = $('#referrerName').val();
+            if (charName.length === 0) {
+
+                $('#referrerID').val('NaN');
+            }
+
+
+        });
+
+
+        function addSubItems() {
+            var itemID = $('#itemID').val();
+            var productName = $('#productName').val();
+            var Quantity = $('#quantity').val();
+            var Unit = $('#unit').val();
+            var Price = $('#Price').val();
+            var GST = $('#GST').val();
+            var disc = $('#disc').val();
+            var NetPrice = $('#netPrice').val();
+            var Total = $('#total').val();
+            var barCode = $('#barCode').val();
+            var category = $('#category').val();
+            var hsn = $('#hsn').val();
+            var stock = $('#stock').val();
+            var mrp = $('#mrp').val();
+            var batch = $('#batchList').val();
+
+            if (productName === '' || Quantity === '' || Price === '' ||
+                Total === '' || category === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Product Name, Category, Quantity and Total are required !'
+                    })
+                ;
+            }
+            else {
+                $('#' + itemID).remove();
+                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                ClearData();
+                calTaxAndTotal();
+                returnCalc();
+                $('#lsp').html();
+            }
+
+        }
+
+
+        function GetItemDetail(id) {
+              getproductBatchList(id);
+            $('#addItemBtn').css('display', 'none');
+            $('#updateItemBtn').css('display', '');
+            var product = $('#product' + id).html();
+            var category = $('#category' + id).html();
+            var hsn = $('#hsn' + id).html();
+            var quantity = $('#quantity' + id).html();
+            var unit = $('#unit' + id).html();
+            var price = $('#price' + id).html();
+            var gst = $('#gst' + id).html();
+            var disc = $('#disc' + id).html();
+            var netprice = $('#netprice' + id).html();
+            var total = $('#total' + id).html();
+                        var batch = $('#batch' + id).html();
+
+            $('#productName').val(product);
+            $('#quantity').val(quantity);
+            $('#unit').val(unit);
+            $('#Price').val(price);
+            $('#GST').val(gst);
+            $('#netPrice').val(netprice);
+            $('#total').val(total);
+            $('#category').val(category);
+            $('#hsn').val(hsn);
+            $('#disc').val(disc);
+            $('#itemID').val(id);
+            var pType = $('#pType').val();
+
+            $.ajax({
+                type: 'get',
+                url: '/api/GetProductDetailByName/?q=' + id + '&pType=' + pType,
+
+                success: function (response) {
+                    $('#mrp').val(response.data['Mrp']);
+                    $('#stock').val(response.data['Stock']);
+                    $('#barCode').val(response.data['BarCode']);
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+             setTimeout(function(){
+                $('#batchList').val(batch).change();
+            },500);
+        }
+
+
+        function updateSubItems() {
+            var id = $('#itemID').val();
+            var productName = $('#productName').val();
+            var Quantity = $('#quantity').val();
+            var Unit = $('#unit').val();
+            var Price = $('#Price').val();
+            var GST = $('#GST').val();
+            var NetPrice = $('#netPrice').val();
+            var Total = $('#total').val();
+            var barCode = $('#barCode').val();
+            var category = $('#category').val();
+            var hsn = $('#hsn').val();
+            var stock = $('#stock').val();
+            var mrp = $('#mrp').val();
+            var disc = $('#disc').val();
+                        var batch = $('#batchList').val();
+
+            if (productName === '' || Quantity === '' || Price === '' ||
+                Total === '' || category === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Product Name, Category, Quantity and Total are required !'
+                    })
+                ;
+            }
+            else {
+                $('#product' + id).html(productName);
+                $('#category' + id).html(category);
+                $('#hsn' + id).html(hsn);
+                $('#quantity' + id).html(Quantity);
+                $('#unit' + id).html(Unit);
+                $('#price' + id).html(Price);
+                $('#gst' + id).html(GST);
+                $('#netprice' + id).html(NetPrice);
+                $('#total' + id).html(Total);
+                $('#disc' + id).html(disc);
+                $('#batch' + id).html(batch);
+
+                ClearData();
+                calTaxAndTotal();
+                returnCalc();
+            }
+
+        }
+
+        function delItem(id) {
+            $('#delItemModal')
+                .modal('show')
+            ;
+            $('#itemDelID').val(id)
+        }
+
+        function deleteItem() {
+            var id = $('#itemDelID').val();
+            $('#' + id).remove();
+            calTaxAndTotal();
+
+
+        }
+        function ClearData() {
+
+            $('#addItemBtn').css('display', '');
+            $('#updateItemBtn').css('display', 'none');
+
+            $('#productName').val('');
+            $('#quantity').val('');
+            $('#unit').val('');
+            $('#Price').val('');
+            $('#GST').val('');
+            $('#netPrice').val('');
+            $('#total').val('');
+            $('#barCode').val('');
+            $('#category').val('');
+            $('#hsn').val('');
+            $('#stock').val('');
+            $('#mrp').val('');
+            $('#disc').val('0');
+            $('#itemID').val('');
+            $('#lsp').html('');
+            $('#batchList').html('<option value="Default">Default</option>');
+
+        }
+
+        function calTaxAndTotal() {
+
+            var subtotal = 0.0;
+            var taxable = 0.0;
+            var gstTotal = 0.0;
+            var TotalAmount = 0.0;
+            var roundOff = 0.0;
+            var billDiscount = $('#billDiscount').html();
+            var otherCharges = $('#otherCharges').html();
+            var personalDiscount = $('#personalDiscount').html();
+
+            $('#itemTable tbody tr').each(function () {
+
+                var id = $(this).closest('tr').attr('id');
+                var total = $('#total' + id).html();
+                var gst = $('#gst' + id).html();
+                var netprice = $('#netprice' + id).html();
+                var price = $('#price' + id).html();
+                var quantity = $('#quantity' + id).html();
+                var disc = $('#disc' + id).html();
+
+                var netP = (parseFloat(price) * parseFloat(quantity)) - (parseFloat(price) * parseFloat(quantity) * (parseFloat(disc / 100.0)));
+
+                var gstT = (parseFloat(netP) * parseFloat(gst) / 100) * quantity;
+
+                subtotal = subtotal + parseFloat(total);
+
+                //taxable after discount
+                var afterDiscount = (parseFloat(total) - (parseFloat(total) * (parseFloat(billDiscount) / 100)));
+                taxable = taxable + parseFloat(afterDiscount);
+
+                // gst after discount
+                var gstPerItem = parseFloat(afterDiscount) * (parseFloat(gst) / 100);
+                gstTotal = gstTotal + gstPerItem
+
+
+            });
+
+            $('#subTotal').html(subtotal.toFixed(2));
+            $('#taxable').html(taxable.toFixed(2));
+
+            $('#taxableGST').html(gstTotal.toFixed(2));
+            var taxPlusGst = taxable + gstTotal;
+
+            $('#totalAfterGst').html(taxPlusGst.toFixed(2));
+
+            var roundNumber = Math.round(taxPlusGst.toFixed(2));
+
+            var roundOfNumber = roundNumber - taxPlusGst.toFixed(2);
+            $('#roundOff').html(roundOfNumber.toFixed(2))
+
+
+            var grandTotal = parseFloat(taxPlusGst) + parseFloat(otherCharges) - parseFloat(personalDiscount) + parseFloat(roundOfNumber.toFixed(2));
+
+
+            $('#GrandTotal').html(grandTotal.toFixed(2))
+
+        }
+
+
+        function AddExtraDetail() {
+
+            $('#ExtraDetails')
+                .modal('show')
+            ;
+
+        }
+
+        //post
+        function salesSave() {
+            var personalDiscount = $('#personalDiscount').html();
+            var referrerID = $('#referrerID').val();
+            var bookingID = $('#bookingID').val();
+            var customerID = $('#customerID').val();
+            var name = $('#customerName').val();
+            var gst = $('#gst').val();
+            var phone = $('#phone').val();
+            var email = $('#email').val();
+            var address = $('#address').val();
+            var state = $('#state').val();
+            var pType = $('#pType').val();
+            var payment = $('input[name="payment"]:checked').val();
+            var cDays = $('#cDays').val();
+            var invoiceNumber = $('#invoiceNo').val();
+            var pDate = $('#date').val();
+            var chequeDetail = $('#chequeDetail').val();
+            var deliveryNote = $('#deliveryNote').val();
+            var supplierReference = $('#supplierReference').val();
+            var orderNumber = $('#orderNumber').val();
+            var dispatchNumber = $('#dispatchNumber').val();
+            var dispatchThrough = $('#dispatchThrough').val();
+            var otherReference = $('#otherReference').val();
+            var dispatchNoteDate = $('#dispatchNoteDate').val();
+            var destination = $('#destination').val();
+            var company = $('#company').val();
+            var paid = $('#paidMoney').val();
+            var dueOrReturn = $('#dueOrReturn').val();
+            var invoiceSeriesID = $('#invoiceSeriesID').val();
+            var defaultInvoiceSeries = $('#defaultInvoiceSeries').html();
+            var paidAgainstBill = $('#paidAgainstBill').val();
+
+            var datas = '';
+            $('#itemTable tbody tr').each(function () {
+                var id = $(this).closest('tr').attr('id');
+                var pro = $('#product' + id).html();
+                var cat = $('#category' + id).html();
+                var hs = $('#hsn' + id).html();
+                var qty = $('#quantity' + id).html();
+                var pri = $('#price' + id).html();
+                var gs = $('#gst' + id).html();
+                var netp = $('#netprice' + id).html();
+                var tot = $('#total' + id).html();
+                var dis = $('#disc' + id).html();
+                var unit = $('#unit' + id).html();
+                var batch = $('#batch' + id).html();
+
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch + '@'
+
+
+            });
+
+            var subTotal = $('#subTotal').html();
+            var taxable = $('#taxable').html();
+            var totalFinal = $('#totalAfterGst').html();
+            var roundOff = $('#roundOff').html();
+            var taxableGST = $('#taxableGST').html();
+            var bill_disc = $('#billDiscount').html();
+            var otherCharges = $('#otherCharges').html();
+
+            var GrandTotal = $('#GrandTotal').html();
+            if (name === '' || pDate === '' || subTotal === '' || taxable === '' || totalFinal === '' ||
+                roundOff === '' || taxableGST === '' || bill_disc === '' || GrandTotal === '' || datas === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Customer Name, Date, Items, total are required !'
+                    })
+                ;
+            } else {
+                data = new FormData();
+                data.append('referrerID', referrerID);
+
+                data.append('bookingID', bookingID);
+                data.append('customerID', customerID);
+                data.append('name', name);
+                data.append('gst', gst);
+                data.append('phone', phone);
+                data.append('email', email);
+                data.append('address', address);
+                data.append('state', state);
+                data.append('pType', pType);
+                data.append('payment', payment);
+                data.append('cDays', cDays);
+                data.append('invoiceNumber', invoiceNumber);
+                data.append('pDate', pDate);
+                data.append('datas', datas);
+                data.append('subTotal', subTotal);
+                data.append('taxable', taxable);
+                data.append('totalFinal', totalFinal);
+                data.append('roundOff', roundOff);
+                data.append('taxableGST', taxableGST);
+                data.append('bill_disc', bill_disc);
+                data.append('GrandTotal', GrandTotal);
+                data.append('otherCharges', otherCharges);
+                data.append('chequeDetail', chequeDetail);
+                data.append('deliveryNote', deliveryNote);
+                data.append('supplierReference', supplierReference);
+                data.append('orderNumber', orderNumber);
+                data.append('dispatchNumber', dispatchNumber);
+                data.append('dispatchThrough', dispatchThrough);
+                data.append('otherReference', otherReference);
+                data.append('dispatchNoteDate', dispatchNoteDate);
+                data.append('destination', destination);
+                data.append('company', company);
+                data.append('paid', paid);
+                data.append('dueOrReturn', dueOrReturn);
+                data.append('invoiceSeriesID', invoiceSeriesID);
+                data.append('defaultInvoiceSeries', defaultInvoiceSeries);
+                data.append('paidAgainstBill', paidAgainstBill);
+                data.append('personalDiscount', personalDiscount);
+
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/add_sales_from_booking/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'New Sales created Successfully.'
+                                });
+                            $('#itemTable tbody tr').remove();
+                            $('#formtest').trigger('reset');
+                            $('#formtest2').trigger('reset');
+                            $('#formtest3').trigger('reset');
+                            $('#AddCompanyForm').trigger('reset');
+                            $('#subTotal').html('0.00');
+                            $('#taxable').html('0.00');
+                            $('#totalAfterGst').html('0.00');
+                            $('#roundOff').html('0.00');
+                            $('#taxableGST').html('0.00');
+                            $('#billDiscount').html('0.00');
+
+                            $('#GrandTotal').html('0.00');
+                            $('#otherCharges').html('0.00');
+                            $('#personalDiscount').html('0.00');
+                            $('#paidMoney').val('0');
+                            $('#dueOrReturn').val('0');
+                            $('#getLastSale').html('');
+                            getInvoiceSeries();
+                            var today = new Date();
+                            $('#standard_calendar')
+                                .calendar({
+                                        initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                                        type: 'date',
+                                        formatter: {
+                                            date: function (date, settings) {
+                                                if (!date) return '';
+                                                var day = date.getDate();
+                                                var month = date.getMonth() + 1;
+                                                var year = date.getFullYear();
+                                                return day + '/' + month + '/' + year;
+                                            }
+                                        }
+                                    }
+                                );
+                            PrintOption();
+                            $('#printSaleID').val(response.saleID)
+
+
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+
+
+        function GetSaleDetail(id) {
+            $('#salesID').val(id);
+            $.ajax({
+                type: 'get',
+                url: '/api/get_sales_detail/' + id + '/',
+
+                success: function (response) {
+
+
+                    $('#itemTableReport tbody tr').remove();
+                    $('#CustName').html(response.data.Basic['Name']);
+                    $('#custGst').html(response.data.Basic['Gst']);
+                    $('#custPhone').html(response.data.Basic['Phone']);
+                    $('#custEmail').html(response.data.Basic['Email']);
+                    $('#custAddress').html(response.data.Basic['Address']);
+                    $('#custState').html(response.data.Basic['State']);
+                    $('#sPaymentType').html(response.data.Basic['PaymentType']);
+                    $('#sInvoice').html(response.data.Basic['Invoice']);
+                    $('#sInvoiceDate').html(response.data.Basic['InvoiceDate']);
+                    $('#sTaxable').html(response.data.Basic['Taxable']);
+                    $('#sSubTotal').html(response.data.Basic['SubTotal']);
+                    $('#sDiscount').html(response.data.Basic['Discount']);
+                    $('#sGrandTotal').html(response.data.Basic['GrandTotal']);
+                    $('#sRoundOff').html(response.data.Basic['RoundOff']);
+                    $('#sTotalFinal').html(response.data.Basic['TotalFinal']);
+                    $('#sBillGst').html(response.data.Basic['BillGst']);
+                    $('#CreditDays').html(response.data.Basic['CreditDays']);
+                    $('#chequeDetail').html(response.data.Basic['chequeDetail']);
+                    $('#deliveryNote').html(response.data.Basic['deliveryNote']);
+                    $('#SupplierReference').html(response.data.Basic['SupplierReference']);
+                    $('#BuyersOrderNumber').html(response.data.Basic['BuyersOrderNumber']);
+                    $('#DispatchDocumentNumber').html(response.data.Basic['DispatchDocumentNumber']);
+                    $('#DispatchThrough').html(response.data.Basic['DispatchThrough']);
+                    $('#OtherReference').html(response.data.Basic['OtherReference']);
+                    $('#DispatchNoteDate').html(response.data.Basic['DispatchNoteDate']);
+                    $('#Destination').html(response.data.Basic['Destination']);
+                    $('#OtherCharges').html(response.data.Basic['OtherCharges']);
+                    $('#PaidAmount').html(response.data.Basic['PaidAmount']);
+                    $('#DueOrReturnAmount').html(response.data.Basic['DueOrReturnAmount']);
+                    $('#PaidAgainstBill').html(response.data.Basic['PaidAgainstBill']);
+                    $('#AddedBy').html(response.data.Basic['AddedBy']);
+                    $('#sPersonalDiscount').html(response.data.Basic['PersonalDiscount']);
+                    $('#billDetail').html("(#" + response.data.Basic['BillNumber'] + "-" + response.data.Basic['BillType'] + ")");
+
+
+                    var i;
+                    for (i = 0; i < response.data.Items.length; i++) {
+                        $('#itemTableReport tbody').append('<tr id ="' + response.data.Items[i]['ItemID'] + '" ><td id ="row' + response.data.Items[i]['ItemID'] + '">#</td> <td id ="product' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemProductName'] + '</td><td id ="category' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemCategory'] + '</td><td id ="hsn' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemHsn'] + '</td><td id ="quantity' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemQuantity'] + '</td><td id ="unit' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemUnit'] + '</td><td id ="price' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemRate'] + '</td><td id ="gst' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemGst'] + '</td><td id ="disc' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemDisc'] + '</td><td id ="netprice' + response.data.Items[i]['ItemnetRate'] + '">' + response.data.Items[i]['ItemnetRate'] + '</td><td id ="total' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemTotal'] + '</td></tr>');
+
+                    }
+
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+            $('.overlay.fullscreen.modal')
+                .modal('show')
+            ;
+
+        }
+        function printInvoice() {
+            var id = $('#salesID').val();
+            window.open('/print/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function printInvoicea5() {
+            var id = $('#salesID').val();
+            window.open('/print_invoicea5/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+
+        function printBillA5() {
+            var id = $('#salesID').val();
+            window.open('/print_billA5/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function printBill() {
+            var id = $('#salesID').val();
+            window.open('/printBill/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function printBillThermals() {
+            var id = $('#salesID').val();
+            window.open('/print_bill_thermal/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+
+
+        $(getInvoiceSeries());
+        function getInvoiceSeries() {
+            var company = $('#company').val();
+            pType = $('#pType').val();
+            var invoice = $('#invoiceChoose').val();
+            if (pType !== 'Jet') {
+                $.ajax({
+                    type: 'get',
+                    url: '/api/get_invoice_series_by_company/?companyID=' + company + '&invoiceType=' + invoice,
+
+                    success: function (response) {
+
+                        $('#defaultInvoiceSeries').html('');
+                        $('#defaultInvoiceSeries').html('N/A');
+                        $('#invoiceSeriesID').val('N/A');
+                        getInvoiceNumber(response.data[0]["ID"]);
+                        $('#otherInvoiceSeries').html('');
+
+       {% comment %}                 var j;
+                        for (j = 0; j < response.data.length; j++) {
+
+                            $('#otherInvoiceSeries').append('<div class="item " onclick ="getInvoiceNumber(' + response.data[j]["ID"] + ')">' + response.data[j]["Series"] + '</div>');
+
+                        }{% endcomment %}
+
+                    },
+
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+            }
+            else {
+                $('#defaultInvoiceSeries').html('N/A');
+                $('#invoiceSeriesID').val('N/A');
+            }
+
+        }
+
+        function getInvoiceNumber(id) {
+
+            $.ajax({
+                type: 'get',
+                url: '/api/get_new_sale_invoice_number/?invoiceSeriesID=' + id,
+
+                success: function (response) {
+
+                    $('#invoiceNo').val({{ sale.invoiceNumber }});
+                    $('#invoiceSeriesID').val('N/A');
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+        }
+        $('.custom.button')
+            .popup({
+                popup: $('.custom.popup'),
+                on: 'click'
+            })
+        ;
+        function getProductStock() {
+            pType = $('#pType').val();
+            var company = $('#company').val();
+
+            $.ajax({
+                type: 'get',
+                url: '/api/get_running_down_out_of_stock_product_list/?pType=' + pType + '&companyID=' + company,
+
+                success: function (response) {
+
+                    $('#runningStock').html('');
+                    if (response.data.length > 0) {
+                        var j;
+                        for (j = 0; j < response.data.length; j++) {
+
+                            $('#runningStock').append('  <div class="item"><div class="content"><h5 class="ui sub header">' + response.data[j]["ProductName"] + '</h5> <div class="meta"> <span class="cinema">Stock Avialable: <div class="ui label">' + response.data[j]["Stock"] + '</div></span> </div> </div></div>');
+
+                        }
+                    }
+                    else {
+                        $('#runningStock').append('  <div class="sub header">Stock available .</div>')
+                    }
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+
+        }
+        function getProductLSP() {
+            var customerID = $('#customerID').val();
+            var itemID = $('#itemID').val();
+
+            $.ajax({
+                type: 'get',
+                url: '/api/get_last_selling_price_of_the_product_by_customer/?pID=' + itemID + '&cID=' + customerID,
+
+                success: function (response) {
+
+                    $('#lsp').html('');
+                    $('#lsp').html('' + response.data);
+
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+
+        }
+        function openProduct() {
+            window.open('{% url "homeApp:product" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+        }
+        function openCategory() {
+            window.open('{% url "homeApp:hsn" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+        }
+
+
+        //post
+        function saleLater() {
+            var personalDiscount = $('#personalDiscount').html();
+            var bookingID = $('#bookingID').val();
+            var customerID = $('#customerID').val();
+            var name = $('#customerName').val();
+            var gst = $('#gst').val();
+            var phone = $('#phone').val();
+            var email = $('#email').val();
+            var address = $('#address').val();
+            var state = $('#state').val();
+            var pType = $('#pType').val();
+            var payment = $('input[name="payment"]:checked').val();
+            var cDays = $('#cDays').val();
+            var invoiceNumber = $('#invoiceNo').val();
+            var pDate = $('#date').val();
+            var chequeDetail = $('#chequeDetail').val();
+            var deliveryNote = $('#deliveryNote').val();
+            var supplierReference = $('#supplierReference').val();
+            var orderNumber = $('#orderNumber').val();
+            var dispatchNumber = $('#dispatchNumber').val();
+            var dispatchThrough = $('#dispatchThrough').val();
+            var otherReference = $('#otherReference').val();
+            var dispatchNoteDate = $('#dispatchNoteDate').val();
+            var destination = $('#destination').val();
+            var company = $('#company').val();
+            var paid = $('#paidMoney').val();
+            var dueOrReturn = $('#dueOrReturn').val();
+            var invoiceSeriesID = $('#invoiceSeriesID').val();
+            var defaultInvoiceSeries = $('#defaultInvoiceSeries').html();
+            var paidAgainstBill = $('#paidAgainstBill').val();
+
+            var datas = '';
+            $('#itemTable tbody tr').each(function () {
+                var id = $(this).closest('tr').attr('id');
+                var pro = $('#product' + id).html();
+                var cat = $('#category' + id).html();
+                var hs = $('#hsn' + id).html();
+                var qty = $('#quantity' + id).html();
+                var pri = $('#price' + id).html();
+                var gs = $('#gst' + id).html();
+                var netp = $('#netprice' + id).html();
+                var tot = $('#total' + id).html();
+                var dis = $('#disc' + id).html();
+                var unit = $('#unit' + id).html();
+                var batch = $('#batch' + id).html();
+
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '@'
+
+
+            });
+
+            var subTotal = $('#subTotal').html();
+            var taxable = $('#taxable').html();
+            var totalFinal = $('#totalAfterGst').html();
+            var roundOff = $('#roundOff').html();
+            var taxableGST = $('#taxableGST').html();
+            var bill_disc = $('#billDiscount').html();
+            var otherCharges = $('#otherCharges').html();
+
+            var GrandTotal = $('#GrandTotal').html();
+            if (name === '' || pDate === '' || subTotal === '' || taxable === '' || totalFinal === '' ||
+                roundOff === '' || taxableGST === '' || bill_disc === '' || GrandTotal === '' || datas === '') {
+                $('body')
+                    .toast({
+                        class: 'orange',
+                        message: 'Customer Name, Date, Items, total are required !'
+                    })
+                ;
+            } else {
+                data = new FormData();
+                data.append('bookingID', bookingID);
+                data.append('customerID', customerID);
+                data.append('name', name);
+                data.append('gst', gst);
+                data.append('phone', phone);
+                data.append('email', email);
+                data.append('address', address);
+                data.append('state', state);
+                data.append('pType', pType);
+                data.append('payment', payment);
+                data.append('cDays', cDays);
+                data.append('invoiceNumber', invoiceNumber);
+                data.append('pDate', pDate);
+                data.append('datas', datas);
+                data.append('subTotal', subTotal);
+                data.append('taxable', taxable);
+                data.append('totalFinal', totalFinal);
+                data.append('roundOff', roundOff);
+                data.append('taxableGST', taxableGST);
+                data.append('bill_disc', bill_disc);
+                data.append('GrandTotal', GrandTotal);
+                data.append('otherCharges', otherCharges);
+                data.append('chequeDetail', chequeDetail);
+                data.append('deliveryNote', deliveryNote);
+                data.append('supplierReference', supplierReference);
+                data.append('orderNumber', orderNumber);
+                data.append('dispatchNumber', dispatchNumber);
+                data.append('dispatchThrough', dispatchThrough);
+                data.append('otherReference', otherReference);
+                data.append('dispatchNoteDate', dispatchNoteDate);
+                data.append('destination', destination);
+                data.append('company', company);
+                data.append('paid', paid);
+                data.append('dueOrReturn', dueOrReturn);
+                data.append('invoiceSeriesID', invoiceSeriesID);
+                data.append('defaultInvoiceSeries', defaultInvoiceSeries);
+                data.append('paidAgainstBill', paidAgainstBill);
+                data.append('personalDiscount', personalDiscount);
+
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/update_booking/',
+                    data: data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Booking requested updated Successfully.'
+                                });
+
+                            window.location.href = '/sales/'
+
+
+                        }
+                        else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+            }
+
+        }
+        function PrintOption() {
+
+            $('#PrintOption')
+                .modal('show')
+            ;
+
+        }
+
+        function printInvoiceA4() {
+            var ID = $('#printSaleID').val()
+            window.open('/print/?q=' + ID, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+
+        }
+        function printInvoiceA5() {
+            var ID = $('#printSaleID').val()
+            window.open('/print_invoicea5/?q=' + ID, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+
+        }
+        function printBillA4() {
+            var ID = $('#printSaleID').val()
+            window.open('/printBill/?q=' + ID, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function printBillA55() {
+            var ID = $('#printSaleID').val()
+            window.open('/print_billA5/?q=' + ID, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function printBillThermal() {
+            var ID = $('#printSaleID').val()
+            window.open('/print_bill_thermal/?q=' + ID, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+
+        }
+        function goTosale() {
+            window.location.href = "/sales/"
+
+        }
+
+         function getproductBatchList(id) {
+                $.ajax({
+                    type: 'get',
+                    url: "{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + id,
+
+                    success: function (response) {
+
+                        $('#batchList').html('');
+                            $('#batchList').append('<option value="Default">Default</option>');
+                        var j;
+                        for (j = 0; j < response.data.length; j++) {
+
+                            $('#batchList').append('<option value="' + response.data[j][10] + '" >' + response.data[j][0] + '-'+response.data[j][1]+'  ('+response.data[j][4]+' to '+response.data[j][5]+')</option>');
+
+                        }
+
+                    },
+
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                    }
+                });
+
+
+        }
+
+    </script>
+{% endblock %}

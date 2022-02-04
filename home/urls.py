@@ -207,4 +207,6 @@ urlpatterns = [
     url(r'^api/edit_product_batch_detail/$', edit_product_batch_detail, name='edit_product_batch_detail'),
     url(r'^api/delete_product_batch/$', delete_product_batch, name='delete_product_batch'),
 
+    #Edit Sales
+    url(r'^edit_sale/(?P<id>[0-9]+)/$', edit_sale, name='edit_sale'),
 ]
