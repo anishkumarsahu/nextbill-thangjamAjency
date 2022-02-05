@@ -593,25 +593,12 @@
 
 
                         <div class="ui segment" style="padding-bottom: 0">
-                            <div class="ui two column very relaxed grid" style="padding-bottom: 0;">
                                 <div class="column">
                                     <a onclick="salesSave()" style="cursor: pointer;">
                                         <i class="save icon" style="font-size: 2rem"></i>
-                                        <p>Sale Now</p>
+                                        <p>Update Sale</p>
                                     </a>
                                 </div>
-                                <div class="column">
-                                    <a onclick="saleLater()" style="cursor: pointer;">
-                                        <i class="box icon" style="font-size: 2rem"></i>
-                                        <p> Update Sale Later</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="ui vertical divider">
-                                OR
-                            </div>
-
-
                         </div>
 
 
@@ -1931,8 +1918,10 @@ $("#quantity").keyup(function () {
 
             var grandTotal = parseFloat(taxPlusGst) + parseFloat(otherCharges) - parseFloat(personalDiscount) + parseFloat(roundOfNumber.toFixed(2));
 
+           $('#paidAgainstBill').val(grandTotal.toFixed(2));
+            $('#GrandTotal').html(grandTotal.toFixed(2));
 
-            $('#GrandTotal').html(grandTotal.toFixed(2))
+
 
         }
 
@@ -2057,6 +2046,7 @@ $("#quantity").keyup(function () {
                 data.append('defaultInvoiceSeries', defaultInvoiceSeries);
                 data.append('paidAgainstBill', paidAgainstBill);
                 data.append('personalDiscount', personalDiscount);
+                data.append('SaleUpdateID', {{ sale.pk }});
 
 
                 $.ajax({
@@ -2384,165 +2374,6 @@ $("#quantity").keyup(function () {
             window.open('{% url "homeApp:hsn" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
         }
 
-
-        //post
-        function saleLater() {
-            var personalDiscount = $('#personalDiscount').html();
-            var bookingID = $('#bookingID').val();
-            var customerID = $('#customerID').val();
-            var name = $('#customerName').val();
-            var gst = $('#gst').val();
-            var phone = $('#phone').val();
-            var email = $('#email').val();
-            var address = $('#address').val();
-            var state = $('#state').val();
-            var pType = $('#pType').val();
-            var payment = $('input[name="payment"]:checked').val();
-            var cDays = $('#cDays').val();
-            var invoiceNumber = $('#invoiceNo').val();
-            var pDate = $('#date').val();
-            var chequeDetail = $('#chequeDetail').val();
-            var deliveryNote = $('#deliveryNote').val();
-            var supplierReference = $('#supplierReference').val();
-            var orderNumber = $('#orderNumber').val();
-            var dispatchNumber = $('#dispatchNumber').val();
-            var dispatchThrough = $('#dispatchThrough').val();
-            var otherReference = $('#otherReference').val();
-            var dispatchNoteDate = $('#dispatchNoteDate').val();
-            var destination = $('#destination').val();
-            var company = $('#company').val();
-            var paid = $('#paidMoney').val();
-            var dueOrReturn = $('#dueOrReturn').val();
-            var invoiceSeriesID = $('#invoiceSeriesID').val();
-            var defaultInvoiceSeries = $('#defaultInvoiceSeries').html();
-            var paidAgainstBill = $('#paidAgainstBill').val();
-
-            var datas = '';
-            $('#itemTable tbody tr').each(function () {
-                var id = $(this).closest('tr').attr('id');
-                var pro = $('#product' + id).html();
-                var cat = $('#category' + id).html();
-                var hs = $('#hsn' + id).html();
-                var qty = $('#quantity' + id).html();
-                var pri = $('#price' + id).html();
-                var gs = $('#gst' + id).html();
-                var netp = $('#netprice' + id).html();
-                var tot = $('#total' + id).html();
-                var dis = $('#disc' + id).html();
-                var unit = $('#unit' + id).html();
-                var batch = $('#batch' + id).html();
-
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '@'
-
-
-            });
-
-            var subTotal = $('#subTotal').html();
-            var taxable = $('#taxable').html();
-            var totalFinal = $('#totalAfterGst').html();
-            var roundOff = $('#roundOff').html();
-            var taxableGST = $('#taxableGST').html();
-            var bill_disc = $('#billDiscount').html();
-            var otherCharges = $('#otherCharges').html();
-
-            var GrandTotal = $('#GrandTotal').html();
-            if (name === '' || pDate === '' || subTotal === '' || taxable === '' || totalFinal === '' ||
-                roundOff === '' || taxableGST === '' || bill_disc === '' || GrandTotal === '' || datas === '') {
-                $('body')
-                    .toast({
-                        class: 'orange',
-                        message: 'Customer Name, Date, Items, total are required !'
-                    })
-                ;
-            } else {
-                data = new FormData();
-                data.append('bookingID', bookingID);
-                data.append('customerID', customerID);
-                data.append('name', name);
-                data.append('gst', gst);
-                data.append('phone', phone);
-                data.append('email', email);
-                data.append('address', address);
-                data.append('state', state);
-                data.append('pType', pType);
-                data.append('payment', payment);
-                data.append('cDays', cDays);
-                data.append('invoiceNumber', invoiceNumber);
-                data.append('pDate', pDate);
-                data.append('datas', datas);
-                data.append('subTotal', subTotal);
-                data.append('taxable', taxable);
-                data.append('totalFinal', totalFinal);
-                data.append('roundOff', roundOff);
-                data.append('taxableGST', taxableGST);
-                data.append('bill_disc', bill_disc);
-                data.append('GrandTotal', GrandTotal);
-                data.append('otherCharges', otherCharges);
-                data.append('chequeDetail', chequeDetail);
-                data.append('deliveryNote', deliveryNote);
-                data.append('supplierReference', supplierReference);
-                data.append('orderNumber', orderNumber);
-                data.append('dispatchNumber', dispatchNumber);
-                data.append('dispatchThrough', dispatchThrough);
-                data.append('otherReference', otherReference);
-                data.append('dispatchNoteDate', dispatchNoteDate);
-                data.append('destination', destination);
-                data.append('company', company);
-                data.append('paid', paid);
-                data.append('dueOrReturn', dueOrReturn);
-                data.append('invoiceSeriesID', invoiceSeriesID);
-                data.append('defaultInvoiceSeries', defaultInvoiceSeries);
-                data.append('paidAgainstBill', paidAgainstBill);
-                data.append('personalDiscount', personalDiscount);
-
-
-                $.ajax({
-                    type: 'post',
-                    url: '/api/update_booking/',
-                    data: data,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-
-
-                    success: function (response) {
-                        if (response.message === 'success') {
-                            $('body')
-                                .toast({
-                                    class: 'success',
-                                    message: 'Booking requested updated Successfully.'
-                                });
-
-                            window.location.href = '/sales/'
-
-
-                        }
-                        else {
-                            $('body')
-                                .toast({
-                                    class: 'error',
-                                    message: 'An error occurred !'
-                                })
-                            ;
-
-                        }
-
-                        return response;
-                    },
-                    error: function () {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
-                    }
-                });
-
-
-            }
-
-        }
         function PrintOption() {
 
             $('#PrintOption')
