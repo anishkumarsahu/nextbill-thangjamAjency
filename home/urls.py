@@ -209,4 +209,5 @@ urlpatterns = [
 
     #Edit Sales
     url(r'^edit_sale/(?P<id>[0-9]+)/$', edit_sale, name='edit_sale'),
+    url(r'^update_sale/$', update_sale, name='update_sale'),
 ]

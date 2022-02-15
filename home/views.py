@@ -5426,3 +5426,217 @@ def edit_sale(request, id=None):
         return render(request, 'home/EditSale.html', context)
     else:
         return redirect('homeApp:loginPage')
+
+
+@csrf_exempt
+def  update_sale(request):
+    if request.method == 'POST':
+        bookingID = request.POST.get("bookingID")
+        customerID = request.POST.get("customerID")
+        name = request.POST.get("name")
+        gst = request.POST.get("gst")
+        phone = request.POST.get("phone")
+        email = request.POST.get("email")
+        address = request.POST.get("address")
+        state = request.POST.get("state")
+        pType = request.POST.get("pType")
+        payment = request.POST.get("payment")
+        cDays = request.POST.get("cDays")
+        invoiceNumber = request.POST.get("invoiceNumber")
+        pDate = request.POST.get("pDate")
+        datas = request.POST.get("datas")
+        subTotal = request.POST.get("subTotal")
+        taxable = request.POST.get("taxable")
+        totalFinal = request.POST.get("totalFinal")
+        roundOff = request.POST.get("roundOff")
+        taxableGST = request.POST.get("taxableGST")
+        bill_disc = request.POST.get("bill_disc")
+        GrandTotal = request.POST.get("GrandTotal")
+        otherCharges = request.POST.get("otherCharges")
+        chequeDetail = request.POST.get("chequeDetail")
+        deliveryNote = request.POST.get("deliveryNote")
+        supplierReference = request.POST.get("supplierReference")
+        orderNumber = request.POST.get("orderNumber")
+        dispatchNumber = request.POST.get("dispatchNumber")
+        dispatchThrough = request.POST.get("dispatchThrough")
+        otherReference = request.POST.get("otherReference")
+        dispatchNoteDate = request.POST.get("dispatchNoteDate")
+        destination = request.POST.get("destination")
+        company = request.POST.get("company")
+        paid = request.POST.get("paid")
+        dueOrReturn = request.POST.get("dueOrReturn")
+        invoiceSeriesID = request.POST.get("invoiceSeriesID")
+        defaultInvoiceSeries = request.POST.get("defaultInvoiceSeries")
+        paidAgainstBill = request.POST.get("paidAgainstBill")
+
+        status = True
+        paidDate = datetime.today().date()
+        if payment == 'Credit':
+
+            status = False
+            paidDate = None
+        else:
+            cDays = 0
+
+        if customerID == 'NaN':
+            cus = Customer()
+            cus.name = name
+            cus.gst = gst
+            cus.phone = phone
+            cus.address = address
+            cus.state = state
+            cus.email = email
+            cus.save()
+            sale = SalesLater.objects.get(pk = int(bookingID))
+            sale.customerID_id = cus.pk
+            sale.customerName = name
+            sale.customerGst = gst
+            sale.customerEmail = email
+            sale.customerPhone = phone
+            sale.customerAddress = address
+            sale.customerState = state
+            sale.salesType = pType
+            sale.paymentType = payment
+            sale.creditDays = int(cDays)
+            sale.invoiceDate = datetime.strptime(pDate, '%d/%m/%Y')
+            if defaultInvoiceSeries != 'N/A':
+
+                sale.invoiceNumber = defaultInvoiceSeries + invoiceNumber
+                sale.invoiceSeriesID_id = int(invoiceSeriesID)
+                sale.invoiceActualNumber = int(invoiceNumber)
+            else:
+                sale.invoiceNumber = invoiceNumber
+            sale.subTotal = float(subTotal)
+            sale.taxable = float(taxable)
+            sale.totalFinal = float(totalFinal)
+            sale.billDisc = float(bill_disc)
+            sale.gst = float(taxableGST)
+            sale.roundOff = float(roundOff)
+            sale.grandTotal = float(GrandTotal)
+            sale.status = status
+            sale.paidDate = paidDate
+            sale.chequeDetail = chequeDetail
+            sale.deliveryNote = deliveryNote
+            sale.supplierReference = supplierReference
+            sale.buyersOrderNumber = orderNumber
+            sale.dispatchDocumentNumber = dispatchNumber
+            sale.dispatchThrough = dispatchThrough
+            sale.otherReference = otherReference
+            if dispatchNoteDate == '':
+                sale.dispatchNoteDate = None
+            else:
+                sale.dispatchNoteDate = datetime.strptime(dispatchNoteDate, '%d/%m/%Y')
+            sale.destination = destination
+            sale.otherCharges = float(otherCharges)
+            sale.companyID_id = int(company)
+            sale.addedBy_id = request.user.pk
+            sale.paidAmount = float(paid)
+            sale.dueOrReturnAmount = float(dueOrReturn)
+            sale.paidAgainstBill = float(paidAgainstBill)
+
+            sale.save()
+
+            splited_receive_item = datas.split("@")
+
+            old_pro = SalesLaterProduct.objects.filter(salesID_id = int(bookingID))
+            old_pro.delete()
+            for item in splited_receive_item[:-1]:
+                item_details = item.split('|')
+
+                p = SalesLaterProduct()
+                p.salesID_id = sale.pk
+                p.productID_id = int(item_details[0])
+                p.productName = item_details[1]
+                p.category = item_details[2]
+                p.hsn = item_details[3]
+                p.quantity = int(item_details[4])
+                p.rate = float(item_details[5])
+                p.gst = float(item_details[6])
+                p.netRate = float(item_details[7])
+                p.total = float(item_details[8])
+                p.disc = float(item_details[9])
+                p.unit = item_details[10]
+
+                # pro = Product.objects.get(pk=int(int(item_details[0])))
+                # ori_stock = pro.stock
+                # pro.stock = (ori_stock - int(item_details[4]))
+                # pro.save()
+                p.save()
+            return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
+        else:
+
+            sale = SalesLater.objects.get(pk=int(bookingID))
+            sale.customerID_id = int(customerID)
+            sale.customerName = name
+            sale.customerGst = gst
+            sale.customerEmail = email
+            sale.customerPhone = phone
+            sale.customerAddress = address
+            sale.customerState = state
+            sale.salesType = pType
+            sale.paymentType = payment
+            sale.creditDays = int(cDays)
+            sale.invoiceDate = datetime.strptime(pDate, '%d/%m/%Y')
+            if defaultInvoiceSeries != 'N/A':
+
+                sale.invoiceNumber = defaultInvoiceSeries + invoiceNumber
+                sale.invoiceSeriesID_id = int(invoiceSeriesID)
+                sale.invoiceActualNumber = int(invoiceNumber)
+            else:
+                sale.invoiceNumber = invoiceNumber
+            sale.subTotal = float(subTotal)
+            sale.taxable = float(taxable)
+            sale.totalFinal = float(totalFinal)
+            sale.billDisc = float(bill_disc)
+            sale.gst = float(taxableGST)
+            sale.roundOff = float(roundOff)
+            sale.grandTotal = float(GrandTotal)
+            sale.status = status
+            sale.paidDate = paidDate
+            sale.chequeDetail = chequeDetail
+            sale.deliveryNote = deliveryNote
+            sale.supplierReference = supplierReference
+            sale.buyersOrderNumber = orderNumber
+            sale.dispatchDocumentNumber = dispatchNumber
+            sale.dispatchThrough = dispatchThrough
+            sale.otherReference = otherReference
+            if dispatchNoteDate == '':
+                sale.dispatchNoteDate = None
+            else:
+                sale.dispatchNoteDate = datetime.strptime(dispatchNoteDate, '%d/%m/%Y')
+            sale.destination = destination
+            sale.otherCharges = float(otherCharges)
+            sale.companyID_id = int(company)
+            sale.addedBy_id = request.user.pk
+            sale.paidAmount = float(paid)
+            sale.dueOrReturnAmount = float(dueOrReturn)
+            sale.paidAgainstBill = float(paidAgainstBill)
+            sale.save()
+
+            splited_receive_item = datas.split("@")
+            old_pro = SalesLaterProduct.objects.filter(salesID_id=int(bookingID))
+            old_pro.delete()
+            for item in splited_receive_item[:-1]:
+                item_details = item.split('|')
+
+                p = SalesLaterProduct()
+                p.salesID_id = sale.pk
+                p.productID_id = int(item_details[0])
+                p.productName = item_details[1]
+                p.category = item_details[2]
+                p.hsn = item_details[3]
+                p.quantity = int(item_details[4])
+                p.rate = float(item_details[5])
+                p.gst = float(item_details[6])
+                p.netRate = float(item_details[7])
+                p.total = float(item_details[8])
+                p.disc = float(item_details[9])
+                p.unit = item_details[10]
+                # pro = Product.objects.get(pk=int(int(item_details[0])))
+                # ori_stock = pro.stock
+                # pro.stock = (ori_stock - int(item_details[4]))
+                # pro.save()
+
+                p.save()
+            return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
+
