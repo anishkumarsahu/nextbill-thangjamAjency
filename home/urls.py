@@ -174,6 +174,7 @@ urlpatterns = [
     url(r'^api/download_purchase_report/$', download_purchase_report, name='download_purchase_report'),
     url(r'^api/download_sales_report/$', download_sales_report, name='download_sales_report'),
     url(r'^api/download_product_sales_report/$', download_product_sales_report, name='download_product_sales_report'),
+    url(r'^api/download_return_product_sales_report/$', download_return_product_sales_report, name='download_return_product_sales_report'),
 
     #booking
     url(r'^api/add_booking/$', add_booking, name='add_booking'),
@@ -209,5 +210,5 @@ urlpatterns = [
 
     #Edit Sales
     url(r'^edit_sale/(?P<id>[0-9]+)/$', edit_sale, name='edit_sale'),
-    url(r'^update_sale/$', update_sale, name='update_sale'),
+    url(r'^api/update_sale/$', update_sale, name='update_sale'),
 ]

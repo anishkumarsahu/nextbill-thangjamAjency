@@ -5431,7 +5431,7 @@ def edit_sale(request, id=None):
 @csrf_exempt
 def  update_sale(request):
     if request.method == 'POST':
-        bookingID = request.POST.get("bookingID")
+        SaleUpdateID = request.POST.get("SaleUpdateID")
         customerID = request.POST.get("customerID")
         name = request.POST.get("name")
         gst = request.POST.get("gst")
@@ -5487,7 +5487,7 @@ def  update_sale(request):
             cus.state = state
             cus.email = email
             cus.save()
-            sale = SalesLater.objects.get(pk = int(bookingID))
+            sale = Sales.objects.get(pk = int(SaleUpdateID))
             sale.customerID_id = cus.pk
             sale.customerName = name
             sale.customerGst = gst
@@ -5499,13 +5499,13 @@ def  update_sale(request):
             sale.paymentType = payment
             sale.creditDays = int(cDays)
             sale.invoiceDate = datetime.strptime(pDate, '%d/%m/%Y')
-            if defaultInvoiceSeries != 'N/A':
-
-                sale.invoiceNumber = defaultInvoiceSeries + invoiceNumber
-                sale.invoiceSeriesID_id = int(invoiceSeriesID)
-                sale.invoiceActualNumber = int(invoiceNumber)
-            else:
-                sale.invoiceNumber = invoiceNumber
+            # if defaultInvoiceSeries != 'N/A':
+            #
+            #     sale.invoiceNumber = defaultInvoiceSeries + invoiceNumber
+            #     sale.invoiceSeriesID_id = int(invoiceSeriesID)
+            #     sale.invoiceActualNumber = int(invoiceNumber)
+            # else:
+            #     sale.invoiceNumber = invoiceNumber
             sale.subTotal = float(subTotal)
             sale.taxable = float(taxable)
             sale.totalFinal = float(totalFinal)
@@ -5536,14 +5536,28 @@ def  update_sale(request):
 
             sale.save()
 
-            splited_receive_item = datas.split("@")
 
-            old_pro = SalesLaterProduct.objects.filter(salesID_id = int(bookingID))
-            old_pro.delete()
+
+            old_pro = SalesProduct.objects.filter(salesID_id = int(SaleUpdateID))
+            # old_pro.delete()
+            for op in old_pro:
+                pro = Product.objects.get(pk=op.productID_id)
+                ori_stock = pro.stock
+                pro.stock = (ori_stock + op.quantity)
+                pro.save()
+                try:
+                    bat = ProductBatch.objects.get(pk=op.batchID.pk)
+                    ori_batch_stock = bat.quantity
+                    bat.quantity = (ori_batch_stock + op.quantity)
+                    bat.save()
+                except:
+                    pass
+                op.delete()
+            splited_receive_item = datas.split("@")
             for item in splited_receive_item[:-1]:
                 item_details = item.split('|')
 
-                p = SalesLaterProduct()
+                p = SalesProduct()
                 p.salesID_id = sale.pk
                 p.productID_id = int(item_details[0])
                 p.productName = item_details[1]
@@ -5561,11 +5575,39 @@ def  update_sale(request):
                 # ori_stock = pro.stock
                 # pro.stock = (ori_stock - int(item_details[4]))
                 # pro.save()
+
+
                 p.save()
+
+                pro = Product.objects.get(pk=int(int(item_details[0])))
+                ori_stock = pro.stock
+                pro.stock = (ori_stock - int(item_details[4]))
+                pro.save()
+                p.save()
+                if item_details[11] == 'Default':
+                    try:
+                        bat = ProductBatch.objects.filter(productID_id=int(item_details[0])).first()
+                        ori_batch_stock = bat.quantity
+                        bat.quantity = (ori_batch_stock - int(item_details[4]))
+                        bat.save()
+                        p.batchID_id = bat.pk
+                        p.save()
+                    except:
+                        pass
+                else:
+                    try:
+                        bat = ProductBatch.objects.get(productID_id=int(item_details[0]), pk=int(item_details[11]))
+                        ori_batch_stock = bat.quantity
+                        bat.quantity = (ori_batch_stock - int(item_details[4]))
+                        bat.save()
+                        p.batchID_id = bat.pk
+                        p.save()
+                    except:
+                        pass
+
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
         else:
-
-            sale = SalesLater.objects.get(pk=int(bookingID))
+            sale = Sales.objects.get(pk=int(SaleUpdateID))
             sale.customerID_id = int(customerID)
             sale.customerName = name
             sale.customerGst = gst
@@ -5577,13 +5619,13 @@ def  update_sale(request):
             sale.paymentType = payment
             sale.creditDays = int(cDays)
             sale.invoiceDate = datetime.strptime(pDate, '%d/%m/%Y')
-            if defaultInvoiceSeries != 'N/A':
-
-                sale.invoiceNumber = defaultInvoiceSeries + invoiceNumber
-                sale.invoiceSeriesID_id = int(invoiceSeriesID)
-                sale.invoiceActualNumber = int(invoiceNumber)
-            else:
-                sale.invoiceNumber = invoiceNumber
+            # if defaultInvoiceSeries != 'N/A':
+            #
+            #     sale.invoiceNumber = defaultInvoiceSeries + invoiceNumber
+            #     sale.invoiceSeriesID_id = int(invoiceSeriesID)
+            #     sale.invoiceActualNumber = int(invoiceNumber)
+            # else:
+            #     sale.invoiceNumber = invoiceNumber
             sale.subTotal = float(subTotal)
             sale.taxable = float(taxable)
             sale.totalFinal = float(totalFinal)
@@ -5613,13 +5655,26 @@ def  update_sale(request):
             sale.paidAgainstBill = float(paidAgainstBill)
             sale.save()
 
+            old_pro = SalesProduct.objects.filter(salesID_id=int(SaleUpdateID))
+            # old_pro.delete()
+            for op in old_pro:
+                pro = Product.objects.get(pk=op.productID_id)
+                ori_stock = pro.stock
+                pro.stock = (ori_stock + op.quantity)
+                pro.save()
+                try:
+                    bat = ProductBatch.objects.get(pk=op.batchID.pk)
+                    ori_batch_stock = bat.quantity
+                    bat.quantity = (ori_batch_stock + op.quantity)
+                    bat.save()
+                except:
+                    pass
+                op.delete()
             splited_receive_item = datas.split("@")
-            old_pro = SalesLaterProduct.objects.filter(salesID_id=int(bookingID))
-            old_pro.delete()
             for item in splited_receive_item[:-1]:
                 item_details = item.split('|')
 
-                p = SalesLaterProduct()
+                p = SalesProduct()
                 p.salesID_id = sale.pk
                 p.productID_id = int(item_details[0])
                 p.productName = item_details[1]
@@ -5632,11 +5687,93 @@ def  update_sale(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+
                 # pro = Product.objects.get(pk=int(int(item_details[0])))
                 # ori_stock = pro.stock
                 # pro.stock = (ori_stock - int(item_details[4]))
                 # pro.save()
 
+
                 p.save()
+
+                pro = Product.objects.get(pk=int(int(item_details[0])))
+                ori_stock = pro.stock
+                pro.stock = (ori_stock - int(item_details[4]))
+                pro.save()
+                p.save()
+                if item_details[11] == 'Default':
+                    try:
+                        bat = ProductBatch.objects.filter(productID_id=int(item_details[0])).first()
+                        ori_batch_stock = bat.quantity
+                        bat.quantity = (ori_batch_stock - int(item_details[4]))
+                        bat.save()
+                        p.batchID_id = bat.pk
+                        p.save()
+                    except:
+                        pass
+                else:
+                    try:
+                        bat = ProductBatch.objects.get(productID_id=int(item_details[0]), pk=int(item_details[11]))
+                        ori_batch_stock = bat.quantity
+                        bat.quantity = (ori_batch_stock - int(item_details[4]))
+                        bat.save()
+                        p.batchID_id = bat.pk
+                        p.save()
+                    except:
+                        pass
+
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
+
+def download_return_product_sales_report(request):
+    companyID = request.GET.get('companyID')
+    eType = request.GET.get('eType')
+    sDate = request.GET.get('startDate')
+    eDate = request.GET.get('endDate')
+    startDate = datetime.strptime(sDate, '%d/%m/%Y')
+    endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="ProductSalesReport({}--{}).xlsx"'.format(sDate, eDate)
+    workbook = xlsxwriter.Workbook(response, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+
+    ex = SalesReturnProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__gte=startDate.date(),
+                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).order_by('productID_id')
+
+    bold = workbook.add_format({'bold': True})
+    worksheet.write('A1', 'Serial No.', bold)
+    worksheet.write('B1', 'Product Name.', bold)
+    worksheet.write('C1', 'BarCode', bold)
+    worksheet.write('D1', 'Quantity', bold)
+    worksheet.write('E1', 'Unit', bold)
+    # worksheet.write('D1', 'Amount', bold)
+    # worksheet.write('E1', 'Description', bold)
+    # Start from the first cell. Rows and columns are zero indexed.
+    row = 1
+    col = 0
+    total = 0.0
+    p_list = []
+    for p in ex:
+        p_list.append(p.productID.pk)
+
+    # Iterate over the data and write it out row by row.
+    for item in tuple(set(p_list)):
+        p_name = Product.objects.get(pk = int(item))
+        p_sale_count = SalesProduct.objects.filter(productID_id=int(item),salesID__invoiceDate__gte=startDate.date(),
+                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).aggregate(Sum('quantity'))
+        worksheet.write(row, col, row)
+        worksheet.write(row, col + 1, p_name.name)
+        worksheet.write(row, col + 2,p_name.barcode)
+        worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
+        worksheet.write(row, col + 4, p_name.unitID.name)
+        row += 1
+        # total = total + item.amount
+
+    # Write a total using a formula.
+    # worksheet.write(row, 2, 'Total', bold)
+    # worksheet.write(row, 3, total)
+
+    workbook.close()
+    # response.write(workbook)
+    return response
 

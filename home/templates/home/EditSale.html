@@ -2047,11 +2047,11 @@ $("#quantity").keyup(function () {
                 data.append('paidAgainstBill', paidAgainstBill);
                 data.append('personalDiscount', personalDiscount);
                 data.append('SaleUpdateID', {{ sale.pk }});
-
+debugger;
 
                 $.ajax({
                     type: 'post',
-                    url: '/api/add_sales_from_booking/',
+                    url: '/api/update_sale/',
                     data: data,
                     contentType: false,
                     cache: false,
