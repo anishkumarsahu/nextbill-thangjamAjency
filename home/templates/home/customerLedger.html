@@ -1,7 +1,9 @@
 {% extends 'home/index.html' %}
 {% load static %}
 {% block title %}
-    <title>Customer Ledger</title>
+    <title>Customer Ledger -
+        <br>  (₹) Total =  {{ total }} , (₹) Paid =  {{ paid }},  (₹) Due =  {{ due }}
+    </title>
 {% endblock %}
 
 {% block css %}

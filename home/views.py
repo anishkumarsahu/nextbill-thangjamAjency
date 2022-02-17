@@ -5733,12 +5733,12 @@ def download_return_product_sales_report(request):
     endDate = datetime.strptime(eDate, '%d/%m/%Y')
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="ProductSalesReport({}--{}).xlsx"'.format(sDate, eDate)
+    response['Content-Disposition'] = 'attachment; filename="ProductReturnReport({}--{}).xlsx"'.format(sDate, eDate)
     workbook = xlsxwriter.Workbook(response, {'in_memory': True})
     worksheet = workbook.add_worksheet()
 
-    ex = SalesReturnProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__gte=startDate.date(),
-                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).order_by('productID_id')
+    ex = SalesReturnProduct.objects.filter(isDeleted__exact=False, datetime__gte=startDate.date(),
+                                           datetime__lte=endDate.date() + timedelta(days=1), quantity__gt=0).order_by('productID_id')
 
     bold = workbook.add_format({'bold': True})
     worksheet.write('A1', 'Serial No.', bold)
@@ -5754,13 +5754,13 @@ def download_return_product_sales_report(request):
     total = 0.0
     p_list = []
     for p in ex:
-        p_list.append(p.productID.pk)
-
+        p_list.append(p.productID.productID_id)
+    print(p_list)
     # Iterate over the data and write it out row by row.
     for item in tuple(set(p_list)):
         p_name = Product.objects.get(pk = int(item))
-        p_sale_count = SalesProduct.objects.filter(productID_id=int(item),salesID__invoiceDate__gte=startDate.date(),
-                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).aggregate(Sum('quantity'))
+        p_sale_count = SalesReturnProduct.objects.filter(productID__productID_id=int(item),datetime__gte=startDate.date(),
+                                                         datetime__lte=endDate.date() + timedelta(days=1)).aggregate(Sum('quantity'))
         worksheet.write(row, col, row)
         worksheet.write(row, col + 1, p_name.name)
         worksheet.write(row, col + 2,p_name.barcode)

@@ -13,6 +13,7 @@
         <a class="item" data-tab="third">Sales Report</a>
         <a class="item" data-tab="fourth">Expense Report</a>
         <a class="item" data-tab="fifth">Product Sales Report</a>
+        <a class="item" data-tab="sixth">Product Return Report</a>
     </div>
     <div class="ui tab active" data-tab="first">
         <div class="row" style="padding-left: 50px; padding-right: 50px">
@@ -326,6 +327,70 @@
         </div>
 
     </div>
+
+      <div class="ui tab" data-tab="sixth">
+        <div class="row" style="padding-left: 50px; padding-right: 50px">
+            <div class="ui placeholder segment">
+                <div class="ui icon header">
+                   <i class="undo icon"></i>
+                    Product Return Report .
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui center aligned segment">
+                    <div class="ui tiny form">
+
+                        <div class="six fields">
+                            <div class="field"></div>
+                            <div class="field">
+                                <label>Company</label>
+                                <select class="dropdown" id="EcompanyProductReturn">
+                                    {% for foo in company %}
+                                        <option value="{{ foo.pk }}">{{ foo.name }}</option>
+                                    {% endfor %}
+
+
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Type</label>
+                                <select class="dropdown" id="productTypeReturn">
+
+                                    <option value="Normal" selected>Normal</option>
+
+                                    {% if  request.user|has_group:"Admin" %}
+                                        <option value="Jet">Jet</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Start Date</label>
+                                <div class="ui calendar" id="rangestartEProductReturn">
+                                    <div class="ui input left icon">
+                                        <i class="calendar icon"></i>
+                                        <input type="text" placeholder="Start" id="EstartProductReturn">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>End Date</label>
+                                <div class="ui calendar" id="rangeendEProductReturn">
+                                    <div class="ui input left icon">
+                                        <i class="calendar icon"></i>
+                                        <input type="text" placeholder="End" id="EendProductReturn">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <a onclick="getProductReturnReport()" class="ui primary button">Generate Now</a>
+            </div>
+
+        </div>
+
+    </div>
 {% endblock %}
 
 
@@ -485,6 +550,37 @@
             }
         });
 
+     $('#rangestartEProductReturn').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            endCalendar: $('#rangeendEProductReturn'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+        $('#rangeendEProductReturn').calendar({
+            initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+            monthFirst: false,
+            type: 'date',
+            startCalendar: $('#rangestartEProductReturn'),
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+
 
 
         function getExpenseReport() {
@@ -526,6 +622,16 @@
             var Eend = $('#EendProduct').val();
 
             window.location.href= "{% url 'homeApp:download_product_sales_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
+
+        }
+
+        function getProductReturnReport() {
+            var Ecompany = $('#EcompanyProductReturn').val();
+            var EType = $('#productTypeReturn').val();
+            var Estart = $('#EstartProductReturn').val();
+            var Eend = $('#EendProductReturn').val();
+
+            window.location.href= "{% url 'homeApp:download_return_product_sales_report' %}?companyID=" + Ecompany + '&eType=' + EType+ '&startDate=' + Estart+ '&endDate=' + Eend
 
         }
     </script>
