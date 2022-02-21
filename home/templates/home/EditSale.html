@@ -112,7 +112,7 @@
                             <i class="map marker alternate icon"></i>
                             <label>Address</label>
                                 </span>
-                            <textarea class="cwide" rows="1" id="address"
+                            <textarea class="cwide" rows="1" id="address" placeholder="Address"
                                       style="padding-bottom: 0.4rem;padding-top: 0.3rem"></textarea>
                         </div>
                         <div class="field inline">
@@ -324,6 +324,7 @@
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
 
                 <div class="eleven wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0">
+                             <form class="ui mini form" action=""  autocomplete="off">
                     <div class="ui mini form">
                         <div class="seven fields">
                             <div class="field" style="width: 15%">
@@ -333,7 +334,7 @@
                                 <div class="ui productList search">
                                     <div class="ui icon input">
                                         <input type="text" class="prompt" id="productName" name="productName"
-                                               placeholder="Product Name" onfocus="proSearch()">
+                                               placeholder="Product Name" onfocus="proSearch()"  autocomplete="off">
                                         <i class="shopping bag icon"></i>
                                         <input type="hidden" id="itemID">
 
@@ -442,6 +443,7 @@
                         </div>
 
                     </div>
+                             </form>
                 </div>
 
                 <div class="five wide column">
@@ -2047,7 +2049,6 @@ $("#quantity").keyup(function () {
                 data.append('paidAgainstBill', paidAgainstBill);
                 data.append('personalDiscount', personalDiscount);
                 data.append('SaleUpdateID', {{ sale.pk }});
-debugger;
 
                 $.ajax({
                     type: 'post',

@@ -54,7 +54,7 @@
 
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
                 <div class="four wide column">
-                    <form class="ui mini form" id="formtest">
+                    <form class="ui mini form" id="formtest"  autocomplete="off">
                         <div class="field inline">
                             <span style="float: left">
                             <i class="user icon"></i>
@@ -104,13 +104,13 @@
                 </div>
 
                 <div class="four wide column">
-                    <form class="ui tiny form" id="formtest2">
+                    <form class="ui mini form" id="formtest2">
                         <div class="field inline">
                             <span style="float: left">
                             <i class="map marker alternate icon"></i>
                             <label>Address</label>
                                 </span>
-                            <textarea class="cwide" rows="1" id="address"
+                            <textarea class="cwide" rows="1" id="address" placeholder="Address"
                                       style="padding-bottom: 0.4rem;padding-top: 0.3rem"></textarea>
                         </div>
                         <div class="field inline">
@@ -270,7 +270,7 @@
                             <i class="calendar alternate icon"></i>
                             <label>Date</label>
                             </span>
-                                        <input style="width: 70%" type="text" name="gst" placeholder="Date"
+                                        <input style="width: 65%" type="text" name="gst" placeholder="Date"
                                                autocomplete="off"
                                                id="date">
                                     </div>
@@ -319,6 +319,7 @@
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
 
                 <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0;padding-right:0">
+                    <form class="ui mini form" action=""  autocomplete="off">
                     <div class="ui mini form">
                         <div class="seven fields">
                             <div class="field" style="width: 15%">
@@ -327,7 +328,7 @@
                                                                                   style="cursor:pointer"></i></label>
                                 <div class="ui productList search">
                                     <div class="ui icon input">
-                                        <input type="text" class="prompt" id="productName" name="productName"
+                                        <input type="text" class="prompt" id="productName" name="productName" autocomplete="off"
                                                placeholder="Product Name" onfocus="proSearch()">
                                         <i class="shopping bag icon"></i>
                                         <input type="hidden" id="itemID">
@@ -413,8 +414,8 @@
                                 <input placeholder="Bill Disc%" type="text" id="bill_disc">
                             </div>{% endcomment %}
 
-                            <div class="field" style="    padding-top: 1.3rem;">
-                                <div class="ui buttons">
+                            <div class="field" style="    padding-top: 1.8rem;">
+                                <div class="ui mini buttons">
                                     <button class="ui positive button" id="addItemBtn" type="button"
                                             onclick="addSubItems()"><i class="plus icon"></i>Add
                                     </button>
@@ -434,6 +435,7 @@
                             </div>
                         </div>
                     </div>
+                        </form>
                 </div>
 
                 <div class="four wide column" style="padding-left: 2px">
