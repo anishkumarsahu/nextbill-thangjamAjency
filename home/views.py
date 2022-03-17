@@ -2007,13 +2007,13 @@ class SalesListByProductJson(BaseDatatableView):
         if 'Admin' in self.request.user.groups.values_list('name', flat=True):
             return SalesProduct.objects.filter(salesID__isDeleted__exact=False,
                                                salesID__invoiceDate__gte=startDate.date(),
-                                               salesID__invoiceDate__lte=endDate.date() + timedelta(days=1))
+                                               salesID__invoiceDate__lte=endDate.date())
         else:
             user = CompanyUser.objects.get(user_ID=self.request.user.pk)
             return SalesProduct.objects.filter(salesID__isDeleted__exact=False,
                                                salesID__companyID_id=user.company_ID_id,
                                                salesID__invoiceDate__gte=startDate.date(),
-                                               salesID__invoiceDate__lte=endDate.date() + timedelta(days=1))
+                                               salesID__invoiceDate__lte=endDate.date())
 
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
@@ -2091,13 +2091,11 @@ class SalesListJson(BaseDatatableView):
         endDate = datetime.strptime(eDate, '%d/%m/%Y')
 
         if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-            return Sales.objects.filter(isDeleted__exact=False, invoiceDate__gte=startDate.date(),
-                                        invoiceDate__lte=endDate.date() + timedelta(days=1))
+            return Sales.objects.filter(isDeleted__exact=False, invoiceDate__range=(startDate.date(), endDate.date()))
         else:
             user = CompanyUser.objects.get(user_ID=self.request.user.pk)
             return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                        invoiceDate__gte=startDate.date(),
-                                        invoiceDate__lte=endDate.date() + timedelta(days=1))
+                                        invoiceDate__range=(startDate.date(), endDate.date()))
 
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)

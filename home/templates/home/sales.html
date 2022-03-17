@@ -374,12 +374,12 @@
                             </div>
                         </div>
 
-                        <div class="8 fields">
-                            <div class="field">
+                        <div class="9 fields">
+                            <div class="field" style="width: 13%">
                                 <label style="text-align: center">Bar Code</label>
                                 <input placeholder="Bar Code" type="text" id="barCode">
                             </div>
-                            <div class="field">
+                            <div class="field" style="width: 13%">
                                 <label style="text-align: center">Category <i onclick="openCategory()"
                                                                               class="plus green icon"
                                                                               style="cursor:pointer"></i></label>
@@ -402,17 +402,25 @@
                             </div>
                             <div class="field" style="width:10%;">
                                 <label style="text-align: center">MRP(₹)</label>
-                                <input placeholder="MRP" type="number" id="mrp" readonly
-                                       style="background-color: lightgray;">
+                                <input placeholder="MRP" type="number" id="mrp"
+                                       style="background-color: #673ab7;color: white">
                             </div>
                             <div class="field" style="width:8%;">
                                 <label style="text-align: center">Item Dics%</label>
                                 <input placeholder="Item Disc%" type="number" id="disc" value="0">
                             </div>
-                            {% comment %} <div class="field">
-                                <label style="text-align: center">Bill Disc%</label>
-                                <input placeholder="Bill Disc%" type="text" id="bill_disc">
-                            </div>{% endcomment %}
+                          <div class="field">
+                        <label style="text-align: center">Margin</label>
+                        <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
+                                    <option value="1.00">1.00</option>
+                                    <option value="1.10">1.10</option>
+                                    <option value="1.15">1.15</option>
+                                    <option value="1.18">1.18</option>
+                                    <option value="1.20">1.20</option>
+                                    <option value="1.25">1.25</option>
+
+                                </select>
+                      </div>
 
                             <div class="field" style="    padding-top: 1.8rem;">
                                 <div class="ui mini buttons">
@@ -1547,6 +1555,13 @@
 
 
         });
+
+        function useMargin() {
+            var mar = $('#marginList').val();
+            console.log(mar);
+
+        }
+
 
         function returnCalc() {
             var GrandTotal = $('#GrandTotal').html();
