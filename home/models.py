@@ -382,6 +382,7 @@ class SalesProduct(models.Model):
     lastUpdatedOn = models.DateTimeField(auto_now_add=False, auto_now=True)
     isDeleted = models.BooleanField(default=False)
     batchID = models.ForeignKey(ProductBatch, blank=True, null=True)
+    margin = models.FloatField(default=1.0)
 
     def __str__(self):
         return self.productName
@@ -482,6 +483,7 @@ class SalesLaterProduct(models.Model):
     lastUpdatedOn = models.DateTimeField(auto_now_add=False, auto_now=True)
     isDeleted = models.BooleanField(default=False)
     batchID = models.ForeignKey(ProductBatch, blank=True, null=True)
+    margin = models.FloatField(default=1.0)
 
     def __str__(self):
         return self.productName

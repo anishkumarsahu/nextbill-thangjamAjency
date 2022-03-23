@@ -319,7 +319,7 @@
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
 
                 <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0;padding-right:0">
-                    <form class="ui mini form" action=""  autocomplete="off">
+                    <form class="ui mini form" action=""  autocomplete="off" id="addProductForm">
                     <div class="ui mini form">
                         <div class="seven fields">
                             <div class="field" style="width: 15%">
@@ -412,7 +412,7 @@
                           <div class="field">
                         <label style="text-align: center">Margin</label>
                         <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
-                                    <option value="1.00">1.00</option>
+                                    <option value="1.00" selected>1.00</option>
                                     <option value="1.10">1.10</option>
                                     <option value="1.15">1.15</option>
                                     <option value="1.18">1.18</option>
@@ -507,6 +507,7 @@
                             <th>Item Disc %</th>
                             <th>Net Rate(₹)</th>
                             <th>Total(₹)</th>
+                            <th>Margin</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -1160,6 +1161,7 @@
 
             if (pType === 'Jet') {
                 $('#productForm').trigger('reset');
+                $('#productForm').trigger('reset');
                 proSearch();
 
                 $('#invoiceNo').val('N/A').attr('readonly', true).css('background-color', 'lightgray');
@@ -1326,7 +1328,7 @@
                 },
                 minCharacters: 1,
                 onSelect: function (result) {
-                    ClearData();
+                     ClearData();
                     $('#itemID').val(result.ID);
                     getProductLSP();
                     getProductDetailByName();
@@ -1363,6 +1365,7 @@
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
                         getproductBatchList(response.data['ID']);
+                                 useMargin();
                     }
                     else {
                         $('#itemID').val(response.data['ID']);
@@ -1379,6 +1382,7 @@
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
                         getproductBatchList(response.data['ID']);
+                                 useMargin();
 
                     }
 
@@ -1444,6 +1448,7 @@
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
                      getproductBatchList(response.data['ID']);
+                              useMargin();
                     }
                     else {
                         $('#itemID').val(response.data['ID']);
@@ -1460,6 +1465,7 @@
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
                         getproductBatchList(response.data['ID']);
+                                 useMargin();
                     }
 
                 },
@@ -1559,6 +1565,23 @@
         function useMargin() {
             var mar = $('#marginList').val();
             console.log(mar);
+            var mrp = $('#mrp').val();
+
+            var net = mrp/mar;
+
+            $('#netPrice').val(parseFloat(net).toFixed(2));
+
+                     var q = $('#quantity').val();
+            var gst = $('#GST').val();
+            var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
+
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+            $('#total').val(totalPriceCal.toFixed(2));
+
+
 
         }
 
@@ -1636,6 +1659,7 @@
             var stock = $('#stock').val();
             var mrp = $('#mrp').val();
             var batch = $('#batchList').val();
+            var margin = $('#marginList').val();
             if (productName === '' || Quantity === '' || Price === '' ||
                 Total === '' || category === '') {
                 $('body')
@@ -1647,7 +1671,7 @@
             }
             else {
                 $('#' + itemID).remove();
-                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td id ="margin' + itemID + '" >' + margin + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
                 ClearData();
                 calTaxAndTotal();
                 returnCalc();
@@ -1672,6 +1696,7 @@
             var netprice = $('#netprice' + id).html();
             var total = $('#total' + id).html();
             var batch = $('#batch' + id).html();
+            var margin = $('#margin' + id).html();
             $('#productName').val(product);
             $('#quantity').val(quantity);
             $('#unit').val(unit);
@@ -1682,13 +1707,10 @@
             $('#category').val(category);
             $('#hsn').val(hsn);
             $('#disc').val(disc);
+
             $('#itemID').val(id);
             var pType = $('#pType').val();
 
-
-{#            $('#batchList option[value="1"]').attr('selected', true);#}
-
-{#           $('#batchList').dropdown('set selected',''+batch+'');#}
             $.ajax({
                 type: 'get',
                 url: '/api/GetProductDetailByName/?q=' + id + '&pType=' + pType,
@@ -1713,6 +1735,7 @@
 
             setTimeout(function(){
                 $('#batchList').val(batch).change();
+                  $('#marginList').val(margin).change();
             },500);
         }
 
@@ -1733,6 +1756,7 @@
             var mrp = $('#mrp').val();
             var disc = $('#disc').val();
             var batch = $('#batchList').val();
+            var margin = $('#marginList').val();
             if (productName === '' || Quantity === '' || Price === '' ||
                 Total === '' || category === '') {
                 $('body')
@@ -1754,6 +1778,7 @@
                 $('#total' + id).html(Total);
                 $('#disc' + id).html(disc);
                 $('#batch' + id).html(batch);
+                $('#margin' + id).html(margin);
 
                 ClearData();
                 calTaxAndTotal();
@@ -1777,6 +1802,7 @@
 
         }
         function ClearData() {
+            $('#addProductForm')[0].reset();
 
             $('#addItemBtn').css('display', '');
             $('#updateItemBtn').css('display', 'none');
@@ -1797,6 +1823,7 @@
             $('#itemID').val('');
             $('#lsp').html('');
             $('#batchList').html('<option value="Default">Default</option>');
+             $('#marginList').val('1.00').change();
         }
 
         function calTaxAndTotal() {
@@ -1994,6 +2021,8 @@
                                     class: 'success',
                                     message: 'New Sales created Successfully.'
                                 });
+
+                            location.reload();
 
                             $('#itemTable tbody tr').remove();
                             $('#formtest').trigger('reset');
