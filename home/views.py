@@ -1852,6 +1852,7 @@ def add_sales(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
 
                 pro = Product.objects.get(pk=int(int(item_details[0])))
                 ori_stock = pro.stock
@@ -1963,6 +1964,7 @@ def add_sales(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
                 pro = Product.objects.get(pk=int(int(item_details[0])))
                 ori_stock = pro.stock
                 pro.stock = (ori_stock - int(item_details[4]))
@@ -4093,6 +4095,7 @@ def add_booking(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
                 p.save()
                 if item_details[11] == 'Default':
                     try:
@@ -4179,6 +4182,7 @@ def add_booking(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
                 if item_details[11] == 'Default':
                     try:
                         bat = ProductBatch.objects.filter(productID_id=int(item_details[0])).first()
@@ -4465,6 +4469,7 @@ def  update_booking(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
 
                 # pro = Product.objects.get(pk=int(int(item_details[0])))
                 # ori_stock = pro.stock
@@ -4541,6 +4546,7 @@ def  update_booking(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
                 # pro = Product.objects.get(pk=int(int(item_details[0])))
                 # ori_stock = pro.stock
                 # pro.stock = (ori_stock - int(item_details[4]))
@@ -4690,6 +4696,7 @@ def add_sales_from_booking(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
 
                 pro = Product.objects.get(pk=int(int(item_details[0])))
                 ori_stock = pro.stock
@@ -4781,6 +4788,7 @@ def add_sales_from_booking(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
                 pro = Product.objects.get(pk=int(int(item_details[0])))
                 ori_stock = pro.stock
                 pro.stock = (ori_stock - int(item_details[4]))

@@ -1940,8 +1940,9 @@
                 var dis = $('#disc' + id).html();
                 var unit = $('#unit' + id).html();
                 var batch = $('#batch' + id).html();
+                var margin = $('#margin' + id).html();
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch + '@'
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch+'|' + margin + '@'
 
 
             });
@@ -2384,8 +2385,9 @@
                 var dis = $('#disc' + id).html();
                 var unit = $('#unit' + id).html();
                 var batch = $('#batch' + id).html();
+                var margin = $('#margin' + id).html();
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '@'
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch+ '|' + margin + '@'
 
 
             });
@@ -2464,7 +2466,7 @@
                                     class: 'success',
                                     message: 'New Booking created Successfully.'
                                 });
-
+                            location.reload();
                             $('#itemTable tbody tr').remove();
                             $('#formtest').trigger('reset');
                             $('#formtest2').trigger('reset');
