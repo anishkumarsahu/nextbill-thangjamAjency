@@ -324,7 +324,7 @@
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
 
                 <div class="eleven wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0">
-                             <form class="ui mini form" action=""  autocomplete="off">
+                <form class="ui mini form" action=""  autocomplete="off" id="addProductForm">
                     <div class="ui mini form">
                         <div class="seven fields">
                             <div class="field" style="width: 15%">
@@ -381,12 +381,12 @@
                         </div>
 
 
-                        <div class="8 fields">
-                            <div class="field">
+                        <div class="9 fields">
+                            <div class="field"  style="width: 13%">
                                 <label style="text-align: center">Bar Code</label>
                                 <input placeholder="Bar Code" type="text" id="barCode">
                             </div>
-                            <div class="field">
+                            <div class="field"  style="width: 13%">
                                 <label style="text-align: center">Category <i onclick="openCategory()"
                                                                               class="plus green icon"
                                                                               style="cursor:pointer"></i></label>
@@ -407,15 +407,27 @@
                                 <input placeholder="Stock" type="number" id="stock" readonly
                                        style="background-color: lightgray;">
                             </div>
-                            <div class="field" style="width:10%;">
+                                <div class="field" style="width:10%;">
                                 <label style="text-align: center">MRP(₹)</label>
-                                <input placeholder="MRP" type="number" id="mrp" readonly
-                                       style="background-color: lightgray;">
+                                <input placeholder="MRP" type="number" id="mrp"
+                                       style="background-color: #673ab7;color: white">
                             </div>
                             <div class="field" style="width:8%;">
                                 <label style="text-align: center">Item Dics%</label>
                                 <input placeholder="Item Disc%" type="number" id="disc" value="0">
                             </div>
+                                    <div class="field">
+                        <label style="text-align: center">Margin</label>
+                        <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
+                                    <option value="1.00" selected>1.00</option>
+                                    <option value="1.10">1.10</option>
+                                    <option value="1.15">1.15</option>
+                                    <option value="1.18">1.18</option>
+                                    <option value="1.20">1.20</option>
+                                    <option value="1.25">1.25</option>
+
+                                </select>
+                      </div>
                             {% comment %} <div class="field">
                                 <label style="text-align: center">Bill Disc%</label>
                                 <input placeholder="Bill Disc%" type="text" id="bill_disc">
@@ -510,6 +522,7 @@
                             <th>Item Disc %</th>
                             <th>Net Rate(₹)</th>
                             <th>Total(₹)</th>
+                            <th>Margin</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -527,11 +540,12 @@
                                 <td id="disc{{ product.productID_id }}">{{ product.disc }}</td>
                                 <td id="netprice{{ product.productID_id }}">{{ product.netRate }}</td>
                                 <td id="total{{ product.productID_id }}">{{ product.total }}</td>
+                                <td id="margin{{ product.productID_id }}">{{ product.margin }}</td>
                                 {% if product.batchID %}
                                     <td style="display:none;"
                                         id="batch{{ product.productID_id }}">{{ product.batchID.pk }}</td>
                                 {% else %}
-                                    <td style="display:none;" id="batch{{ product.productID_id }}">Default}</td>
+                                    <td style="display:none;" id="batch{{ product.productID_id }}">Default</td>
                                 {% endif %}
                                 <td>
                                     <button style="font-size:10px;"
@@ -1436,7 +1450,8 @@
                         $('#netPrice').val(response.data['Sp']);
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
-
+                           getproductBatchList(response.data['ID']);
+                                                         useMargin();
                     }
                     else {
                         $('#itemID').val(response.data['ID']);
@@ -1453,6 +1468,7 @@
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
                         getproductBatchList(response.data['ID']);
+                         useMargin();
 
                     }
 
@@ -1519,7 +1535,7 @@
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
                         getproductBatchList(response.data['ID']);
-
+                         useMargin();
                     }
                     else {
                         $('#itemID').val(response.data['ID']);
@@ -1536,6 +1552,7 @@
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
                        getproductBatchList(response.data['ID']);
+                        useMargin();
                     }
 
                 },
@@ -1631,6 +1648,28 @@ $("#quantity").keyup(function () {
 
         });
 
+               function useMargin() {
+            var mar = $('#marginList').val();
+            console.log(mar);
+            var mrp = $('#mrp').val();
+
+            var net = mrp/mar;
+
+            $('#netPrice').val(parseFloat(net).toFixed(2));
+
+                     var q = $('#quantity').val();
+            var gst = $('#GST').val();
+            var disc = $('#disc').val();
+            var net = $('#netPrice').val();
+            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            $('#Price').val(sp.toFixed(2));
+
+            var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
+            $('#total').val(totalPriceCal.toFixed(2));
+
+
+
+        }
         function returnCalc() {
             var GrandTotal = $('#GrandTotal').html();
             var paidMoney = $('#paidMoney').val();
@@ -1705,7 +1744,7 @@ $("#quantity").keyup(function () {
             var stock = $('#stock').val();
             var mrp = $('#mrp').val();
             var batch = $('#batchList').val();
-
+     var margin = $('#marginList').val();
             if (productName === '' || Quantity === '' || Price === '' ||
                 Total === '' || category === '') {
                 $('body')
@@ -1717,7 +1756,7 @@ $("#quantity").keyup(function () {
             }
             else {
                 $('#' + itemID).remove();
-                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td id ="margin' + itemID + '" >' + margin + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
                 ClearData();
                 calTaxAndTotal();
                 returnCalc();
@@ -1742,6 +1781,7 @@ $("#quantity").keyup(function () {
             var netprice = $('#netprice' + id).html();
             var total = $('#total' + id).html();
                         var batch = $('#batch' + id).html();
+                          var margin = $('#margin' + id).html();
 
             $('#productName').val(product);
             $('#quantity').val(quantity);
@@ -1778,6 +1818,8 @@ $("#quantity").keyup(function () {
             });
              setTimeout(function(){
                 $('#batchList').val(batch).change();
+                 $('#marginList').val(margin).change();
+
             },500);
         }
 
@@ -1798,6 +1840,8 @@ $("#quantity").keyup(function () {
             var mrp = $('#mrp').val();
             var disc = $('#disc').val();
                         var batch = $('#batchList').val();
+                                    var margin = $('#marginList').val();
+
 
             if (productName === '' || Quantity === '' || Price === '' ||
                 Total === '' || category === '') {
@@ -1820,6 +1864,7 @@ $("#quantity").keyup(function () {
                 $('#total' + id).html(Total);
                 $('#disc' + id).html(disc);
                 $('#batch' + id).html(batch);
+                    $('#margin' + id).html(margin);
 
                 ClearData();
                 calTaxAndTotal();
@@ -1843,7 +1888,7 @@ $("#quantity").keyup(function () {
 
         }
         function ClearData() {
-
+            $('#addProductForm')[0].reset();
             $('#addItemBtn').css('display', '');
             $('#updateItemBtn').css('display', 'none');
 
@@ -1863,6 +1908,7 @@ $("#quantity").keyup(function () {
             $('#itemID').val('');
             $('#lsp').html('');
             $('#batchList').html('<option value="Default">Default</option>');
+             $('#marginList').val('1.00').change();
 
         }
 
@@ -1983,8 +2029,9 @@ $("#quantity").keyup(function () {
                 var dis = $('#disc' + id).html();
                 var unit = $('#unit' + id).html();
                 var batch = $('#batch' + id).html();
+                var margin = $('#margin' + id).html();
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch + '@'
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch +'|' + margin + '@'
 
 
             });
@@ -2064,8 +2111,10 @@ $("#quantity").keyup(function () {
                             $('body')
                                 .toast({
                                     class: 'success',
-                                    message: 'New Sales created Successfully.'
+                                    message: 'New Sales Updated Successfully.'
                                 });
+
+                             location.reload();
                             $('#itemTable tbody tr').remove();
                             $('#formtest').trigger('reset');
                             $('#formtest2').trigger('reset');

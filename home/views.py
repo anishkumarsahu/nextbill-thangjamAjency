@@ -5576,6 +5576,7 @@ def  update_sale(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
 
                 # pro = Product.objects.get(pk=int(int(item_details[0])))
                 # ori_stock = pro.stock
@@ -5678,6 +5679,7 @@ def  update_sale(request):
                 op.delete()
             splited_receive_item = datas.split("@")
             for item in splited_receive_item[:-1]:
+
                 item_details = item.split('|')
 
                 p = SalesProduct()
@@ -5693,6 +5695,7 @@ def  update_sale(request):
                 p.total = float(item_details[8])
                 p.disc = float(item_details[9])
                 p.unit = item_details[10]
+                p.margin = float(item_details[12])
 
                 # pro = Product.objects.get(pk=int(int(item_details[0])))
                 # ori_stock = pro.stock
@@ -5761,7 +5764,6 @@ def download_return_product_sales_report(request):
     p_list = []
     for p in ex:
         p_list.append(p.productID.productID_id)
-    print(p_list)
     # Iterate over the data and write it out row by row.
     for item in tuple(set(p_list)):
         p_name = Product.objects.get(pk = int(item))
