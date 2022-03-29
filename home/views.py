@@ -201,6 +201,7 @@ def index(request):
 def sales(request):
     if request.user.is_authenticated:
         # if request.groups.filter(name='Staff').is_authenticated:
+        last_sale = Sales.objects.last()
 
         if 'Admin' in request.user.groups.values_list('name', flat=True):
             company = CompanyProfile.objects.filter(isDeleted__exact=False)
@@ -210,6 +211,7 @@ def sales(request):
 
         context = {
             'company': company,
+            'lastSale':last_sale.pk
         }
 
         return render(request, 'home/sales.html', context)

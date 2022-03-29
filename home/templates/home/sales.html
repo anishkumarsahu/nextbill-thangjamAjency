@@ -413,10 +413,10 @@
                         <label style="text-align: center">Margin</label>
                         <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
                                     <option value="1.00" selected>1.00</option>
-                                    <option value="1.10">1.10</option>
+                                    <option value="1.1">1.10</option>
                                     <option value="1.15">1.15</option>
                                     <option value="1.18">1.18</option>
-                                    <option value="1.20">1.20</option>
+                                    <option value="1.2">1.20</option>
                                     <option value="1.25">1.25</option>
 
                                 </select>
@@ -578,6 +578,10 @@
                             </div>
                         </div>
                     </div>
+                    <button class="ui mini telegram button" onclick="PrintOption()">
+                      <i class="print icon"></i>
+                      Print Previous Sale
+                    </button>
                 </div>
             </div>
 
@@ -1043,7 +1047,7 @@
         <i class="close icon"></i>
         <div class="header">
             Select Printing Option
-            <input type="hidden" id="printSaleID">
+            <input type="hidden" id="printSaleID" value="{{ lastSale }}">
         </div>
         <div class="image content">
             <div class="description">
@@ -2065,7 +2069,7 @@
                             changeProductType();
 
 
-                            PrintOption();
+{#                            PrintOption();#}
                             $('#printSaleID').val(response.saleID)
 
                         }

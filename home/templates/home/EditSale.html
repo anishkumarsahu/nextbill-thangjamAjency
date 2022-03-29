@@ -420,10 +420,10 @@
                         <label style="text-align: center">Margin</label>
                         <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
                                     <option value="1.00" selected>1.00</option>
-                                    <option value="1.10">1.10</option>
+                                    <option value="1.1">1.10</option>
                                     <option value="1.15">1.15</option>
                                     <option value="1.18">1.18</option>
-                                    <option value="1.20">1.20</option>
+                                    <option value="1.2">1.20</option>
                                     <option value="1.25">1.25</option>
 
                                 </select>
@@ -592,7 +592,7 @@
 
                                 <div class="field" style="background: lightgrey;">
                                     <label>Paid</label>
-                                    <input placeholder="Paid" type="number" id="paidMoney" value="0">
+                                    <input placeholder="Paid" type="number" id="paidMoney" value="{{ sale.paidAmount }}">
                                 </div>
                                 <div class="field" style="background: lightgrey;">
                                     <label id="returnLabel">Due/Return</label>
@@ -1190,7 +1190,8 @@
         var today = new Date();
         $('#standard_calendar')
             .calendar({
-                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+{#                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),#}
+                    initialDate: {{ sale.invoiceDate|date:'d' }} + '/' + {{ sale.invoiceDate|date:'m' }} + '/' + {{ sale.invoiceDate|date:'Y' }},
                     monthFirst: false,
                     type: 'date',
                     formatter: {
@@ -1200,7 +1201,8 @@
                             var day = String(date.getDate());
                             var month = String(date.getMonth() + 1);
                             var year = date.getFullYear();
-                            return '{{ sale.invoiceDate|date:'d/m/Y' }}';
+{#                            return '{{ sale.invoiceDate|date:'d/m/Y' }}';#}
+                            return day + '/' + month + '/' + year;
                         }
                     }
                 }
