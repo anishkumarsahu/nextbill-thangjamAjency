@@ -2646,6 +2646,7 @@ def take_sale_payment(request):
         Amount = request.POST.get("Amount")
         sale = Sales.objects.get(pk=int(id))
         sale.paidAgainstBill = (sale.paidAgainstBill + float(Amount))
+        sale.paidAmount = (sale.paidAmount + float(Amount))
         sale.save()
         pay = PaymentHistory()
         pay.salesID_id = int(id)
