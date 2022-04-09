@@ -1,4 +1,5 @@
 from django.core import management
+from django.db import transaction
 from django.db.models import Q, Sum, F
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
@@ -26,9 +27,10 @@ def has_group(user, group_name):
 
 
 @register.simple_tag()
-def multiply(qty, price, dis ,*args, ** kwargs):
-    t = round(price - price * (dis / 100.0),2)
-    return round(qty * t,2)
+def multiply(qty, price, dis, *args, **kwargs):
+    t = round(price - price * (dis / 100.0), 2)
+    return round(qty * t, 2)
+
 
 # ----------------- html Views--------------------------
 # ----------------- html Views--------------------------
@@ -37,46 +39,43 @@ def print_invoice(request, *args, **kwargs):
 
     sale = Sales.objects.get(pk=int(query))
     saleProductMain = SalesProduct.objects.filter(salesID=int(query))
-    saleProduct =[]
+    saleProduct = []
     for a in saleProductMain:
-        n_rate = (a.netRate / (1 + (a.gst/100)))
-        t_gst = (n_rate * (a.gst/100.0))* a.quantity
-        cA = round(t_gst/2, 2)
-        sA = round(t_gst/2, 2)
+        n_rate = (a.netRate / (1 + (a.gst / 100)))
+        t_gst = (n_rate * (a.gst / 100.0)) * a.quantity
+        cA = round(t_gst / 2, 2)
+        sA = round(t_gst / 2, 2)
         tA = round((a.total + cA + sA), 2)
-        prod_dic ={
-            'hsn':a.hsn,
-            'name':a.productName,
-            'quantity':str(a.quantity) +' '+ a.unit ,
-            'rate':a.rate,
+        prod_dic = {
+            'hsn': a.hsn,
+            'name': a.productName,
+            'quantity': str(a.quantity) + ' ' + a.unit,
+            'rate': a.rate,
             'disc': a.disc,
-            'tax':a.gst,
-            'taxableAmount':round(a.total,2),
-            'cgst':a.gst/2,
-            'cgstAmount':cA,
-            'sgst':a.gst/2,
-            'sgstAmount':sA,
-            'total':tA
+            'tax': a.gst,
+            'taxableAmount': round(a.total, 2),
+            'cgst': a.gst / 2,
+            'cgstAmount': cA,
+            'sgst': a.gst / 2,
+            'sgstAmount': sA,
+            'total': tA
 
         }
         saleProduct.append(prod_dic)
-
-
-
 
     context = {
         'query': query,
         'sale': sale,
         'saleProduct': saleProduct,
         'left': 12 - saleProductMain.count(),
-        'loo': str().zfill(10 - saleProductMain.count()-1),
-        'IGST': round(sale.gst / 2,2),
-        'CGST': round(sale.gst / 2,2),
+        'loo': str().zfill(10 - saleProductMain.count() - 1),
+        'IGST': round(sale.gst / 2, 2),
+        'CGST': round(sale.gst / 2, 2),
         'TotalInWords': num2words(int(sale.grandTotal))
-
 
     }
     return render(request, 'home/invoice.html', context)
+
 
 def print_invoicea5(request, *args, **kwargs):
     query = request.GET.get('q')
@@ -85,10 +84,10 @@ def print_invoicea5(request, *args, **kwargs):
     saleProductMain = SalesProduct.objects.filter(salesID=int(query))
     saleProduct = []
     for a in saleProductMain:
-        n_rate = (a.netRate / (1 + (a.gst/100)))
-        t_gst = (n_rate * (a.gst/100.0))* a.quantity
-        cA = round(t_gst/2, 2)
-        sA = round(t_gst/2, 2)
+        n_rate = (a.netRate / (1 + (a.gst / 100)))
+        t_gst = (n_rate * (a.gst / 100.0)) * a.quantity
+        cA = round(t_gst / 2, 2)
+        sA = round(t_gst / 2, 2)
         tA = round((a.total + cA + sA), 2)
         prod_dic = {
             'hsn': a.hsn,
@@ -119,7 +118,6 @@ def print_invoicea5(request, *args, **kwargs):
 
     }
     return render(request, 'home/Printinvoicea5.html', context)
-
 
 
 def print_bill(request, *args, **kwargs):
@@ -153,14 +151,14 @@ def print_billA5(request, *args, **kwargs):
         'sale': sale,
         'saleProduct': saleProduct,
         'left': 11 - saleProduct.count(),
-        'loo': str().zfill(11 - saleProduct.count()-1),
-        'IGST': round(sale.gst / 2,2),
-        'CGST': round(sale.gst / 2,2),
+        'loo': str().zfill(11 - saleProduct.count() - 1),
+        'IGST': round(sale.gst / 2, 2),
+        'CGST': round(sale.gst / 2, 2),
         'TotalInWords': num2words(int(sale.grandTotal))
-
 
     }
     return render(request, 'home/billPrintA5.html', context)
+
 
 def print_bill_thermal(request, *args, **kwargs):
     query = request.GET.get('q')
@@ -211,7 +209,7 @@ def sales(request):
 
         context = {
             'company': company,
-            'lastSale':last_sale.pk
+            'lastSale': last_sale.pk
         }
 
         return render(request, 'home/sales.html', context)
@@ -276,6 +274,7 @@ def returnReport(request):
 def bookingList(request):
     return render(request, 'home/bookingList.html')
 
+
 @is_activated()
 def purchaseReport(request):
     return render(request, 'home/purchaseReport.html')
@@ -285,9 +284,11 @@ def purchaseReport(request):
 def contact(request):
     return render(request, 'home/contact.html')
 
+
 @is_activated()
 def referrer(request):
     return render(request, 'home/referrer.html')
+
 
 @is_activated()
 def generalSetting(request):
@@ -490,11 +491,13 @@ def supplier_ledger(request, id=None):
 @is_activated()
 def referrer_ledger(request, id=None):
     instance = get_object_or_404(Referrer, pk=id)
-    ref = ReferrerTransaction.objects.filter(referrerID_id=instance.pk, isDeleted__exact=False, transactionType__icontains='Credit')
+    ref = ReferrerTransaction.objects.filter(referrerID_id=instance.pk, isDeleted__exact=False,
+                                             transactionType__icontains='Credit')
     total = 0.0
     for s in ref:
         total = total + s.amount
-    refD = ReferrerTransaction.objects.filter(referrerID_id=instance.pk, isDeleted__exact=False, transactionType__icontains='Debit')
+    refD = ReferrerTransaction.objects.filter(referrerID_id=instance.pk, isDeleted__exact=False,
+                                              transactionType__icontains='Debit')
     total_j = 0.0
     for s_j in refD:
         total_j = total_j + s_j.amount
@@ -509,7 +512,7 @@ def referrer_ledger(request, id=None):
 
 # --------------------api-------------------------------
 
-
+@transaction.atomic
 def post_customer(request):
     if request.method == 'POST':
         cname = request.POST.get("cname")
@@ -599,6 +602,7 @@ def get_customer_detail_by_name(request):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_customer(request):
     if request.method == 'POST':
         idC = request.POST.get("idC")
@@ -621,6 +625,7 @@ def edit_customer(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def delete_customer(request):
     if request.method == 'POST':
         idC = request.POST.get("userID")
@@ -631,6 +636,7 @@ def delete_customer(request):
         return JsonResponse({'message': 'success'}, safe=False)
 
 
+@transaction.atomic
 def post_supplier(request):
     if request.method == 'POST':
         sname = request.POST.get("sname")
@@ -713,6 +719,7 @@ def get_supplier_detail_by_name(request):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_supplier(request):
     if request.method == 'POST':
         idC = request.POST.get("idC")
@@ -735,6 +742,7 @@ def edit_supplier(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def delete_supplier(request):
     if request.method == 'POST':
         idC = request.POST.get("userID")
@@ -746,6 +754,7 @@ def delete_supplier(request):
 
 
 # hsn
+@transaction.atomic
 @csrf_exempt
 def post_hsn(request):
     if request.method == 'POST':
@@ -819,7 +828,7 @@ def delete_hsn(request):
 
 
 # category
-
+@transaction.atomic
 def post_category(request):
     if request.method == 'POST':
         hsn = request.POST.get("hsn")
@@ -889,6 +898,7 @@ def get_category_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_category(request):
     if request.method == 'POST':
         categoryID = request.POST.get("categoryID")
@@ -929,7 +939,7 @@ def delete_category(request):
 
 
 # product
-
+@transaction.atomic
 def post_product(request):
     if request.method == 'POST':
         pType = request.POST.get("pType")
@@ -1027,7 +1037,7 @@ def get_product_detail_by_name(request):
             'ActualUnit': instance.unitID.name,
             'Sp': instance.spWithoutGst,
             'Net': instance.spWithGst,
-            'BarCode':instance.barcode
+            'BarCode': instance.barcode
 
         }
     except:
@@ -1048,7 +1058,6 @@ def get_product_detail_by_name(request):
         }
 
     return JsonResponse({'data': data}, safe=False)
-
 
 
 def get_product_detail_by_barcode(request):
@@ -1074,7 +1083,7 @@ def get_product_detail_by_barcode(request):
             'ActualUnit': instance.unitID.name,
             'Sp': instance.spWithoutGst,
             'Net': instance.spWithGst,
-            'BarCode':instance.barcode
+            'BarCode': instance.barcode
 
         }
     except:
@@ -1095,8 +1104,6 @@ def get_product_detail_by_barcode(request):
         }
 
     return JsonResponse({'data': data}, safe=False)
-
-
 
 
 def get_product_detail(request, id=None):
@@ -1153,6 +1160,7 @@ def get_product_detail(request, id=None):
         return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_product(request):
     if request.method == 'POST':
         pID = request.POST.get("pID")
@@ -1609,7 +1617,7 @@ class CompanyListJson(BaseDatatableView):
 
 class UserListJson(BaseDatatableView):
     order_columns = ['name', 'username', 'userPassword', 'phone', 'address', 'city',
-                     'zip', 'state', 'email', 'company_ID','target'
+                     'zip', 'state', 'email', 'company_ID', 'target'
                      ]
 
     def get_initial_queryset(self):
@@ -1624,7 +1632,7 @@ class UserListJson(BaseDatatableView):
                 Q(username__icontains=search) | Q(userPassword__icontains=search) | Q(name__icontains=search) | Q(
                     phone__icontains=search)
                 | Q(address__icontains=search) | Q(city__icontains=search)
-                | Q(zip__icontains=search) | Q(state__icontains=search)| Q(target__icontains=search)
+                | Q(zip__icontains=search) | Q(state__icontains=search) | Q(target__icontains=search)
                 | Q(email__icontains=search) | Q(company_ID__name__icontains=search)
             ).order_by('-id')
 
@@ -1711,7 +1719,7 @@ class WareHouseListJson(BaseDatatableView):
 
 
 
-
+@transaction.atomic
 @csrf_exempt
 def add_sales(request):
     if request.method == 'POST':
@@ -1762,8 +1770,6 @@ def add_sales(request):
             paidDate = None
         else:
             cDays = 0
-
-
 
         if customerID == 'NaN':
             cus = Customer()
@@ -1833,9 +1839,8 @@ def add_sales(request):
                 com.referrerID_id = int(referrerID)
                 com.remark = "For a sale with amount Rs. {} and bill no. {}".format(str(subTotal), str(sale.pk))
                 com.save()
-                referral.balance = round(referral.balance + com.amount,2)
+                referral.balance = round(referral.balance + com.amount, 2)
                 referral.save()
-
 
             splited_receive_item = datas.split("@")
             for item in splited_receive_item[:-1]:
@@ -1881,8 +1886,6 @@ def add_sales(request):
                         p.save()
                     except:
                         pass
-
-
 
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
         else:
@@ -1946,7 +1949,7 @@ def add_sales(request):
                 com.referrerID_id = int(referrerID)
                 com.remark = "For a sale with amount Rs. {} and bill no. {}".format(str(subTotal), str(sale.pk))
                 com.save()
-                referral.balance = round(referral.balance + com.amount,2)
+                referral.balance = round(referral.balance + com.amount, 2)
                 referral.save()
 
             splited_receive_item = datas.split("@")
@@ -1986,7 +1989,7 @@ def add_sales(request):
                         pass
                 else:
                     try:
-                        bat = ProductBatch.objects.get(productID_id=int(item_details[0]), pk = int(item_details[11]))
+                        bat = ProductBatch.objects.get(productID_id=int(item_details[0]), pk=int(item_details[11]))
                         ori_batch_stock = bat.quantity
                         bat.quantity = (ori_batch_stock - int(item_details[4]))
                         bat.save()
@@ -2181,7 +2184,7 @@ class SalesListJson(BaseDatatableView):
 
 class ReturnListJson(BaseDatatableView):
     order_columns = ['salesID.customerName', 'salesID.customerGst', 'salesID.invoiceDate', 'salesID.id',
-                     'salesID.invoiceNumber', 'totalAmount',  'salesID.companyID','datetime', ]
+                     'salesID.invoiceNumber', 'totalAmount', 'salesID.companyID', 'datetime', ]
 
     def get_initial_queryset(self):
         sDate = self.request.GET.get('startDate')
@@ -2191,18 +2194,19 @@ class ReturnListJson(BaseDatatableView):
 
         if 'Admin' in self.request.user.groups.values_list('name', flat=True):
             return SalesReturn.objects.filter(isDeleted__exact=False, datetime__gte=startDate.date(),
-                                        datetime__lte=endDate.date() + timedelta(days=1))
+                                              datetime__lte=endDate.date() + timedelta(days=1))
         else:
             user = CompanyUser.objects.get(user_ID=self.request.user.pk)
             return SalesReturn.objects.filter(isDeleted__exact=False, salesID__companyID_id=user.company_ID_id,
-                                        datetime__gte=startDate.date(),
-                                        datetime__lte=endDate.date() + timedelta(days=1))
+                                              datetime__gte=startDate.date(),
+                                              datetime__lte=endDate.date() + timedelta(days=1))
 
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
         if search:
             qs = qs.filter(
-                Q(salesID__customerName__icontains=search) | Q(salesID__customerGst__icontains=search) | Q(salesID__id__icontains=search)
+                Q(salesID__customerName__icontains=search) | Q(salesID__customerGst__icontains=search) | Q(
+                    salesID__id__icontains=search)
                 | Q(salesID__invoiceDate__icontains=search) | Q(salesID__invoiceNumber__icontains=search)
                 | Q(totalAmount__icontains=search) | Q(salesID__companyID__name__icontains=search)
             ).order_by('-id')
@@ -2266,7 +2270,6 @@ class ReturnListJson(BaseDatatableView):
                 # < / button >
             ])
         return json_data
-
 
 
 class SalesListByCustomerJson(BaseDatatableView):
@@ -2460,7 +2463,8 @@ def get_sales_detail_by_invoice_number(request):
                 'ItemGst': i.gst,
                 'ItemDisc': i.disc,
                 'ItemnetRate': i.netRate,
-                'ItemRateAfterDiscount': round((i.total / i.quantity),2) + round((round((i.total / i.quantity),2) * i.gst/100.0),2),
+                'ItemRateAfterDiscount': round((i.total / i.quantity), 2) + round(
+                    (round((i.total / i.quantity), 2) * i.gst / 100.0), 2),
 
             }
             item_list.append(item_dic)
@@ -2470,10 +2474,9 @@ def get_sales_detail_by_invoice_number(request):
             'Items': item_list
 
         }
-        return JsonResponse({'data': data, 'message':'success'}, safe=False)
+        return JsonResponse({'data': data, 'message': 'success'}, safe=False)
     except:
-        return JsonResponse({'message':'error'}, safe=False)
-
+        return JsonResponse({'message': 'error'}, safe=False)
 
 
 def get_sales_detail_for_invoice(request, id=None):
@@ -2598,7 +2601,7 @@ def get_return_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
-
+@transaction.atomic
 @csrf_exempt
 def delete_sales(request):
     if request.method == 'POST':
@@ -2615,6 +2618,7 @@ def delete_sales(request):
         return JsonResponse({'message': 'success'}, safe=False)
 
 
+@transaction.atomic
 @csrf_exempt
 def delete_return(request):
     if request.method == 'POST':
@@ -2639,6 +2643,7 @@ def delete_return(request):
         return JsonResponse({'message': 'success'}, safe=False)
 
 
+@transaction.atomic
 @csrf_exempt
 def take_sale_payment(request):
     if request.method == 'POST':
@@ -2654,9 +2659,10 @@ def take_sale_payment(request):
         pay.addedBy_id = request.user.pk
         pay.save()
 
-
         return JsonResponse({'message': 'success'}, safe=False)
 
+
+@transaction.atomic
 def post_company(request):
     if request.method == 'POST':
         companyName = request.POST.get("companyName")
@@ -2701,6 +2707,7 @@ def post_company(request):
         return JsonResponse({'message': 'success'}, safe=False)
 
 
+@transaction.atomic
 @csrf_exempt
 def delete_company(request):
     if request.method == 'POST':
@@ -2716,7 +2723,7 @@ def delete_company(request):
 
 
 # For EDit
-
+@transaction.atomic
 def Edit_company(request):
     if request.method == 'POST':
         ID = request.POST.get("companyID")
@@ -2778,7 +2785,7 @@ def get_company_list(request):
 
 
 # For User
-
+@transaction.atomic
 def post_User(request):
     if request.method == 'POST':
         CompanyUserName = request.POST.get("CompanyUserName")
@@ -2838,6 +2845,7 @@ def post_User(request):
             return JsonResponse({'message': 'success'}, safe=False)
 
 
+@transaction.atomic
 @csrf_exempt
 def delete_user(request):
     if request.method == 'POST':
@@ -2872,6 +2880,7 @@ def get_User_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def Edit_user(request):
     if request.method == 'POST':
         ID = request.POST.get("UserID")
@@ -2926,6 +2935,7 @@ def user_logout(request):
 
 
 # For WareHouse
+@transaction.atomic
 def add_warehouse(request):
     if request.method == 'POST':
         WareHouseName = request.POST.get("WareHouseName")
@@ -2964,6 +2974,7 @@ def get_warehouse_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_warehouse(request):
     if request.method == 'POST':
         WareID = request.POST.get("WareID")
@@ -2981,6 +2992,7 @@ def edit_warehouse(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def delete_wareHouse(request):
     if request.method == 'POST':
         # try:
@@ -3030,6 +3042,7 @@ class UnitsListJson(BaseDatatableView):
         return json_data
 
 
+@transaction.atomic
 def add_unit(request):
     if request.method == 'POST':
         unitName = request.POST.get("unitName")
@@ -3063,6 +3076,7 @@ def get_unit_detail(request, id=None):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_unit(request):
     if request.method == 'POST':
         uniID = request.POST.get("uniID")
@@ -3078,6 +3092,7 @@ def edit_unit(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def delete_unit(request):
     if request.method == 'POST':
         # try:
@@ -3092,6 +3107,7 @@ def delete_unit(request):
 # purchase
 
 @csrf_exempt
+@transaction.atomic
 def add_purchase(request):
     if request.method == 'POST':
         supplierID = request.POST.get("supplierID")
@@ -3484,6 +3500,7 @@ def get_purchase_detail(request, id=None):
 
 
 @csrf_exempt
+@transaction.atomic
 def delete_purchase(request):
     if request.method == 'POST':
         id = request.POST.get("ID")
@@ -3499,7 +3516,7 @@ def delete_purchase(request):
 
 
 # expense
-
+@transaction.atomic
 def add_expense(request):
     if request.method == 'POST':
         description = request.POST.get("description")
@@ -3518,8 +3535,9 @@ def add_expense(request):
 
         return JsonResponse({'message': 'success'}, safe=False)
 
+
 class ExpenseListJson(BaseDatatableView):
-    order_columns = ['expenseType', 'description', 'amount', 'companyID', 'expenseDate', 'datetime','action']
+    order_columns = ['expenseType', 'description', 'amount', 'companyID', 'expenseDate', 'datetime', 'action']
 
     def get_initial_queryset(self):
         sDate = self.request.GET.get('startDate')
@@ -3562,7 +3580,9 @@ class ExpenseListJson(BaseDatatableView):
             ])
         return json_data
 
+
 @csrf_exempt
+@transaction.atomic
 def delete_expense(request):
     if request.method == 'POST':
         idC = request.POST.get("ID")
@@ -3570,6 +3590,8 @@ def delete_expense(request):
         cus.delete()
         return JsonResponse({'message': 'success'}, safe=False)
 
+
+@transaction.atomic
 def change_password(request):
     if request.method == 'POST':
 
@@ -3617,7 +3639,7 @@ def change_user_printer_setting(request):
 
 
 # invoice
-
+@transaction.atomic
 def add_invoice(request):
     if request.method == 'POST':
         invoiceSeries = request.POST.get("invoiceSeries")
@@ -3658,7 +3680,8 @@ class InvoiceListJson(BaseDatatableView):
             qs = qs.filter(
                 Q(invoiceSeries__icontains=search) | Q(invoiceMaxCount__icontains=search) | Q(
                     invoiceStartWith__icontains=search)
-                | Q(invoiceType__icontains=search) | Q(datetime__icontains=search) | Q(companyID__name__icontains=search)
+                | Q(invoiceType__icontains=search) | Q(datetime__icontains=search) | Q(
+                    companyID__name__icontains=search)
             )
 
         return qs
@@ -3681,7 +3704,7 @@ def get_invoice_series_by_company(request):
     companyID = request.GET.get('companyID')
     invoice = request.GET.get('invoiceType')
     inv = Invoice.objects.filter(isDeleted__exact=False, companyID_id=int(companyID),
-                                 isCompleted__exact=False,invoiceType__exact = invoice).order_by('-id')
+                                 isCompleted__exact=False, invoiceType__exact=invoice).order_by('-id')
     inv_list = []
     for i in inv:
         inv_dic = {
@@ -3972,6 +3995,7 @@ def download_sales_report(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def add_booking(request):
     if request.method == 'POST':
         personalDiscount = request.POST.get("personalDiscount")
@@ -4219,12 +4243,12 @@ class BookingListJson(BaseDatatableView):
 
         if 'Admin' in self.request.user.groups.values_list('name', flat=True):
             return SalesLater.objects.filter(isDeleted__exact=False, invoiceDate__gte=startDate.date(),
-                                        invoiceDate__lte=endDate.date() + timedelta(days=1))
+                                             invoiceDate__lte=endDate.date() + timedelta(days=1))
         else:
             user = CompanyUser.objects.get(user_ID=self.request.user.pk)
             return SalesLater.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                        invoiceDate__gte=startDate.date(),
-                                        invoiceDate__lte=endDate.date() + timedelta(days=1))
+                                             invoiceDate__gte=startDate.date(),
+                                             invoiceDate__lte=endDate.date() + timedelta(days=1))
 
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
@@ -4303,7 +4327,9 @@ class BookingListJson(BaseDatatableView):
             ])
         return json_data
 
+
 @csrf_exempt
+@transaction.atomic
 def delete_booking(request):
     if request.method == 'POST':
         id = request.POST.get("ID")
@@ -4322,8 +4348,7 @@ def delete_booking(request):
 def BookingSale(request, id=None):
     if request.user.is_authenticated:
         instance = get_object_or_404(SalesLater, pk=id)
-        pro = SalesLaterProduct.objects.filter(salesID_id = instance.pk)
-
+        pro = SalesLaterProduct.objects.filter(salesID_id=instance.pk)
 
         # if request.groups.filter(name='Staff').is_authenticated:
 
@@ -4345,7 +4370,8 @@ def BookingSale(request, id=None):
 
 
 @csrf_exempt
-def  update_booking(request):
+@transaction.atomic
+def update_booking(request):
     if request.method == 'POST':
         bookingID = request.POST.get("bookingID")
         customerID = request.POST.get("customerID")
@@ -4403,7 +4429,7 @@ def  update_booking(request):
             cus.state = state
             cus.email = email
             cus.save()
-            sale = SalesLater.objects.get(pk = int(bookingID))
+            sale = SalesLater.objects.get(pk=int(bookingID))
             sale.customerID_id = cus.pk
             sale.customerName = name
             sale.customerGst = gst
@@ -4454,7 +4480,7 @@ def  update_booking(request):
 
             splited_receive_item = datas.split("@")
 
-            old_pro = SalesLaterProduct.objects.filter(salesID_id = int(bookingID))
+            old_pro = SalesLaterProduct.objects.filter(salesID_id=int(bookingID))
             old_pro.delete()
             for item in splited_receive_item[:-1]:
                 item_details = item.split('|')
@@ -4560,6 +4586,7 @@ def  update_booking(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def add_sales_from_booking(request):
     if request.method == 'POST':
         personalDiscount = request.POST.get("personalDiscount")
@@ -4679,7 +4706,7 @@ def add_sales_from_booking(request):
                 com.referrerID_id = int(referrerID)
                 com.remark = "For a sale with amount Rs. {} and bill no. {}".format(str(subTotal), str(sale.pk))
                 com.save()
-                referral.balance = round(referral.balance + com.amount,2)
+                referral.balance = round(referral.balance + com.amount, 2)
                 referral.save()
 
             splited_receive_item = datas.split("@")
@@ -4706,7 +4733,7 @@ def add_sales_from_booking(request):
                 pro.stock = (ori_stock - int(item_details[4]))
                 pro.save()
                 p.save()
-            book = SalesLater.objects.get(pk = int(bookingID))
+            book = SalesLater.objects.get(pk=int(bookingID))
             book.isDeleted = True
             book.save()
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
@@ -4771,7 +4798,7 @@ def add_sales_from_booking(request):
                 com.referrerID_id = int(referrerID)
                 com.remark = "For a sale with amount Rs. {} and bill no. {}".format(str(subTotal), str(sale.pk))
                 com.save()
-                referral.balance = round(referral.balance + com.amount,2)
+                referral.balance = round(referral.balance + com.amount, 2)
                 referral.save()
 
             splited_receive_item = datas.split("@")
@@ -4803,10 +4830,11 @@ def add_sales_from_booking(request):
             book.save()
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
 
+
 # referrer
 
 class ReferrerListJson(BaseDatatableView):
-    order_columns = ['name', 'balance','commission', 'phone', ]
+    order_columns = ['name', 'balance', 'commission', 'phone', ]
 
     def get_initial_queryset(self):
 
@@ -4856,6 +4884,7 @@ class ReferrerListJson(BaseDatatableView):
         return json_data
 
 
+@transaction.atomic
 def post_referrer(request):
     if request.method == 'POST':
         cname = request.POST.get("cname")
@@ -4879,7 +4908,7 @@ def post_referrer(request):
 def get_referrer_list(request):
     data = []
     q = request.GET.get('q')
-    for cus in Referrer.objects.filter(Q(name__icontains=q) | Q(phone__icontains=q) ,
+    for cus in Referrer.objects.filter(Q(name__icontains=q) | Q(phone__icontains=q),
                                        isDeleted__exact=False).order_by('name'):
         data_dic = {
             'ID': cus.pk,
@@ -4936,6 +4965,7 @@ def get_referrer_detail_by_name(request):
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_referrer(request):
     if request.method == 'POST':
         idC = request.POST.get("idC")
@@ -4951,7 +4981,7 @@ def edit_referrer(request):
         cus.email = cemail
         cus.address = caddress
         cus.balance = float(bal)
-        cus.commission  = float(com)
+        cus.commission = float(com)
         cus.phone = cphone
         cus.save()
         return JsonResponse({'message': 'success'}, safe=False)
@@ -4969,6 +4999,7 @@ def delete_referrer(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def take_referrer_payment(request):
     if request.method == 'POST':
         id = request.POST.get("ID")
@@ -4979,7 +5010,7 @@ def take_referrer_payment(request):
         ref = Referrer.objects.get(pk=int(id))
         if tType == 'Credit':
             ref.balance = (ref.balance + float(Amount))
-        if tType =='Debit':
+        if tType == 'Debit':
             ref.balance = (ref.balance - float(Amount))
 
         ref.save()
@@ -4996,7 +5027,7 @@ def take_referrer_payment(request):
 
 class TransactionListByReferrerJson(BaseDatatableView):
     order_columns = ['id', 'transactionDate', 'amount',
-                     'transactionType', 'remark', 'datetime' ]
+                     'transactionType', 'remark', 'datetime']
 
     def get_initial_queryset(self):
         if 'Admin' in self.request.user.groups.values_list('name', flat=True):
@@ -5052,9 +5083,10 @@ class TransactionListByReferrerJson(BaseDatatableView):
             i = i + 1
         return json_data
 
+
 def error_404(request, exception):
-        data = {}
-        return render(request, 'home/error/404.html', data)
+    data = {}
+    return render(request, 'home/error/404.html', data)
 
 
 def error_500(request, exception):
@@ -5063,12 +5095,12 @@ def error_500(request, exception):
 
 
 def daily_report(request):
-    mode = ['Cash','Card','Credit','Cheque']
+    mode = ['Cash', 'Card', 'Credit', 'Cheque']
     cash_sale_total = 0.0
     card_sale_total = 0.0
     credit_sale_total = 0.0
     cheque_sale_total = 0.0
-    sales_user =CompanyUser.objects.all().order_by('name')
+    sales_user = CompanyUser.objects.all().order_by('name')
     expense = Expense.objects.filter(expenseDate__exact=datetime.today().date())
     total_expense = 0.0
     for e in expense:
@@ -5078,14 +5110,15 @@ def daily_report(request):
     total_return = 0.0
     for e in return_s:
         total_return += e.totalAmount
-    user_data =[]
+    user_data = []
     for user in sales_user:
         cash_sale_user = 0.0
         card_sale_user = 0.0
         credit_sale_user = 0.0
         cheque_sale_user = 0.0
         for c in mode:
-            today_sales = Sales.objects.filter(paymentType__iexact=c,addedBy_id=user.user_ID_id, invoiceDate__exact=datetime.today().date())
+            today_sales = Sales.objects.filter(paymentType__iexact=c, addedBy_id=user.user_ID_id,
+                                               invoiceDate__exact=datetime.today().date())
             for s in today_sales:
                 if c == 'Cash':
                     cash_sale_user += s.grandTotal
@@ -5100,25 +5133,24 @@ def daily_report(request):
                     cheque_sale_user += s.grandTotal
                     cheque_sale_total += s.grandTotal
 
-
         data = {
-            'name':user.name,
+            'name': user.name,
             'target': user.target,
-            'cash':cash_sale_user,
-            'card':card_sale_user,
-            'credit':credit_sale_user,
-            'cheque':cheque_sale_user,
-            'total':cash_sale_user+card_sale_user+credit_sale_user+cheque_sale_user
+            'cash': cash_sale_user,
+            'card': card_sale_user,
+            'credit': credit_sale_user,
+            'cheque': cheque_sale_user,
+            'total': cash_sale_user + card_sale_user + credit_sale_user + cheque_sale_user
         }
         user_data.append(data)
-
 
     cash_sale_user = 0.0
     card_sale_user = 0.0
     credit_sale_user = 0.0
     cheque_sale_user = 0.0
     for c in mode:
-        today_sales = Sales.objects.filter(paymentType__iexact=c,addedBy__username='Admin', invoiceDate__exact=datetime.today().date())
+        today_sales = Sales.objects.filter(paymentType__iexact=c, addedBy__username='Admin',
+                                           invoiceDate__exact=datetime.today().date())
         for s in today_sales:
             if c == 'Cash':
                 cash_sale_user += s.grandTotal
@@ -5143,22 +5175,22 @@ def daily_report(request):
     }
 
     context = {
-        'date':datetime.today().date(),
-        'admin_data':admin_data,
-        'users':user_data,
-        'cash_sale_total':cash_sale_total,
-        'card_sale_total':card_sale_total,
-        'credit_sale_total':credit_sale_total,
-        'cheque_sale_total':cheque_sale_total,
-        'sale_total':cash_sale_total+card_sale_total+credit_sale_total+cheque_sale_total,
-        'total_expense':total_expense,
+        'date': datetime.today().date(),
+        'admin_data': admin_data,
+        'users': user_data,
+        'cash_sale_total': cash_sale_total,
+        'card_sale_total': card_sale_total,
+        'credit_sale_total': credit_sale_total,
+        'cheque_sale_total': cheque_sale_total,
+        'sale_total': cash_sale_total + card_sale_total + credit_sale_total + cheque_sale_total,
+        'total_expense': total_expense,
         'total_return': total_return,
         'total_total_expense': total_return + total_expense,
         'cash_in_hand': cash_sale_total - (total_expense + total_return)
     }
 
+    return render(request, 'home/dailyReport.html', context)
 
-    return render(request, 'home/dailyReport.html',context)
 
 # Product Batch
 
@@ -5170,7 +5202,7 @@ class ProductBatchListJson(BaseDatatableView):
     def get_initial_queryset(self):
         batchProductID = self.request.GET.get('batchProductID')
         if batchProductID != '':
-            return ProductBatch.objects.filter(isDeleted__exact=False,productID_id=int(batchProductID))
+            return ProductBatch.objects.filter(isDeleted__exact=False, productID_id=int(batchProductID))
         else:
             return ProductBatch.objects.filter(isDeleted__exact=True)
 
@@ -5218,6 +5250,7 @@ class ProductBatchListJson(BaseDatatableView):
         return json_data
 
 
+@transaction.atomic
 def post_product_batch_detail(request):
     if request.method == 'POST':
         try:
@@ -5231,7 +5264,7 @@ def post_product_batch_detail(request):
             locationBatch = request.POST.get("locationBatch")
             additionBatch = request.POST.get("additionBatch")
 
-            p = Product.objects.get(pk = int(batchProductID))
+            p = Product.objects.get(pk=int(batchProductID))
             b = ProductBatch()
             b.productID_id = int(batchProductID)
             b.batchNumber = batchNumber
@@ -5265,11 +5298,11 @@ def get_product_batch_detail(request, id=None):
         'Location': instance.location,
         'AdditionalDetail': instance.additionalDetail,
 
-
     }
     return JsonResponse({'data': data}, safe=False)
 
 
+@transaction.atomic
 def edit_product_batch_detail(request):
     if request.method == 'POST':
         try:
@@ -5284,7 +5317,7 @@ def edit_product_batch_detail(request):
             locationBatch = request.POST.get("locationBatch")
             additionBatch = request.POST.get("additionBatch")
 
-            p = Product.objects.get(pk = int(batchProductID))
+            p = Product.objects.get(pk=int(batchProductID))
             b = ProductBatch.objects.get(pk=int(batchID))
             p.stock = p.stock - float(b.quantity) + float(batchQuantity)
             b.productID_id = int(batchProductID)
@@ -5305,6 +5338,7 @@ def edit_product_batch_detail(request):
 
 
 @csrf_exempt
+@transaction.atomic
 def delete_product_batch(request):
     if request.method == 'POST':
         idC = request.POST.get("ID")
@@ -5316,7 +5350,6 @@ def delete_product_batch(request):
         p.save()
         b.save()
         return JsonResponse({'message': 'success'}, safe=False)
-
 
 
 def download_product_sales_report(request):
@@ -5333,7 +5366,8 @@ def download_product_sales_report(request):
     worksheet = workbook.add_worksheet()
 
     ex = SalesProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__gte=startDate.date(),
-                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).order_by('productID_id')
+                                     salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).order_by(
+        'productID_id')
 
     bold = workbook.add_format({'bold': True})
     worksheet.write('A1', 'Serial No.', bold)
@@ -5353,12 +5387,13 @@ def download_product_sales_report(request):
 
     # Iterate over the data and write it out row by row.
     for item in tuple(set(p_list)):
-        p_name = Product.objects.get(pk = int(item))
-        p_sale_count = SalesProduct.objects.filter(productID_id=int(item),salesID__invoiceDate__gte=startDate.date(),
-                                salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).aggregate(Sum('quantity'))
+        p_name = Product.objects.get(pk=int(item))
+        p_sale_count = SalesProduct.objects.filter(productID_id=int(item), salesID__invoiceDate__gte=startDate.date(),
+                                                   salesID__invoiceDate__lte=endDate.date() + timedelta(
+                                                       days=1)).aggregate(Sum('quantity'))
         worksheet.write(row, col, row)
         worksheet.write(row, col + 1, p_name.name)
-        worksheet.write(row, col + 2,p_name.barcode)
+        worksheet.write(row, col + 2, p_name.barcode)
         worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
         worksheet.write(row, col + 4, p_name.unitID.name)
         row += 1
@@ -5373,6 +5408,7 @@ def download_product_sales_report(request):
     return response
 
 
+@transaction.atomic
 @csrf_exempt
 def add_return_sales(request):
     if request.method == 'POST':
@@ -5415,8 +5451,7 @@ def add_return_sales(request):
 def edit_sale(request, id=None):
     if request.user.is_authenticated:
         instance = get_object_or_404(Sales, pk=id)
-        pro = SalesProduct.objects.filter(salesID_id = instance.pk)
-
+        pro = SalesProduct.objects.filter(salesID_id=instance.pk)
 
         # if request.groups.filter(name='Staff').is_authenticated:
 
@@ -5437,8 +5472,9 @@ def edit_sale(request, id=None):
         return redirect('homeApp:loginPage')
 
 
+@transaction.atomic
 @csrf_exempt
-def  update_sale(request):
+def update_sale(request):
     if request.method == 'POST':
         SaleUpdateID = request.POST.get("SaleUpdateID")
         customerID = request.POST.get("customerID")
@@ -5496,7 +5532,7 @@ def  update_sale(request):
             cus.state = state
             cus.email = email
             cus.save()
-            sale = Sales.objects.get(pk = int(SaleUpdateID))
+            sale = Sales.objects.get(pk=int(SaleUpdateID))
             sale.customerID_id = cus.pk
             sale.customerName = name
             sale.customerGst = gst
@@ -5545,9 +5581,7 @@ def  update_sale(request):
 
             sale.save()
 
-
-
-            old_pro = SalesProduct.objects.filter(salesID_id = int(SaleUpdateID))
+            old_pro = SalesProduct.objects.filter(salesID_id=int(SaleUpdateID))
             # old_pro.delete()
             for op in old_pro:
                 pro = Product.objects.get(pk=op.productID_id)
@@ -5736,6 +5770,7 @@ def  update_sale(request):
 
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
 
+
 def download_return_product_sales_report(request):
     companyID = request.GET.get('companyID')
     eType = request.GET.get('eType')
@@ -5750,7 +5785,8 @@ def download_return_product_sales_report(request):
     worksheet = workbook.add_worksheet()
 
     ex = SalesReturnProduct.objects.filter(isDeleted__exact=False, datetime__gte=startDate.date(),
-                                           datetime__lte=endDate.date() + timedelta(days=1), quantity__gt=0).order_by('productID_id')
+                                           datetime__lte=endDate.date() + timedelta(days=1), quantity__gt=0).order_by(
+        'productID_id')
 
     bold = workbook.add_format({'bold': True})
     worksheet.write('A1', 'Serial No.', bold)
@@ -5769,12 +5805,14 @@ def download_return_product_sales_report(request):
         p_list.append(p.productID.productID_id)
     # Iterate over the data and write it out row by row.
     for item in tuple(set(p_list)):
-        p_name = Product.objects.get(pk = int(item))
-        p_sale_count = SalesReturnProduct.objects.filter(productID__productID_id=int(item),datetime__gte=startDate.date(),
-                                                         datetime__lte=endDate.date() + timedelta(days=1)).aggregate(Sum('quantity'))
+        p_name = Product.objects.get(pk=int(item))
+        p_sale_count = SalesReturnProduct.objects.filter(productID__productID_id=int(item),
+                                                         datetime__gte=startDate.date(),
+                                                         datetime__lte=endDate.date() + timedelta(days=1)).aggregate(
+            Sum('quantity'))
         worksheet.write(row, col, row)
         worksheet.write(row, col + 1, p_name.name)
-        worksheet.write(row, col + 2,p_name.barcode)
+        worksheet.write(row, col + 2, p_name.barcode)
         worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
         worksheet.write(row, col + 4, p_name.unitID.name)
         row += 1
@@ -5787,4 +5825,3 @@ def download_return_product_sales_report(request):
     workbook.close()
     # response.write(workbook)
     return response
-

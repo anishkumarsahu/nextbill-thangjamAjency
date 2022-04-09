@@ -610,10 +610,12 @@
 
                         <div class="ui segment" style="padding-bottom: 0">
                                 <div class="column">
-                                    <a onclick="salesSave()" style="cursor: pointer;">
+                                    <a id="saveBtn" onclick="salesSave()" style="cursor: pointer;">
                                         <i class="save icon" style="font-size: 2rem"></i>
                                         <p>Update Sale</p>
                                     </a>
+                                    <button id="saveBtnLoad" style="display: none;" class="ui green double loading button">Saving ....</button>
+
                                 </div>
                         </div>
 
@@ -1986,6 +1988,7 @@ $("#quantity").keyup(function () {
 
         //post
         function salesSave() {
+            showLoading();
             var personalDiscount = $('#personalDiscount').html();
             var referrerID = $('#referrerID').val();
             var bookingID = $('#bookingID').val();
@@ -2055,6 +2058,7 @@ $("#quantity").keyup(function () {
                         message: 'Customer Name, Date, Items, total are required !'
                     })
                 ;
+                hideLoading();
             } else {
                 data = new FormData();
                 data.append('referrerID', referrerID);
@@ -2154,6 +2158,7 @@ $("#quantity").keyup(function () {
                                 );
                             PrintOption();
                             $('#printSaleID').val(response.saleID)
+                            hideLoading();
 
 
                         }
@@ -2164,7 +2169,7 @@ $("#quantity").keyup(function () {
                                     message: 'An error occurred !'
                                 })
                             ;
-
+hideLoading();
                         }
 
                         return response;
@@ -2176,6 +2181,7 @@ $("#quantity").keyup(function () {
                                 message: 'An error occurred !'
                             })
                         ;
+                        hideLoading();
                     }
                 });
 
@@ -2494,6 +2500,17 @@ $("#quantity").keyup(function () {
                     }
                 });
 
+
+        }
+
+        function showLoading() {
+            $('#saveBtn').css('display','none');
+            $('#saveBtnLoad').css('display','');
+
+        }
+             function hideLoading() {
+            $('#saveBtn').css('display','');
+            $('#saveBtnLoad').css('display','none');
 
         }
 

@@ -320,138 +320,139 @@
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
 
                 <div class="eleven wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0">
-                      <form class="ui mini form" action=""  autocomplete="off" id="addProductForm">
-                    <div class="ui mini form">
-                        <div class="seven fields">
-                            <div class="field" style="width: 15%">
-                                <label style="text-align: center">Product Name <i onclick="openProduct()"
-                                                                                  class="plus green icon"
-                                                                                  style="cursor:pointer"></i></label>
-                                <div class="ui productList search">
-                                    <div class="ui icon input">
-                                        <input type="text" class="prompt" id="productName" name="productName"
-                                               placeholder="Product Name" onfocus="proSearch()"  autocomplete="off">
-                                        <i class="shopping bag icon"></i>
-                                        <input type="hidden" id="itemID">
+                    <form class="ui mini form" action="" autocomplete="off" id="addProductForm">
+                        <div class="ui mini form">
+                            <div class="seven fields">
+                                <div class="field" style="width: 15%">
+                                    <label style="text-align: center">Product Name <i onclick="openProduct()"
+                                                                                      class="plus green icon"
+                                                                                      style="cursor:pointer"></i></label>
+                                    <div class="ui productList search">
+                                        <div class="ui icon input">
+                                            <input type="text" class="prompt" id="productName" name="productName"
+                                                   placeholder="Product Name" onfocus="proSearch()" autocomplete="off">
+                                            <i class="shopping bag icon"></i>
+                                            <input type="hidden" id="itemID">
 
 
+                                        </div>
+                                        <div class="results"></div>
                                     </div>
-                                    <div class="results"></div>
+                                </div>
+                                <div class="field" style="width: 30%">
+                                    <label style="text-align: center">Batch Number</label>
+                                    <select class="ui fluid dropdown search" id="batchList"
+                                            style="border-color:black!important;">
+                                        <option value="Default">Default</option>
+
+                                    </select>
+                                </div>
+                                <div class="field" style="width: 9%">
+                                    <label style="text-align: center">Quantity</label>
+                                    <input placeholder="Quantity" type="text"
+                                           id="quantity">
+                                </div>
+                                <div class="field" style="width: 9%">
+                                    <label style="text-align: center">Unit</label>
+                                    <input placeholder="Unit" type="text"
+                                           id="unit" readonly style="background-color: lightgray;">
+                                </div>
+                                <div class="field" style="width: 10%">
+                                    <label style="text-align: center">Net Price(₹)</label>
+                                    <input placeholder="Net Price" type="number" id="netPrice" step="0.01">
+                                </div>
+
+
+                                <div class="field" style="width: 13%">
+                                    <label style="text-align: center">Rate(₹) <span class="ui red text" id="lsp"
+                                                                                    data-tooltip="Last selling price of the product to a customer"
+                                                                                    data-position="top center"></span></label>
+                                    <input placeholder="Price" type="number" id="Price">
+                                </div>
+
+                                <div class="field" style="width: 13%">
+                                    <label style="text-align: center">Total (Without Tax)(₹)</label>
+                                    <input placeholder="Total" type="number" id="total">
                                 </div>
                             </div>
-                            <div class="field" style="width: 30%">
-                                <label style="text-align: center">Batch Number</label>
-                                <select class="ui fluid dropdown search" id="batchList"
-                                        style="border-color:black!important;">
-                                    <option value="Default">Default</option>
-
-                                </select>
-                            </div>
-                            <div class="field" style="width: 9%">
-                                <label style="text-align: center">Quantity</label>
-                                <input placeholder="Quantity" type="text"
-                                       id="quantity">
-                            </div>
-                            <div class="field" style="width: 9%">
-                                <label style="text-align: center">Unit</label>
-                                <input placeholder="Unit" type="text"
-                                       id="unit" readonly style="background-color: lightgray;">
-                            </div>
-                            <div class="field" style="width: 10%">
-                                <label style="text-align: center">Net Price(₹)</label>
-                                <input placeholder="Net Price" type="number" id="netPrice" step="0.01">
-                            </div>
 
 
-                            <div class="field" style="width: 13%">
-                                <label style="text-align: center">Rate(₹) <span class="ui red text" id="lsp"
-                                                                                data-tooltip="Last selling price of the product to a customer"
-                                                                                data-position="top center"></span></label>
-                                <input placeholder="Price" type="number" id="Price">
-                            </div>
+                            <div class="9 fields">
+                                <div class="field" style="width: 13%">
+                                    <label style="text-align: center">Bar Code</label>
+                                    <input placeholder="Bar Code" type="text" id="barCode">
+                                </div>
+                                <div class="field" style="width: 13%">
+                                    <label style="text-align: center">Category <i onclick="openCategory()"
+                                                                                  class="plus green icon"
+                                                                                  style="cursor:pointer"></i></label>
+                                    <input placeholder="Category" type="text" id="category" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field" style="width: 8%">
+                                    <label style="text-align: center">GST%</label>
+                                    <input placeholder="GST" type="number" id="GST">
+                                </div>
+                                <div class="field" style="width:10%;">
+                                    <label style="text-align: center">HSN</label>
+                                    <input placeholder="HSN" type="text" id="hsn" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field" style="width:10%;">
+                                    <label style="text-align: center">Stock</label>
+                                    <input placeholder="Stock" type="number" id="stock" readonly
+                                           style="background-color: lightgray;">
+                                </div>
+                                <div class="field" style="width:10%;">
+                                    <label style="text-align: center">MRP(₹)</label>
+                                    <input placeholder="MRP" type="number" id="mrp"
+                                           style="background-color: #673ab7;color: white">
+                                </div>
+                                <div class="field" style="width:8%;">
+                                    <label style="text-align: center">Item Dics%</label>
+                                    <input placeholder="Item Disc%" type="number" id="disc" value="0">
+                                </div>
+                                <div class="field">
+                                    <label style="text-align: center">Margin</label>
+                                    <select class="ui fluid dropdown search" id="marginList"
+                                            style="border-color:black!important;" onchange="useMargin()">
+                                        <option value="1.00" selected>1.00</option>
+                                        <option value="1.1">1.10</option>
+                                        <option value="1.15">1.15</option>
+                                        <option value="1.18">1.18</option>
+                                        <option value="1.2">1.20</option>
+                                        <option value="1.25">1.25</option>
 
-                            <div class="field" style="width: 13%">
-                                <label style="text-align: center">Total (Without Tax)(₹)</label>
-                                <input placeholder="Total" type="number" id="total">
-                            </div>
-                        </div>
-
-
-                        <div class="9 fields">
-                            <div class="field" style="width: 13%">
-                                <label style="text-align: center">Bar Code</label>
-                                <input placeholder="Bar Code" type="text" id="barCode">
-                            </div>
-                            <div class="field" style="width: 13%">
-                                <label style="text-align: center">Category <i onclick="openCategory()"
-                                                                              class="plus green icon"
-                                                                              style="cursor:pointer"></i></label>
-                                <input placeholder="Category" type="text" id="category" readonly
-                                       style="background-color: lightgray;">
-                            </div>
-                            <div class="field" style="width: 8%">
-                                <label style="text-align: center">GST%</label>
-                                <input placeholder="GST" type="number" id="GST">
-                            </div>
-                            <div class="field" style="width:10%;">
-                                <label style="text-align: center">HSN</label>
-                                <input placeholder="HSN" type="text" id="hsn" readonly
-                                       style="background-color: lightgray;">
-                            </div>
-                            <div class="field" style="width:10%;">
-                                <label style="text-align: center">Stock</label>
-                                <input placeholder="Stock" type="number" id="stock" readonly
-                                       style="background-color: lightgray;">
-                            </div>
-                           <div class="field" style="width:10%;">
-                                <label style="text-align: center">MRP(₹)</label>
-                                <input placeholder="MRP" type="number" id="mrp"
-                                       style="background-color: #673ab7;color: white">
-                            </div>
-                            <div class="field" style="width:8%;">
-                                <label style="text-align: center">Item Dics%</label>
-                                <input placeholder="Item Disc%" type="number" id="disc" value="0">
-                            </div>
-                               <div class="field">
-                        <label style="text-align: center">Margin</label>
-                        <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
-                                    <option value="1.00" selected>1.00</option>
-                                    <option value="1.1">1.10</option>
-                                    <option value="1.15">1.15</option>
-                                    <option value="1.18">1.18</option>
-                                    <option value="1.2">1.20</option>
-                                    <option value="1.25">1.25</option>
-
-                                </select>
-                      </div>
-                            {% comment %} <div class="field">
+                                    </select>
+                                </div>
+                                {% comment %} <div class="field">
                                 <label style="text-align: center">Bill Disc%</label>
                                 <input placeholder="Bill Disc%" type="text" id="bill_disc">
                             </div>{% endcomment %}
 
-                            <div class="field" style="    padding-top: 1.6rem;">
-                                <div class="ui tiny buttons">
-                                    <button class="ui positive  button" id="addItemBtn" type="button"
-                                            onclick="addSubItems()"><i class="plus icon"></i>Add
-                                    </button>
-                                    <button style="display: none" type="button" id="updateItemBtn"
-                                            onclick="updateSubItems()" class="ui orange button">
-                                        <i class="icon redo"></i>
-                                        Update
-                                    </button>
-                                    <div class="or"></div>
-                                    <button class="ui button red" type="button" onclick="ClearData()"><i
-                                            class="minus icon"></i>
-                                        Clear
-                                    </button>
+                                <div class="field" style="    padding-top: 1.6rem;">
+                                    <div class="ui tiny buttons">
+                                        <button class="ui positive  button" id="addItemBtn" type="button"
+                                                onclick="addSubItems()"><i class="plus icon"></i>Add
+                                        </button>
+                                        <button style="display: none" type="button" id="updateItemBtn"
+                                                onclick="updateSubItems()" class="ui orange button">
+                                            <i class="icon redo"></i>
+                                            Update
+                                        </button>
+                                        <div class="or"></div>
+                                        <button class="ui button red" type="button" onclick="ClearData()"><i
+                                                class="minus icon"></i>
+                                            Clear
+                                        </button>
 
 
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                    </div>
-                      </form>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="five wide column">
@@ -542,7 +543,7 @@
                                 {% else %}
                                     <td style="display:none;" id="batch{{ product.productID_id }}">Default</td>
                                 {% endif %}
-                             <td id="margin{{ product.productID_id }}">{{ product.margin }}</td>
+                                <td id="margin{{ product.productID_id }}">{{ product.margin }}</td>
                                 <td>
                                     <button style="font-size:10px;"
                                             onclick="GetItemDetail('{{ product.productID_id }}')"
@@ -588,7 +589,8 @@
 
                                 <div class="field" style="background: lightgrey;">
                                     <label>Paid</label>
-                                    <input placeholder="Paid" type="number" id="paidMoney" value="{{ sale.paidAmount }}">
+                                    <input placeholder="Paid" type="number" id="paidMoney"
+                                           value="{{ sale.paidAmount }}">
                                 </div>
                                 <div class="field" style="background: lightgrey;">
                                     <label id="returnLabel">Due/Return</label>
@@ -603,28 +605,34 @@
                     <div class="ui center aligned basic segment"
                          style="margin-top: 200px;padding-top: 0;padding-bottom: 0;">
 
+                        <div id="saveBtn">
+                            <div class="ui segment" style="padding-bottom: 0">
+                                <div class="ui two column very relaxed grid" style="padding-bottom: 0;">
+                                    <div class="column">
+                                        <a onclick="salesSave()" style="cursor: pointer;">
+                                            <i class="save icon" style="font-size: 2rem"></i>
+                                            <p>Sale Now</p>
+                                        </a>
+                                    </div>
+                                    <div class="column">
+                                        <a onclick="saleLater()" style="cursor: pointer;">
+                                            <i class="box icon" style="font-size: 2rem"></i>
+                                            <p> Update Sale Later</p>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="ui vertical divider">
+                                    OR
+                                </div>
+                            </div>
 
-                        <div class="ui segment" style="padding-bottom: 0">
-                            <div class="ui two column very relaxed grid" style="padding-bottom: 0;">
-                                <div class="column">
-                                    <a onclick="salesSave()" style="cursor: pointer;">
-                                        <i class="save icon" style="font-size: 2rem"></i>
-                                        <p>Sale Now</p>
-                                    </a>
-                                </div>
-                                <div class="column">
-                                    <a onclick="saleLater()" style="cursor: pointer;">
-                                        <i class="box icon" style="font-size: 2rem"></i>
-                                        <p> Update Sale Later</p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="ui vertical divider">
-                                OR
-                            </div>
+
 
 
                         </div>
+                              <button id="saveBtnLoad" style="display: none;" class="ui green double loading button">
+                                Saving ....
+                            </button>
 
 
                     </div>
@@ -1202,7 +1210,7 @@
             .calendar({
                     initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
 
-                monthFirst: false,
+                    monthFirst: false,
                     type: 'date',
                     formatter: {
                         date: function (date, settings) {
@@ -1461,8 +1469,8 @@
                         $('#netPrice').val(response.data['Sp']);
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
-                           getproductBatchList(response.data['ID']);
-                             useMargin();
+                        getproductBatchList(response.data['ID']);
+                        useMargin();
 
                     }
                     else {
@@ -1480,7 +1488,7 @@
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
                         getproductBatchList(response.data['ID']);
-                          useMargin();
+                        useMargin();
 
                     }
 
@@ -1547,7 +1555,7 @@
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
                         getproductBatchList(response.data['ID']);
-                          useMargin();
+                        useMargin();
 
                     }
                     else {
@@ -1564,8 +1572,8 @@
                         $('#netPrice').val(response.data['Net']);
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
-                       getproductBatchList(response.data['ID']);
-                         useMargin();
+                        getproductBatchList(response.data['ID']);
+                        useMargin();
                     }
 
                 },
@@ -1580,18 +1588,18 @@
                 }
             });
         });
-$("#quantity").keyup(function () {
+        $("#quantity").keyup(function () {
             var q = $('#quantity').val();
-{#            var price = $('#Price').val();#}
+            {#            var price = $('#Price').val();#}
             var gst = $('#GST').val();
             var disc = $('#disc').val();
             var net = $('#netPrice').val();
-              var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
             $('#Price').val(sp.toFixed(2));
 
-{#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
+            {#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
             var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
-{#            $('#netPrice').val(netPriceCal.toFixed(2));#}
+            {#            $('#netPrice').val(netPriceCal.toFixed(2));#}
             $('#total').val(totalPriceCal.toFixed(2));
 
 
@@ -1619,15 +1627,15 @@ $("#quantity").keyup(function () {
             var gst = $('#GST').val();
             var disc = $('#disc').val();
 
-            var net = parseFloat(price) +( parseFloat(price)* (parseFloat(gst)/100));
-             $('#netPrice').val(net.toFixed(2));
-             var sp = parseFloat(net.toFixed(2)) / (1 + ((parseFloat(gst) / 100)));
+            var net = parseFloat(price) + ( parseFloat(price) * (parseFloat(gst) / 100));
+            $('#netPrice').val(net.toFixed(2));
+            var sp = parseFloat(net.toFixed(2)) / (1 + ((parseFloat(gst) / 100)));
 
-{#            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);#}
-{#            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);#}
-{#            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);#}
+            {#            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);#}
+            {#            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);#}
+            {#            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);#}
 
-{#            $('#total').val(totalPriceCal.toFixed(2));#}
+            {#            $('#total').val(totalPriceCal.toFixed(2));#}
 
             var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
             $('#total').val(totalPriceCal.toFixed(2));
@@ -1636,7 +1644,7 @@ $("#quantity").keyup(function () {
         });
 
         $("#disc").keyup(function () {
-          var q = $('#quantity').val();
+            var q = $('#quantity').val();
             var gst = $('#GST').val();
             var disc = $('#disc').val();
             var net = $('#netPrice').val();
@@ -1660,16 +1668,16 @@ $("#quantity").keyup(function () {
 
 
         });
-  function useMargin() {
+        function useMargin() {
             var mar = $('#marginList').val();
             console.log(mar);
             var mrp = $('#mrp').val();
 
-            var net = mrp/mar;
+            var net = mrp / mar;
 
             $('#netPrice').val(parseFloat(net).toFixed(2));
 
-                     var q = $('#quantity').val();
+            var q = $('#quantity').val();
             var gst = $('#GST').val();
             var disc = $('#disc').val();
             var net = $('#netPrice').val();
@@ -1678,7 +1686,6 @@ $("#quantity").keyup(function () {
 
             var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
             $('#total').val(totalPriceCal.toFixed(2));
-
 
 
         }
@@ -1782,7 +1789,7 @@ $("#quantity").keyup(function () {
 
 
         function GetItemDetail(id) {
-              getproductBatchList(id);
+            getproductBatchList(id);
             $('#addItemBtn').css('display', 'none');
             $('#updateItemBtn').css('display', '');
             var product = $('#product' + id).html();
@@ -1795,8 +1802,8 @@ $("#quantity").keyup(function () {
             var disc = $('#disc' + id).html();
             var netprice = $('#netprice' + id).html();
             var total = $('#total' + id).html();
-                        var batch = $('#batch' + id).html();
-                         var margin = $('#margin' + id).html();
+            var batch = $('#batch' + id).html();
+            var margin = $('#margin' + id).html();
 
             $('#productName').val(product);
             $('#quantity').val(quantity);
@@ -1831,10 +1838,10 @@ $("#quantity").keyup(function () {
                     ;
                 }
             });
-             setTimeout(function(){
+            setTimeout(function () {
                 $('#batchList').val(batch).change();
-                 $('#marginList').val(margin).change();
-            },500);
+                $('#marginList').val(margin).change();
+            }, 500);
         }
 
 
@@ -1901,7 +1908,7 @@ $("#quantity").keyup(function () {
 
         }
         function ClearData() {
-             $('#addProductForm')[0].reset();
+            $('#addProductForm')[0].reset();
             $('#addItemBtn').css('display', '');
             $('#updateItemBtn').css('display', 'none');
 
@@ -1921,7 +1928,7 @@ $("#quantity").keyup(function () {
             $('#itemID').val('');
             $('#lsp').html('');
             $('#batchList').html('<option value="Default">Default</option>');
-              $('#marginList').val('1.00').change();
+            $('#marginList').val('1.00').change();
 
         }
 
@@ -1995,6 +2002,7 @@ $("#quantity").keyup(function () {
 
         //post
         function salesSave() {
+            showLoading();
             var personalDiscount = $('#personalDiscount').html();
             var referrerID = $('#referrerID').val();
             var bookingID = $('#bookingID').val();
@@ -2042,7 +2050,7 @@ $("#quantity").keyup(function () {
                 var batch = $('#batch' + id).html();
                 var margin = $('#margin' + id).html();
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch+'|' + margin + '@'
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '|' + margin + '@'
 
 
             });
@@ -2064,6 +2072,7 @@ $("#quantity").keyup(function () {
                         message: 'Customer Name, Date, Items, total are required !'
                     })
                 ;
+                hideLoading();
             } else {
                 data = new FormData();
                 data.append('referrerID', referrerID);
@@ -2163,7 +2172,7 @@ $("#quantity").keyup(function () {
                                 );
                             PrintOption();
                             $('#printSaleID').val(response.saleID)
-
+                            hideLoading();
 
                         }
                         else {
@@ -2173,7 +2182,7 @@ $("#quantity").keyup(function () {
                                     message: 'An error occurred !'
                                 })
                             ;
-
+                            hideLoading();
                         }
 
                         return response;
@@ -2185,6 +2194,7 @@ $("#quantity").keyup(function () {
                                 message: 'An error occurred !'
                             })
                         ;
+                        hideLoading();
                     }
                 });
 
@@ -2438,6 +2448,7 @@ $("#quantity").keyup(function () {
 
         //post
         function saleLater() {
+            showLoading();
             var personalDiscount = $('#personalDiscount').html();
             var bookingID = $('#bookingID').val();
             var customerID = $('#customerID').val();
@@ -2482,9 +2493,9 @@ $("#quantity").keyup(function () {
                 var dis = $('#disc' + id).html();
                 var unit = $('#unit' + id).html();
                 var batch = $('#batch' + id).html();
-                  var margin = $('#margin' + id).html();
+                var margin = $('#margin' + id).html();
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch+ '|' + margin + '@'
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '|' + margin + '@'
 
 
             });
@@ -2506,6 +2517,7 @@ $("#quantity").keyup(function () {
                         message: 'Customer Name, Date, Items, total are required !'
                     })
                 ;
+                hideLoading();
             } else {
                 data = new FormData();
                 data.append('bookingID', bookingID);
@@ -2566,7 +2578,7 @@ $("#quantity").keyup(function () {
                                 });
 
                             window.location.href = '/sales/'
-
+                            hideLoading();
 
                         }
                         else {
@@ -2576,7 +2588,7 @@ $("#quantity").keyup(function () {
                                     message: 'An error occurred !'
                                 })
                             ;
-
+                            hideLoading();
                         }
 
                         return response;
@@ -2588,6 +2600,7 @@ $("#quantity").keyup(function () {
                                 message: 'An error occurred !'
                             })
                         ;
+                        hideLoading();
                     }
                 });
 
@@ -2635,36 +2648,46 @@ $("#quantity").keyup(function () {
 
         }
 
-         function getproductBatchList(id) {
-                $.ajax({
-                    type: 'get',
-                    url: "{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + id,
+        function getproductBatchList(id) {
+            $.ajax({
+                type: 'get',
+                url: "{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + id,
 
-                    success: function (response) {
+                success: function (response) {
 
-                        $('#batchList').html('');
-                            $('#batchList').append('<option value="Default">Default</option>');
-                        var j;
-                        for (j = 0; j < response.data.length; j++) {
+                    $('#batchList').html('');
+                    $('#batchList').append('<option value="Default">Default</option>');
+                    var j;
+                    for (j = 0; j < response.data.length; j++) {
 
-                            $('#batchList').append('<option value="' + response.data[j][10] + '" >' + response.data[j][0] + '-'+response.data[j][1]+'  ('+response.data[j][4]+' to '+response.data[j][5]+')</option>');
+                        $('#batchList').append('<option value="' + response.data[j][10] + '" >' + response.data[j][0] + '-' + response.data[j][1] + '  (' + response.data[j][4] + ' to ' + response.data[j][5] + ')</option>');
 
-                        }
-
-                    },
-
-                    error: function () {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
                     }
-                });
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
 
 
         }
 
+        function showLoading() {
+            $('#saveBtn').css('display', 'none');
+            $('#saveBtnLoad').css('display', '');
+
+        }
+        function hideLoading() {
+            $('#saveBtn').css('display', '');
+            $('#saveBtnLoad').css('display', 'none');
+
+        }
     </script>
 {% endblock %}
