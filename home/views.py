@@ -2277,12 +2277,28 @@ class SalesListByCustomerJson(BaseDatatableView):
                      'grandTotal', 'paidAgainstBill', 'paymentType', 'companyID', 'salesType', 'datetime', ]
 
     def get_initial_queryset(self):
-        if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-            return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'))
-        else:
-            user = CompanyUser.objects.get(user_ID=self.request.user.pk)
-            return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                        customerID_id=self.request.GET.get('ID'))
+        try:
+            startDateV = self.request.GET.get("startDateV")
+            endDateV = self.request.GET.get("endDateV")
+            sDate = datetime.strptime(startDateV, '%d/%m/%Y')
+            eDate = datetime.strptime(endDateV, '%d/%m/%Y')
+
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'))
+            else:
+                user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+                return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
+                                            customerID_id=self.request.GET.get('ID'))
+            
+        except:
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'))
+            else:
+                user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+                return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
+                                            customerID_id=self.request.GET.get('ID'))
+
 
     def filter_queryset(self, qs):
 
