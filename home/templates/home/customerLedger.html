@@ -174,7 +174,14 @@
 
                         </div>
                     </div>
-        <div class="ui internally grid">
+
+                    <div class="row" >
+                        <div class="twelve wide column" style="margin-top: 25px;">
+                             <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                       List of Sales
+                    </h5>
+                                <div class="ui internally grid" style="margin-bottom: 10px;">
             <div class="row" style="padding-bottom: 0!important;padding-top: 5px!important;">
 
                 <div class="eight wide column">
@@ -254,12 +261,6 @@
             </div>
         </div>
 
-                    <div class="row" >
-                        <div class="twelve wide column" style="margin-top: 25px;">
-                             <h5 class="ui horizontal left aligned divider header">
-                        <i class="left align icon"></i>
-                       List of Sales
-                    </h5>
                             <table class="ui very compact table" id="itemTable" style="margin-top: 5px;">
                                 <thead>
                                 <tr>
@@ -772,11 +773,16 @@
                 "pageLength": 7,
                 "processing": true,
                 "serverSide": true,
-                "ajax": "{% url 'homeApp:SalesListByCustomerJson' %}?ID=" + {{ instance.pk }}
+                "ajax": '{% url "homeApp:SalesListByCustomerJson" %}?ID=' + {{ instance.pk }}
             });
 
         }
+        function filterDetails() {
+            var startDate = $('#startDateF').val();
+            var endDate = $('#endDateF').val();
+            customerTab.ajax.url('{% url 'homeApp:SalesListByCustomerJson' %}?startDate=' + startDate + '&endDate=' + endDate + '&ID=' + {{ instance.pk }}).load();
 
+        }
            function delSale(id) {
             $('#delSaleModal')
                 .modal('show')

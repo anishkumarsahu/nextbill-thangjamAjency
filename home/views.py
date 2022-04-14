@@ -271,6 +271,11 @@ def returnReport(request):
 
 
 @is_activated()
+def ledger(request):
+    return render(request, 'home/ledger.html')
+
+
+@is_activated()
 def bookingList(request):
     return render(request, 'home/bookingList.html')
 
@@ -2278,19 +2283,19 @@ class SalesListByCustomerJson(BaseDatatableView):
 
     def get_initial_queryset(self):
         try:
-            startDateV = self.request.GET.get("startDateV")
-            endDateV = self.request.GET.get("endDateV")
+            startDateV = self.request.GET.get("startDate")
+            endDateV = self.request.GET.get("endDate")
             sDate = datetime.strptime(startDateV, '%d/%m/%Y')
             eDate = datetime.strptime(endDateV, '%d/%m/%Y')
 
 
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'))
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
             else:
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                            customerID_id=self.request.GET.get('ID'))
-            
+                                            customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+
         except:
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
                 return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'))
@@ -3387,13 +3392,27 @@ class PurchaseListBySupplierJson(BaseDatatableView):
                      'total', 'paymentType', 'companyID', 'status', 'purchaseType', ]
 
     def get_initial_queryset(self):
-        if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-            return Purchase.objects.filter(isDeleted__exact=False, supplierID_id=self.request.GET.get('ID'))
-        else:
-            user = CompanyUser.objects.get(user_ID=self.request.user.pk)
-            return Purchase.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                           supplierID_id=self.request.GET.get('ID'))
+        try:
+            startDateV = self.request.GET.get("startDate")
+            endDateV = self.request.GET.get("endDate")
+            sDate = datetime.strptime(startDateV, '%d/%m/%Y')
+            eDate = datetime.strptime(endDateV, '%d/%m/%Y')
 
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                return Purchase.objects.filter(isDeleted__exact=False, supplierID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+            else:
+                user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+                return Purchase.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
+                                               supplierID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+        except:
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                return Purchase.objects.filter(isDeleted__exact=False, supplierID_id=self.request.GET.get('ID'))
+            else:
+                user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+                return Purchase.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
+                                               supplierID_id=self.request.GET.get('ID'))
     def filter_queryset(self, qs):
 
         search = self.request.GET.get('search[value]', None)

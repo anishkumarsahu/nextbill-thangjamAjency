@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^create_return/$', create_return, name='create_return'),
     url(r'^salesReport/$', salesReport, name='salesReport'),
     url(r'^returnReport/$', returnReport, name='returnReport'),
+    url(r'^ledger/$', ledger, name='ledger'),
     url(r'^bookingList/$', bookingList, name='bookingList'),
     url(r'^purchaseReport/$', purchaseReport, name='purchaseReport'),
     url(r'^contact/$', contact, name='contact'),
