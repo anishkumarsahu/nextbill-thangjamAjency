@@ -212,4 +212,9 @@ urlpatterns = [
     #Edit Sales
     url(r'^edit_sale/(?P<id>[0-9]+)/$', edit_sale, name='edit_sale'),
     url(r'^api/update_sale/$', update_sale, name='update_sale'),
+
+    #customer ledger
+    url(r'^api/get_customer_detail_by_name_for_ledger/$', get_customer_detail_by_name_for_ledger, name='get_customer_detail_by_name_for_ledger'),
+    url(r'^SalesLedgerListByCustomerJson/$', SalesLedgerListByCustomerJson.as_view(), name='SalesLedgerListByCustomerJson'),
+
 ]

@@ -1,3 +1,4 @@
+import calendar
 from django.core import management
 from django.db import transaction
 from django.db.models import Q, Sum, F
@@ -272,7 +273,11 @@ def returnReport(request):
 
 @is_activated()
 def ledger(request):
-    return render(request, 'home/ledger.html')
+    customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
+    context = {
+        'customers':customers
+    }
+    return render(request, 'home/ledger.html', context)
 
 
 @is_activated()
@@ -5860,3 +5865,121 @@ def download_return_product_sales_report(request):
     workbook.close()
     # response.write(workbook)
     return response
+
+
+#customer ledger
+
+def get_customer_detail_by_name_for_ledger(request):
+
+
+    try:
+        q = request.GET.get('q')
+        id = str(q).split('|')
+
+        instance = Customer.objects.get(pk=int(id[1]), isDeleted__exact=False)
+        data = {
+            'ID': instance.pk,
+            'Name': instance.name,
+            'Email': instance.email,
+            'Address': instance.address,
+            'Gst': instance.gst,
+            'Phone': instance.phone,
+            'State': instance.state,
+        }
+        return JsonResponse({'message':'success','data': data}, safe=False)
+    except:
+        data = {
+            'ID': 'N/A',
+            'Name': 'N/A',
+            'Email': 'N/A',
+            'Address': 'N/A',
+            'Gst': 'N/A',
+            'Phone': 'N/A',
+            'State': 'N/A',
+
+        }
+
+    return JsonResponse({'message': 'error', 'data': data}, safe=False)
+
+
+
+class SalesLedgerListByCustomerJson(BaseDatatableView):
+    order_columns = ['id', 'invoiceDate', 'id', 'invoiceNumber',
+                     'grandTotal', 'paidAgainstBill', 'paymentType', 'companyID', 'salesType', 'datetime', ]
+
+    def get_initial_queryset(self):
+        try:
+            startDateV = self.request.GET.get("startDate")
+            endDateV = self.request.GET.get("endDate")
+            sDate = datetime.strptime(startDateV, '%m/%Y')
+            eDate = datetime.strptime(endDateV, '%m/%Y')
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+            else:
+                user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+                return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
+                                            customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+
+        except:
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'))
+            else:
+                user = CompanyUser.objects.get(user_ID=self.request.user.pk)
+                return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
+                                            customerID_id=self.request.GET.get('ID'))
+
+
+    def filter_queryset(self, qs):
+
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(status__icontains=search)
+                | Q(invoiceDate__icontains=search) | Q(invoiceNumber__icontains=search) | Q(id__icontains=search)
+                | Q(salesType__icontains=search)
+                | Q(grandTotal__icontains=search) | Q(paymentType__icontains=search) | Q(creditDays__icontains=search)
+                | Q(companyID__name__icontains=search)
+            )
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        i = 1
+        for item in qs:
+            if item.invoiceNumber is None:
+                invoiceNumber = 'N/A'
+            else:
+                invoiceNumber = item.invoiceNumber
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                action = '''<button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
+                               <i class="receipt icon"></i>
+                             </button>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            else:
+                action = '''<button style="font-size:10px;" onclick = "GetSaleDetail('{}')" class="ui circular  icon button green">
+                               <i class="receipt icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            json_data.append([
+                escape(i),  # escape HTML for security reasons
+                escape(item.invoiceDate),
+                str(item.pk).zfill(5),
+                invoiceNumber,
+                escape(item.grandTotal),
+                escape(item.paidAgainstBill),
+                escape(item.paymentType),
+                escape(item.companyID.name),
+                escape(item.salesType),
+                escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
+                action,
+
+            ])
+            i = i + 1
+        return json_data
