@@ -215,6 +215,7 @@ urlpatterns = [
 
     #customer ledger
     url(r'^api/get_customer_detail_by_name_for_ledger/$', get_customer_detail_by_name_for_ledger, name='get_customer_detail_by_name_for_ledger'),
+    url(r'^api/get_customer_ledger_amount/$', get_customer_ledger_amount, name='get_customer_ledger_amount'),
     url(r'^SalesLedgerListByCustomerJson/$', SalesLedgerListByCustomerJson.as_view(), name='SalesLedgerListByCustomerJson'),
 
 ]

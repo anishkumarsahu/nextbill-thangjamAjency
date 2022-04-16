@@ -5914,12 +5914,21 @@ class SalesLedgerListByCustomerJson(BaseDatatableView):
             sDate = datetime.strptime(startDateV, '%m/%Y')
             eDate = datetime.strptime(endDateV, '%m/%Y')
 
+            s = datetime(sDate.year, sDate.month, 1)
+            ssDate = datetime.strptime(str(s.strftime("%d/%m/%Y")), '%d/%m/%Y')
+
+            x = calendar.monthrange(eDate.year, eDate.month)[1]
+            e = datetime(eDate.year, eDate.month, x)
+            eeDate =datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
+
+
+
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'),  invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
             else:
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                            customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+                                            customerID_id=self.request.GET.get('ID'), invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
 
         except:
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
@@ -5983,3 +5992,53 @@ class SalesLedgerListByCustomerJson(BaseDatatableView):
             ])
             i = i + 1
         return json_data
+
+
+@csrf_exempt
+def get_customer_ledger_amount(request):
+    try:
+        startDateV = request.GET.get("startDate")
+        endDateV = request.GET.get("endDate")
+        load = request.GET.get("load")
+        sDate = datetime.strptime(startDateV, '%m/%Y')
+        eDate = datetime.strptime(endDateV, '%m/%Y')
+
+        s = datetime(sDate.year, sDate.month, 1)
+        ssDate = datetime.strptime(str(s.strftime("%d/%m/%Y")), '%d/%m/%Y')
+
+        x = calendar.monthrange(eDate.year, eDate.month)[1]
+        e = datetime(eDate.year, eDate.month, x)
+        eeDate = datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
+        print(load)
+        if load == 'onload':
+            print('a')
+            all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'))
+
+        else:
+            print('b')
+            all_sales =  Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'),
+                                        invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+
+        paid = 0.0
+        total = 0.0
+        for s in all_sales:
+            paid = paid + s.paidAgainstBill
+            total = total + s.grandTotal
+
+        due = total - paid
+
+        return JsonResponse({'message': 'success', 'total':total, 'paid':paid , 'due':due}, safe=False)
+
+    except:
+
+        all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'))
+
+        paid = 0.0
+        total = 0.0
+        for s in all_sales:
+            paid = paid + s.paidAgainstBill
+            total = total + s.grandTotal
+
+        due = total - paid
+
+        return JsonResponse({'message': 'success', 'total':total, 'paid':paid , 'due':due}, safe=False)
