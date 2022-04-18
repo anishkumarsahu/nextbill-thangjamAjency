@@ -1657,6 +1657,14 @@
 
         });
 
+        function addRowCount(tableAttr) {
+          $(tableAttr).each(function(){
+            $('td:first-child', this).each(function(i){
+              $(this).html(''+(i+1)+'');
+            });
+          });
+        }
+
         function addSubItems() {
             var itemID = $('#itemID').val();
             var productName = $('#productName').val();
@@ -1685,11 +1693,12 @@
             }
             else {
                 $('#' + itemID).remove();
-                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td id ="margin' + itemID + '" >' + margin + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                $('#itemTable tbody').append('<tr id ="' + itemID + '" ><td  id ="row' + itemID + '">#</td> <td id ="product' + itemID + '">' + productName + '</td><td id ="category' + itemID + '">' + category + '</td><td id ="hsn' + itemID + '">' + hsn + '</td><td id ="quantity' + itemID + '">' + Quantity + '</td><td id ="unit' + itemID + '">' + Unit + '</td><td id ="price' + itemID + '">' + Price + '</td><td id ="gst' + itemID + '">' + GST + '</td><td id ="disc' + itemID + '">' + disc + '</td><td id ="netprice' + itemID + '">' + NetPrice + '</td><td id ="total' + itemID + '">' + Total + '</td><td id ="batch' + itemID + '" style="display:none;">' + batch + '</td><td id ="margin' + itemID + '" >' + margin + '</td><td><button style="font-size:10px;" onclick="GetItemDetail(' + itemID + ')" class="ui circular facebook icon button green"><i class="pen icon"></i></button><button style="font-size:10px;" onclick="delItem(' + itemID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
                 ClearData();
                 calTaxAndTotal();
                 returnCalc();
                 $('#lsp').html();
+                addRowCount('#itemTable');
             }
 
         }
@@ -1812,6 +1821,7 @@
             var id = $('#itemDelID').val();
             $('#' + id).remove();
             calTaxAndTotal();
+            addRowCount('#itemTable');
 
 
         }

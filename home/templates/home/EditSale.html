@@ -529,7 +529,7 @@
                         <tbody>
                         {% for product in Products %}
                             <tr id="{{ product.productID_id }}">
-                                <td id="row{{ product.productID_id }}">#</td>
+                                <td id="row{{ product.productID_id }}">{{forloop.counter}}</td>
                                 <td id="product{{ product.productID_id }}">{{ product.productName }}</td>
                                 <td id="category{{ product.productID_id }}">{{ product.category }}</td>
                                 <td id="hsn{{ product.productID_id }}">{{ product.hsn }}</td>
@@ -1732,6 +1732,14 @@ $("#quantity").keyup(function () {
         });
 
 
+    function addRowCount(tableAttr) {
+          $(tableAttr).each(function(){
+            $('td:first-child', this).each(function(i){
+              $(this).html(''+(i+1)+'');
+            });
+          });
+        }
+
         function addSubItems() {
             var itemID = $('#itemID').val();
             var productName = $('#productName').val();
@@ -1765,6 +1773,7 @@ $("#quantity").keyup(function () {
                 calTaxAndTotal();
                 returnCalc();
                 $('#lsp').html();
+                addRowCount('#itemTable');
             }
 
         }
@@ -1888,7 +1897,7 @@ $("#quantity").keyup(function () {
             var id = $('#itemDelID').val();
             $('#' + id).remove();
             calTaxAndTotal();
-
+               addRowCount('#itemTable');
 
         }
         function ClearData() {
