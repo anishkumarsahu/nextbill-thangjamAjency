@@ -553,3 +553,17 @@ class SalesReturnProduct(models.Model):
 
     class Meta:
         verbose_name_plural = 'T) Sales Return Products'
+
+
+
+class TakePayment(models.Model):
+    customerID = models.ForeignKey(Customer, blank=True, null=True)
+    amount = models.FloatField(default=0.0)
+    description = models.TextField(blank=True, null=True)
+    paymentDate = models.DateField(blank=True, null=True)
+    addedBy = models.ForeignKey(User, blank=True, null=True)
+    datetime = models.DateTimeField(auto_now_add=True, auto_now=False)
+    lastUpdatedOn = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'S)Take Payment List'

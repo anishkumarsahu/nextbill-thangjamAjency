@@ -169,7 +169,27 @@ class ReferrerAdmin(admin.ModelAdmin):
 
 admin.site.register(Referrer, ReferrerAdmin)
 
+
 class ReferrerTransactionAdmin(admin.ModelAdmin):
     list_display = ['referrerID','amount','transactionType','addedBy','remark','transactionDate','datetime','lastUpdatedOn']
 
 admin.site.register(ReferrerTransaction, ReferrerTransactionAdmin)
+
+
+class TakePaymentAdmin(admin.ModelAdmin):
+    list_display = ['customerID','amount','description','addedBy','paymentDate','datetime','lastUpdatedOn']
+
+admin.site.register(TakePayment, TakePaymentAdmin)
+
+
+class SalesReturnProductListAdmin(admin.TabularInline):
+    model = SalesReturnProduct
+    extra = 0
+
+
+class SalesReturnAdmin(admin.ModelAdmin):
+    search_fields = ['totalAmount']
+    list_display = ['salesID','totalAmount', 'isDeleted', 'datetime', 'lastUpdatedOn']
+
+    inlines = (SalesReturnProductListAdmin,)
+admin.site.register(SalesReturn, SalesReturnAdmin)

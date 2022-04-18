@@ -129,8 +129,12 @@
             </div>
         </div>
     {% endif %}
-    <div class="six column row">
+    <div class="seven column row">
         <div class="column">
+            <a href="{% url 'homeApp:take_payment' %}">
+                <p><i class="rupee sign icon" style="font-size: 5rem;"></i><br> Take Payment </p>
+            </a>
+        </div> <div class="column">
             <a href="{% url 'homeApp:ledger' %}">
                 <p><i class="scroll icon" style="font-size: 5rem;"></i><br> CUSTOMER LEDGER </p>
             </a>

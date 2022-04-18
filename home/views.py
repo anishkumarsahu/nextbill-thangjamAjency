@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.template import loader
 from django.template.defaultfilters import register
 from django.utils.crypto import get_random_string
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
@@ -280,6 +281,16 @@ def ledger(request):
     return render(request, 'home/ledger.html', context)
 
 
+@cache_page(60 * 10)
+@is_activated()
+def take_payment(request):
+    customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
+    context = {
+        'customers':customers
+    }
+    return render(request, 'home/takePayment.html', context)
+
+
 @is_activated()
 def bookingList(request):
     return render(request, 'home/bookingList.html')
@@ -449,11 +460,16 @@ def report(request):
 def customer_ledger(request, id=None):
     instance = get_object_or_404(Customer, pk=id)
     sale = Sales.objects.filter(customerID_id=instance.pk, isDeleted__exact=False, salesType__icontains='Normal')
+    pay = TakePayment.objects.filter(customerID_id=instance.pk)
     paid = 0.0
     total = 0.0
     for s in sale:
         paid = paid + s.paidAgainstBill
         total = total + s.grandTotal
+
+    for p in pay:
+        paid = paid + p.amount
+
     sale_j = Sales.objects.filter(customerID_id=instance.pk, isDeleted__exact=False, salesType__icontains='jet')
     paid_j = 0.0
     total_j = 0.0
@@ -6009,21 +6025,25 @@ def get_customer_ledger_amount(request):
         x = calendar.monthrange(eDate.year, eDate.month)[1]
         e = datetime(eDate.year, eDate.month, x)
         eeDate = datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
-        print(load)
         if load == 'onload':
-            print('a')
             all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'))
+            pay =  TakePayment.objects.filter(customerID_id=request.GET.get('ID'))
 
         else:
-            print('b')
             all_sales =  Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'),
                                         invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+            pay = TakePayment.objects.filter(customerID_id=request.GET.get('ID'),
+                                             paymentDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
 
         paid = 0.0
         total = 0.0
         for s in all_sales:
             paid = paid + s.paidAgainstBill
             total = total + s.grandTotal
+
+        for p in pay:
+            paid = paid + p.amount
+
 
         due = total - paid
 
@@ -6032,6 +6052,7 @@ def get_customer_ledger_amount(request):
     except:
 
         all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'))
+        pay = TakePayment.objects.filter(customerID_id=request.GET.get('ID'))
 
         paid = 0.0
         total = 0.0
@@ -6039,6 +6060,82 @@ def get_customer_ledger_amount(request):
             paid = paid + s.paidAgainstBill
             total = total + s.grandTotal
 
+        for p in pay:
+            paid = paid + p.amount
         due = total - paid
 
         return JsonResponse({'message': 'success', 'total':total, 'paid':paid , 'due':due}, safe=False)
+
+
+# take payment
+@transaction.atomic
+def add_take_payment(request):
+    if request.method == 'POST':
+        try:
+            description = request.POST.get("description")
+            amount = request.POST.get("amount")
+            date = request.POST.get("date")
+            customerNameID = request.POST.get("customerNameID")
+            id = str(customerNameID).split('|')
+
+            ex = TakePayment()
+            ex.description = description
+            ex.customerID_id = int(id[1])
+            ex.amount = float(amount)
+            ex.paymentDate = datetime.strptime(date, '%d/%m/%Y')
+            ex.save()
+
+            return JsonResponse({'message': 'success'}, safe=False)
+        except:
+            return JsonResponse({'message': 'error'}, safe=False)
+
+
+class TakePaymentListJson(BaseDatatableView):
+    order_columns = ['customerID.name', 'amount', 'description', 'paymentDate', 'datetime', 'action']
+
+    def get_initial_queryset(self):
+        sDate = self.request.GET.get('startDate')
+        eDate = self.request.GET.get('endDate')
+        startDate = datetime.strptime(sDate, '%d/%m/%Y')
+        endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+        return TakePayment.objects.filter( paymentDate__range=(startDate.date(), endDate.date() ))
+
+    def filter_queryset(self, qs):
+
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(customerID__name__icontains=search) | Q(description__icontains=search) | Q(amount__icontains=search)
+            )
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                action = '''<button style="font-size:10px;" onclick ="delExpense('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                                                 <i class="trash alternate icon"></i>
+                                               </button></td>'''.format(item.pk)
+            else:
+                action = '<button class="mini ui button">Denied</button>'
+            json_data.append([
+                escape(item.customerID.name),  # escape HTML for security reasons
+                escape(item.amount),  # escape HTML for security reasons
+                escape(item.description),  # escape HTML for security reasons
+                escape(item.paymentDate),  # escape HTML for security reasons
+                escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
+                action,
+            ])
+        return json_data
+
+
+@csrf_exempt
+@transaction.atomic
+def delete_take_payment(request):
+    if request.method == 'POST':
+        idC = request.POST.get("ID")
+        cus = TakePayment.objects.get(pk=int(idC))
+        cus.delete()
+        return JsonResponse({'message': 'success'}, safe=False)

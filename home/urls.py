@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^salesReport/$', salesReport, name='salesReport'),
     url(r'^returnReport/$', returnReport, name='returnReport'),
     url(r'^ledger/$', ledger, name='ledger'),
+    url(r'^take_payment/$', take_payment, name='take_payment'),
     url(r'^bookingList/$', bookingList, name='bookingList'),
     url(r'^purchaseReport/$', purchaseReport, name='purchaseReport'),
     url(r'^contact/$', contact, name='contact'),
@@ -217,5 +218,11 @@ urlpatterns = [
     url(r'^api/get_customer_detail_by_name_for_ledger/$', get_customer_detail_by_name_for_ledger, name='get_customer_detail_by_name_for_ledger'),
     url(r'^api/get_customer_ledger_amount/$', get_customer_ledger_amount, name='get_customer_ledger_amount'),
     url(r'^SalesLedgerListByCustomerJson/$', SalesLedgerListByCustomerJson.as_view(), name='SalesLedgerListByCustomerJson'),
+
+
+
+    url(r'^api/add_take_payment/$', add_take_payment, name='add_take_payment'),
+    url(r'^api/delete_take_payment/$', delete_take_payment, name='delete_take_payment'),
+    url(r'^TakePaymentListJson/$', TakePaymentListJson.as_view(), name='TakePaymentListJson'),
 
 ]
