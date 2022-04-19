@@ -280,6 +280,11 @@ def ledger(request):
     }
     return render(request, 'home/ledger.html', context)
 
+@is_activated()
+def customer_monthly_report(request):
+
+    return render(request, 'home/CustomerMonthlyReport.html')
+
 
 @cache_page(60 * 10)
 @is_activated()
@@ -5415,22 +5420,21 @@ def download_product_sales_report(request):
     eDate = request.GET.get('endDate')
     startDate = datetime.strptime(sDate, '%d/%m/%Y')
     endDate = datetime.strptime(eDate, '%d/%m/%Y')
-
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="ProductSalesReport({}--{}).xlsx"'.format(sDate, eDate)
     workbook = xlsxwriter.Workbook(response, {'in_memory': True})
     worksheet = workbook.add_worksheet()
 
-    ex = SalesProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__gte=startDate.date(),
-                                     salesID__invoiceDate__lte=endDate.date() + timedelta(days=1)).order_by(
-        'productID_id')
+    ex = SalesProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__range=(startDate.date(), endDate.date())).order_by('productID_id')
 
     bold = workbook.add_format({'bold': True})
     worksheet.write('A1', 'Serial No.', bold)
     worksheet.write('B1', 'Product Name.', bold)
     worksheet.write('C1', 'BarCode', bold)
     worksheet.write('D1', 'Quantity', bold)
-    worksheet.write('E1', 'Unit', bold)
+    worksheet.write('E1', 'Total', bold)
+    worksheet.write('F1', 'Unit Price', bold)
+    worksheet.write('G1', 'Unit', bold)
     # worksheet.write('D1', 'Amount', bold)
     # worksheet.write('E1', 'Description', bold)
     # Start from the first cell. Rows and columns are zero indexed.
@@ -5447,11 +5451,21 @@ def download_product_sales_report(request):
         p_sale_count = SalesProduct.objects.filter(productID_id=int(item), salesID__invoiceDate__gte=startDate.date(),
                                                    salesID__invoiceDate__lte=endDate.date() + timedelta(
                                                        days=1)).aggregate(Sum('quantity'))
+
+        p_sale_unit_price = SalesProduct.objects.filter(productID_id=int(item), salesID__invoiceDate__gte=startDate.date(),
+                                                   salesID__invoiceDate__lte=endDate.date() + timedelta(
+                                                       days=1))
+        total_p = 0.0
+        for p in p_sale_unit_price:
+            total_p = total_p + (p.quantity*p.netRate)
+
         worksheet.write(row, col, row)
         worksheet.write(row, col + 1, p_name.name)
         worksheet.write(row, col + 2, p_name.barcode)
         worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
-        worksheet.write(row, col + 4, p_name.unitID.name)
+        worksheet.write(row, col + 4, str(total_p))
+        worksheet.write(row, col + 5, str(total_p/p_sale_count['quantity__sum']))
+        worksheet.write(row, col + 6, p_name.unitID.name)
         row += 1
         # total = total + item.amount
 
@@ -6139,3 +6153,66 @@ def delete_take_payment(request):
         cus = TakePayment.objects.get(pk=int(idC))
         cus.delete()
         return JsonResponse({'message': 'success'}, safe=False)
+
+
+class CustomerMonthlyLedgerListByCustomerJson(BaseDatatableView):
+    order_columns = ['name', 'address']
+
+    def get_initial_queryset(self):
+        try:
+            return Customer.objects.filter(isDeleted__exact=False)
+
+        except:
+            return Customer.objects.filter(isDeleted__exact=False)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(Q(name__icontains=search)| Q(address__icontains=search) )
+
+        return qs
+
+    def prepare_results(self, qs):
+        startDateV = self.request.GET.get("startDate")
+        endDateV = self.request.GET.get("endDate")
+        sDate = datetime.strptime(startDateV, '%m/%Y')
+        eDate = datetime.strptime(endDateV, '%m/%Y')
+
+        s = datetime(sDate.year, sDate.month, 1)
+        ssDate = datetime.strptime(str(s.strftime("%d/%m/%Y")), '%d/%m/%Y')
+
+        x = calendar.monthrange(eDate.year, eDate.month)[1]
+        e = datetime(eDate.year, eDate.month, x)
+        eeDate = datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
+        json_data = []
+        for item in qs:
+            if item.address is None:
+                address = 'N/A'
+            else:
+                address = item.address
+            sale = Sales.objects.filter(isDeleted__exact=False,customerID_id=item.pk,
+                                        invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+
+            pay = TakePayment.objects.filter(customerID_id=item.pk,
+                                             paymentDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+
+            paid = 0.0
+            total = 0.0
+            for s in sale:
+                paid = paid + s.paidAgainstBill
+                total = total + s.grandTotal
+
+            for p in pay:
+                paid = paid + p.amount
+
+            due = total - paid
+
+            json_data.append([
+                escape(item.name),
+                address,
+                escape(total),
+                escape(paid),
+                escape(due),
+            ])
+        return json_data

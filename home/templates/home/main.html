@@ -8,15 +8,15 @@
     {% progressive_web_app_meta %}
     <meta name="viewport" content="width=device-width, initial-scale=no">
     <link rel="icon" href="{% static 'logo/logo.png' %}" type="image/gif" sizes="16x16">
-{#    <script src="{% static 'jsMain/jquery.min.js' %}"></script>#}
-{#    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">#}
-{#    <script src="{% static 'jsMain/semantic.min.js' %}"></script>#}
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
-<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
+    {#    <script src="{% static 'jsMain/jquery.min.js' %}"></script>#}
+    {#    <link rel="stylesheet" type="text/css" href="{% static 'cssMain/semantic.min.css' %}">#}
+    {#    <script src="{% static 'jsMain/semantic.min.js' %}"></script>#}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
     <script src="{% static 'sw/app.js' %}"></script>
 </head>
-<body >
+<body>
 
 <div class="ui vertically divided grid inverted" style="text-align: center">
 
@@ -40,7 +40,7 @@
             >A Billing Software<span style="font-size: 12px">  (V 2.6.0) </span></p>
             <img src="{% static 'logo/nextbill.png' %}" alt="" width="80" height="80">
 
-{#                        <p style="color:grey;font-family: serif;font-style: italic;">"By Ziva Infotech"</p>#}
+            {#                        <p style="color:grey;font-family: serif;font-style: italic;">"By Ziva Infotech"</p>#}
         </div>
 
     </div>
@@ -55,7 +55,8 @@
             <a href="{% url 'homeApp:bookingList' %}">
                 <p><i class="box icon" style="font-size: 5rem;"></i><br>BOOKINGS </p>
             </a>
-        </div><div class="column">
+        </div>
+        <div class="column">
             <a href="{% url 'homeApp:create_return' %}">
                 <p><i class="undo icon" style="font-size: 5rem;"></i><br>RETURN </p>
             </a>
@@ -92,7 +93,7 @@
             <div class="column">
                 <a href="{% url 'homeApp:daily_report' %}">
                     <p><i class="hand holding usd icon
-" style="font-size: 5rem;"></i><br>Daily Report </p>
+                " style="font-size: 5rem;"></i><br>DAILY REPORT </p>
                 </a>
             </div>
             <div class="column">
@@ -129,16 +130,22 @@
             </div>
         </div>
     {% endif %}
-    <div class="seven column row">
+    <div class="eight column row">
         <div class="column">
-            <a href="{% url 'homeApp:take_payment' %}">
-                <p><i class="rupee sign icon" style="font-size: 5rem;"></i><br> Take Payment </p>
+            <a href="{% url 'homeApp:customer_monthly_report' %}">
+                <p><i class="calendar check icon" style="font-size: 5rem;"></i><br> MONTHLY LEDGER </p>
             </a>
         </div> <div class="column">
+            <a href="{% url 'homeApp:take_payment' %}">
+                <p><i class="rupee sign icon" style="font-size: 5rem;"></i><br> TAKE PAYMENT </p>
+            </a>
+        </div>
+        <div class="column">
             <a href="{% url 'homeApp:ledger' %}">
                 <p><i class="scroll icon" style="font-size: 5rem;"></i><br> CUSTOMER LEDGER </p>
             </a>
-        </div>  <div class="column">
+        </div>
+        <div class="column">
             <a href="{% url 'homeApp:contact' %}">
                 <p><i class="address book icon" style="font-size: 5rem;"></i><br>CONTACTS </p>
             </a>
