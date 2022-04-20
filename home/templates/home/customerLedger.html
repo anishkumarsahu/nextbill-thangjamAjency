@@ -269,7 +269,7 @@
                                     <th>BillNo.</th>
                                     <th>Invoice No.</th>
                                     <th>TotalAmount(₹)</th>
-                                    <th>PaidAmount(₹)</th>
+{#                                    <th>PaidAmount(₹)</th>#}
                                     <th>PaymentType</th>
                                     <th>Company</th>
                                     <th>Type</th>
@@ -741,16 +741,16 @@
 
             customerTab = $('#itemTable').DataTable({
                 dom: 'Blfrtip',
-                "scrollY": "280px",
+                "scrollY": "300px",
                 buttons: [{
                     extend: 'excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7,8,9]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7,8]
                     }
                 }, {
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7,8,9]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7,8]
                     }
                 }
                 ],
@@ -760,15 +760,15 @@
                     {"name": "id", "targets": 2, "orderable": true},
                     {"name": "invoiceNumber", "targets": 3, "orderable": true},
                     {"name": "grandTotal", "targets": 4, "orderable": true},
-                    {"name": "paidAgainstBill", "targets": 5, "orderable": true},
-                    {"name": "paymentType", "targets": 6, "orderable": true},
-                    {"name": "companyID", "targets": 7, "orderable": true},
-                    {"name": "salesType", "targets": 8, "orderable": true},
-                    {"name": "datetime", "targets":9, "orderable": true},
-                    {"name": "action", "targets": 10, "orderable": false},
+{#                    {"name": "paidAgainstBill", "targets": 5, "orderable": true},#}
+                    {"name": "paymentType", "targets": 5, "orderable": true},
+                    {"name": "companyID", "targets": 6, "orderable": true},
+                    {"name": "salesType", "targets": 7, "orderable": true},
+                    {"name": "datetime", "targets":8, "orderable": true},
+                    {"name": "action", "targets": 9, "orderable": false},
 
                 ],
-                aaSorting: [[9, 'desc']],
+                aaSorting: [[8, 'desc']],
                 "lengthMenu": [[7, 25, 50, 100, -1], [7, 25, 50, 100, "All"]],
                 "pageLength": 7,
                 "processing": true,

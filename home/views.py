@@ -2305,7 +2305,7 @@ class ReturnListJson(BaseDatatableView):
 
 class SalesListByCustomerJson(BaseDatatableView):
     order_columns = ['id', 'invoiceDate', 'id', 'invoiceNumber',
-                     'grandTotal', 'paidAgainstBill', 'paymentType', 'companyID', 'salesType', 'datetime', ]
+                     'grandTotal', 'paymentType', 'companyID', 'salesType', 'datetime', ]
 
     def get_initial_queryset(self):
         try:
@@ -2374,7 +2374,7 @@ class SalesListByCustomerJson(BaseDatatableView):
                 str(item.pk).zfill(5),
                 invoiceNumber,
                 escape(item.grandTotal),
-                escape(item.paidAgainstBill),
+                # escape(item.paidAgainstBill),
                 escape(item.paymentType),
                 escape(item.companyID.name),
                 escape(item.salesType),
@@ -6197,22 +6197,22 @@ class CustomerMonthlyLedgerListByCustomerJson(BaseDatatableView):
             pay = TakePayment.objects.filter(customerID_id=item.pk,
                                              paymentDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
 
-            paid = 0.0
-            total = 0.0
-            for s in sale:
-                paid = paid + s.paidAgainstBill
-                total = total + s.grandTotal
+            if sale.count() > 0:
+                paid = 0.0
+                total = 0.0
+                for s in sale:
+                    paid = paid + s.paidAgainstBill
+                    total = total + s.grandTotal
 
-            for p in pay:
-                paid = paid + p.amount
+                for p in pay:
+                    paid = paid + p.amount
 
-            due = total - paid
-
-            json_data.append([
-                escape(item.name),
-                address,
-                escape(total),
-                escape(paid),
-                escape(due),
-            ])
+                due = total - paid
+                json_data.append([
+                    escape(item.name),
+                    address,
+                    escape(total),
+                    escape(paid),
+                    escape(due),
+                ])
         return json_data
