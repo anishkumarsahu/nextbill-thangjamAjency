@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'pwa',
     'home',
     'activation',
+    'ecomApp',
 ]
 
 MIDDLEWARE = [

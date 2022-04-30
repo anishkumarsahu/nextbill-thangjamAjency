@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include("home.urls", namespace='homeApp')),
     url(r'^activate/', include("activation.urls", namespace='activationApp')),
+    url(r'^ecom/', include("ecomApp.urls", namespace='ecomApp')),
     url('', include('pwa.urls')),
 ]
 
