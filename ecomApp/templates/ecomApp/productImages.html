@@ -1,0 +1,364 @@
+{% extends 'ecomApp/indexEcom.html' %}
+{% load static %}
+{% block title %}
+    <title>Product Images</title>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+    <style>
+        .cwide {
+            width: 75% !important;
+        }
+
+        #productTable_length {
+
+            left: 10px;
+            position: absolute;
+        }
+
+        #productTable_filter {
+            width: 75%;
+            float: right;
+        }
+
+            #batchTable_length {
+
+            left: 10px;
+            position: absolute;
+        }
+
+        #batchTable_filter {
+            width: 75%;
+            float: right;
+        }
+
+        .dt-buttons {
+            position: absolute;
+            left: 200px;
+        }
+    </style>
+    <div class="ui right aligned basic segment">
+        <div class="ui internally celled grid">
+            <div class="row" style="padding-bottom: 0!important;padding-top: 0px!important;">
+                <div class="sixteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Product Image List
+                    </h5>
+                    <table class="ui sortable celled very compact table" id="productTable"
+                           style="margin-top: 5px;width: 100%">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>MRP(₹)</th>
+                            <th>Cost(₹)</th>
+                            <th>SP(₹)</th>
+                            <th>Net(₹)</th>
+                            <th>ProductImages</th>
+                            <th>AddImage</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui basic modal custom" id="delProductModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Product detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Product detail will be deleted, are you sure to delete
+                this Product?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dpID">
+            <div class="ui green ok inverted button" onclick="deleteProduct()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui overlay fullscreen modal front transition scrolling win" id="batchDiv">
+        <div class="header">
+            Batch <span class="ui teal text">Detail.</span>
+
+        </div>
+        <div class="content" style="padding-top: 0!important;">
+            <div class="description">
+                <div class="ui right aligned basic segment">
+<h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Add New Product Batch Details
+                    </h5>
+
+                        <div class="ui internally grid">
+
+                            <div class="row" style="padding-bottom: 0!important;">
+                                <div class="thirteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                                    <form action="" id="batchForm">{% csrf_token %}
+                                        <input type="hidden" id="batchProductID">
+                                        <div class="ui mini form">
+                                            <div class="6 fields">
+                                                <div class="field">
+                                                    <label style="text-align: center">Batch Number</label>
+                                                        <div class="ui icon input">
+                                                            <input placeholder="Batch Number" class="prompt"
+                                                                   type="text"
+                                                                   id="batchNumber">
+                                                        </div>
+
+                                                </div>
+                                                <div class="field">
+                                                    <label style="text-align: center">Quantity</label>
+                                                        <div class="ui icon input">
+                                                            <input placeholder="Quantity" class="prompt" type="number"
+                                                                   id="batchQuantity" autocomplete="off" value="0">
+                                                            <input type="hidden" id="batchID" value="N/A">
+                                                        </div>
+
+                                                </div>
+                                                <div class="field">
+                                                    <label style="text-align: center">Rate</label>
+                                                    <input placeholder="Rate" id="batchRate" type="number" value="0"
+                                                    >
+                                                </div>
+                                                <div class="field">
+                                                    <label style="text-align: center">MRP</label>
+                                                    <input placeholder="MRP" id="batchMrp" type="number" value="0">
+                                                </div>
+                                                <div class="field" id="mDate">
+                                                    <label style="text-align: center">Manufacture Date</label>
+                                                    <input placeholder="Manufacture Date" id="manufactureBatch" type="text">
+                                                </div>
+                                                <div class="field" id="eDate">
+                                                    <label style="text-align: center">Expiry Date</label>
+                                                    <input placeholder="Expiry Date" id="expiryBatch" type="text" >
+                                                </div>
+
+                                            </div>
+                                            <div class="two fields" style="float: left;width: 100%;">
+
+
+                                                <div class="field">
+                                                    <label style="text-align: center">Location</label>
+                                                    <input placeholder="Location" id="locationBatch" type="text">
+                                                </div>
+                                                 <div class="field">
+                                                    <label style="text-align: center">Additional Detail</label>
+                                                    <input placeholder="Additional Detail" id="additionBatch" type="text">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="three left column" style="padding: 3rem">
+                                    <div class="ui buttons">
+
+                                        <button class="ui positive button" id="addBatchBtn" type="button"
+                                                onclick="addBatch()">
+                                            <i class="plus icon"></i>Add
+                                        </button>
+                                        <button style="display: none" type="button" id="updateBatchBtn"
+                                                onclick="editBatch()" class="ui orange button">
+                                            <i class="icon redo"></i>
+                                            Update
+                                        </button>
+                                        <div class="or"></div>
+                                        <button class="ui button red" onclick="clearBatchForm()"><i
+                                                class="minus icon"></i> Clear
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Product Batch List
+                    </h5>
+                    <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
+                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                        <table class="ui sortable celled very compact table" id="batchTable"
+                           style="margin-top: 5px;width: 100%;">
+                        <thead>
+                        <tr>
+                            <th>Batch Number</th>
+                            <th>Quantity</th>
+                            <th>Rate(₹)</th>
+                            <th>MRP(₹)</th>
+                            <th>ManDate</th>
+                            <th>ExDate</th>
+                            <th>Location</th>
+                            <th>Add Details</th>
+                            <th>Datetime</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+
+            <div class="ui primary approve button">
+                Close
+                <i class="compress arrows alternate icon"></i>
+            </div>
+        </div>
+    </div>
+
+        <div class="ui basic modal custom" id="delBatchModal">
+        <div class="ui icon header">
+            <i class="archive icon"></i>
+            Product Batch detail will be Deleted.
+        </div>
+        <div class="content">
+            <p style="text-align: center">The Product Batch detail will be deleted, are you sure to delete
+                this Product Batch?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <input type="hidden" id="dpBatchID">
+            <div class="ui green ok inverted button" onclick="deleteBatch()">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+{% block js %}
+    <script>
+
+
+        $(getProduct());
+        var productTab;
+        function getProduct() {
+
+
+            productTab = $('#productTable').DataTable({
+                dom: 'Blfrtip',
+                "scrollX": true,
+
+                buttons: [{
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }, {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6]
+                    }
+                }
+                    , {
+                        extend: 'colvis',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    {"name": "name", "targets": 0, "orderable": true},
+                    {"name": "brand", "targets": 1, "orderable": true},
+                    {"name": "categoryID", "targets": 2, "orderable": true},
+                    {"name": "mrp", "targets": 3, "orderable": true},
+                    {"name": "cost", "targets": 4, "orderable": true},
+                    {"name": "spWithoutGst", "targets": 5, "orderable": true},
+                    {"name": "spWithGst", "targets": 6, "orderable": true},
+                    {"name": "barcode", "targets": 7, "orderable": false},
+                    {"name": "action", "targets": 8, "orderable": false, "class": "flexbox"}
+
+                ],
+                aaSorting: [[0, 'asc']],
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                "pageLength": 10,
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'ecomApp:ProductListForImageJson' %}"
+            });
+        }
+
+        function delProduct(id) {
+            $('#delProductModal')
+                .modal('show')
+            ;
+            $('#dpID').val(id)
+        }
+
+        function deleteProduct() {
+            var id = $('#dpID').val();
+            var formdata = new FormData();
+            formdata.append('ID', id);
+            $.ajax({
+                url: "{% url 'homeApp:delete_product' %}",
+                type: "post",
+                data: formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Product Detail Deleted Successfully.'
+                            })
+                        ;
+
+
+                        productTab.ajax.reload();
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+        }
+
+    </script>
+{% endblock %}

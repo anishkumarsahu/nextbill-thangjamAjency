@@ -87,7 +87,7 @@
                                 <th>Zip</th>
                                 <th>State</th>
                                 <th>Email</th>
-                                <th>Company</th>
+                                <th>IsActive?</th>
                                 <th>D_Target</th>
                                 <th>Actions</th>
                             </tr>
@@ -251,8 +251,11 @@
                                     <input type="text" name="Name" placeholder="Full Name" id="EditCompanyUserName">
                                 </div>
                                 <div class="field">
-                                    <label>Company</label>
-                                    <select id="EditUserCompany" style="color: black"></select>
+                                    <label>Is Active</label>
+                                    <select id="isActive" style="color: black">
+                                        <option value="True">Active</option>
+                                        <option value="False">In-Active</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -591,12 +594,12 @@
                     console.log(response);
                     $('#EditUserId').val(response.data['ID']);
                     $('#EditCompanyUserName').val(response.data['UserName']);
-{#                    $('#EditUserCompany').val(response.data['UserCompany']);#}
+                    $('#isActive').val(response.data['IsActive']).change();
                     $('#EditUserPhoneNo').val(response.data['UserPhone']);
                     $('#EditUserEmail').val(response.data['UserEmail']);
                     $('#EditUserAddress').val(response.data['UserAddress']);
                     $('#EditUserZip').val(response.data['UserZip']);
-                    $('#EditUserState').val(response.data['UserState']);
+                    $('#EditUserState').val(response.data['UserState']).change();
                     $('#EditUserCity').val(response.data['UserCity']);
                     $('#EditUserTarget').val(response.data['Target']);
 
@@ -625,6 +628,7 @@
             var EditUserState = $('#EditUserState').val();
             var EditUserCity = $('#EditUserCity').val();
             var EditUserTarget = $('#EditUserTarget').val();
+            var isActive = $('#isActive').val();
 
 
             if (EditCompanyUserName === '' || EditUserCompany === '' || EditUserPhoneNo === '' ||
@@ -642,7 +646,6 @@
                 data = new FormData();
                 data.append('UserID', ID);
                 data.append('EditCompanyUserName', EditCompanyUserName);
-                data.append('EditUserCompany', EditUserCompany);
                 data.append('EditUserPhoneNo', EditUserPhoneNo);
                 data.append('EditUserEmail', EditUserEmail);
                 data.append('EditUserAddress', EditUserAddress);
@@ -650,12 +653,13 @@
                 data.append('EditUserState', EditUserState);
                 data.append('EditUserCity', EditUserCity);
                 data.append('EditUserTarget', EditUserTarget);
+                data.append('isActive', isActive);
 
                 data.append('csrfmiddlewaretoken', csrfmiddlewaretoken);
 
                 $.ajax({
                     type: 'post',
-                    url: '/api/EditUserDetail/',
+                    url: '{% url "ecomApp:Edit_executive" %}',
                     data: data,
                     contentType: false,
                     cache: false,

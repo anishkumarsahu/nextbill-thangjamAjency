@@ -17,7 +17,7 @@ from activation.models import Validity
 from activation.views import is_activated
 from home.numberToWord import num2words
 from .models import *
-
+from home.models import *
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import escape
 
@@ -163,7 +163,7 @@ def get_executive_detail(request):
         'UserZip': C_User.zip,
         'UserState': C_User.state,
         'UserEmail': C_User.email,
-        'IsActive': C_User.isActive,
+        'IsActive': str(C_User.isActive).capitalize(),
         'Target': C_User.target,
 
     }
@@ -182,7 +182,7 @@ def Edit_executive(request):
         EditUserState = request.POST.get("EditUserState")
         EditUserCity = request.POST.get("EditUserCity")
         EditUserTarget = request.POST.get("EditUserTarget")
-
+        isActive = request.POST.get("isActive")
         edit_user = ExecutiveUser.objects.get(pk=int(ID))
 
         edit_user.name = EditCompanyUserName
@@ -193,7 +193,91 @@ def Edit_executive(request):
         edit_user.state = EditUserState
         edit_user.city = EditUserCity
         edit_user.target = float(EditUserTarget)
+        user = User.objects.get(pk=edit_user.user_ID_id)
+        if isActive == 'True':
+
+            edit_user.isActive = True
+            user.is_active = True
+        else:
+            edit_user.isActive = False
+            user.is_active = False
         edit_user.save()
+        user.save()
 
         return JsonResponse({'message': 'success'}, safe=False)
+
+
+
+@is_activated()
+def product_images(request):
+    return render(request, 'ecomApp/productImages.html')
+
+
+# done
+class ProductListForImageJson(BaseDatatableView):
+    order_columns = ['name', 'brand', 'categoryID', 'mrp','cost', 'spWithoutGst', 'spWithGst','barcode']
+
+    def get_initial_queryset(self):
+        if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+
+            return Product.objects.filter(wareHouse_ID__isDeleted__exact=False, company_ID__isDeleted__exact=False,
+                                          isDeleted__exact=False)
+        else:
+            user = CompanyUser.objects.get(user_ID_id=self.request.user.pk)
+            return Product.objects.filter(wareHouse_ID__isDeleted__exact=False, company_ID__isDeleted__exact=False,
+                                          isDeleted__exact=False, company_ID_id=user.company_ID_id,
+                                          productType__iexact='Normal')
+
+    def filter_queryset(self, qs):
+
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) | Q(brand__icontains=search)
+                | Q(categoryID__name__icontains=search) | Q(mrp__icontains=search)
+                | Q(cost__icontains=search) | Q(spWithoutGst__icontains=search)
+                | Q(spWithGst__icontains=search)
+            ).order_by('-id')
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            images =''
+            try:
+                img = ProductImage.objects.filter(productID_id=item.pk, isDeleted__exact=False)
+                if img.count() < 0:
+                    images = '<button class="mini ui red button">No Image Addedsss</button>'
+                else:
+                    for i in img:
+                        images = '<img class="ui avatar image" src="{}">'.format(i.productImage.thumbnail.url)
+
+            except:
+                images = '<button class="mini ui red button">No Image Addedfdfd</button>'
+
+
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+                action = '''
+                    <button style="font-size:10px;" onclick = "GetProductDetail('{}')" class="ui circular facebook icon button green">
+                                               <i class="image icon"></i>
+                                             </button>
+
+                        '''.format(item.pk),
+            else:
+                action = '<button class="mini ui button">Denied</button>'
+
+            json_data.append([
+                escape(item.name),  # escape HTML for security reasons
+                escape(item.brand),
+                escape(item.categoryID.name),
+                escape(item.mrp),
+                escape(item.cost),
+                escape(item.spWithoutGst),
+                escape(item.spWithGst),
+                images,
+                action,
+
+            ])
+        return json_data
 

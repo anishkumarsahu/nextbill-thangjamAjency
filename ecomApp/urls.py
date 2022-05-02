@@ -11,4 +11,10 @@ urlpatterns = [
     url(r'^api/get_executive_detail/$', get_executive_detail, name='get_executive_detail'),
     url(r'^api/Edit_executive/$', Edit_executive, name='Edit_executive'),
 
+    # product images
+    url(r'^product_images/$', product_images, name='product_images'),
+    url(r'^ProductListForImageJson/$', ProductListForImageJson.as_view(), name='ProductListForImageJson'),
+
+
+
     ]
