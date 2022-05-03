@@ -14,7 +14,9 @@ urlpatterns = [
     # product images
     url(r'^product_images/$', product_images, name='product_images'),
     url(r'^ProductListForImageJson/$', ProductListForImageJson.as_view(), name='ProductListForImageJson'),
-
+    url(r'^add_product_image_api/$', add_product_image_api, name='add_product_image_api'),
+    url(r'^product_image_list_api/$', product_image_list_api, name='product_image_list_api'),
+    url(r'^delete_product_image_api/$', delete_product_image_api, name='delete_product_image_api'),
 
 
     ]

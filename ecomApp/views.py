@@ -244,22 +244,18 @@ class ProductListForImageJson(BaseDatatableView):
     def prepare_results(self, qs):
         json_data = []
         for item in qs:
-            images =''
-            try:
-                img = ProductImage.objects.filter(productID_id=item.pk, isDeleted__exact=False)
-                if img.count() < 0:
-                    images = '<button class="mini ui red button">No Image Addedsss</button>'
-                else:
-                    for i in img:
-                        images = '<img class="ui avatar image" src="{}">'.format(i.productImage.thumbnail.url)
-
-            except:
-                images = '<button class="mini ui red button">No Image Addedfdfd</button>'
-
+            images = '<button class="mini ui red button">No Image Added</button>'
+            img = ProductImage.objects.filter(productID_id=item.pk, isDeleted__exact=False)
+            if img.count() < 1:
+                images = '<button class="mini ui red button">No Image Added</button>'
+            else:
+                images =''
+                for i in img:
+                    images += '<img class="ui avatar image" src="{}">'.format(i.productImage.thumbnail.url)
 
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
                 action = '''
-                    <button style="font-size:10px;" onclick = "GetProductDetail('{}')" class="ui circular facebook icon button green">
+                    <button style="font-size:10px;" onclick = "GetProductImageDetail('{}')" class="ui circular facebook icon button green">
                                                <i class="image icon"></i>
                                              </button>
 
@@ -281,3 +277,46 @@ class ProductListForImageJson(BaseDatatableView):
             ])
         return json_data
 
+
+@transaction.atomic
+@csrf_exempt
+def add_product_image_api(request):
+    if request.method == 'POST':
+        try:
+            productID = request.POST.get("productID")
+            imageUpload = request.FILES["imageUpload"]
+
+            pro = ProductImage()
+            pro.productID_id = int(productID)
+            pro.productImage = imageUpload
+            pro.save()
+            return JsonResponse({'message': 'success'}, safe=False)
+        except:
+            return JsonResponse({'message': 'error'}, safe=False)
+
+@csrf_exempt
+def product_image_list_api(request):
+    productID = request.POST.get("productID")
+    pro = ProductImage.objects.filter(productID_id=int(productID), isDeleted__exact=False)
+    pro_list = []
+    for p in pro:
+        pro_dic ={
+            'ImageID': p.id,
+            'Image':p.productImage.medium.url
+        }
+        pro_list.append(pro_dic)
+
+
+
+    return JsonResponse({'message': 'success', 'data':pro_list}, safe=False)
+
+
+
+@csrf_exempt
+def delete_product_image_api(request):
+    if request.method == 'POST':
+        idC = request.POST.get("ID")
+
+        cus = ProductImage.objects.get(pk=int(idC))
+        cus.delete()
+        return JsonResponse({'message': 'success'}, safe=False)

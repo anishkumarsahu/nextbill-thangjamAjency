@@ -7,6 +7,78 @@
 {% endblock %}
 {% block body %}
     <style>
+        .avatar-upload {
+            position: relative;
+            max-width: 115px;
+            margin: 5px auto;
+        }
+
+        .avatar-upload .avatar-edit {
+            position: absolute;
+            right: 12px;
+            z-index: 1;
+            top: 10px;
+        }
+
+        .avatar-upload .avatar-edit input {
+            display: none;
+        }
+
+        .avatar-upload .avatar-edit input + label {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            margin-bottom: 0;
+            border-radius: 100%;
+            background: #FFFFFF;
+            border: 1px solid transparent;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            font-weight: normal;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .avatar-upload .avatar-edit input + label:hover {
+            background: #f1f1f1;
+            border-color: #d6d6d6;
+        }
+
+        .avatar-upload .avatar-edit input + label:after {
+            color: #757575;
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            margin: auto;
+
+        }
+
+        .avatar-upload .avatar-preview {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            border-radius: 100%;
+            border: 6px solid #F8F8F8;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-upload .avatar-preview > div {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .ui.vertical.segment:not(.inverted) {
+            padding-top: 5rem !important;
+            padding-bottom: 6rem;
+        }
+    </style>
+
+    <style>
         .cwide {
             width: 75% !important;
         }
@@ -22,7 +94,7 @@
             float: right;
         }
 
-            #batchTable_length {
+        #batchTable_length {
 
             left: 10px;
             position: absolute;
@@ -36,6 +108,7 @@
         .dt-buttons {
             position: absolute;
             left: 200px;
+
         }
     </style>
     <div class="ui right aligned basic segment">
@@ -68,14 +141,14 @@
             </div>
         </div>
     </div>
-    <div class="ui basic modal custom" id="delProductModal">
+    <div class="ui basic inverted coupled modal custom" id="delProductModal">
         <div class="ui icon header">
-            <i class="archive icon"></i>
-            Product detail will be Deleted.
+            <i class="image icon"></i>
+            Product Image will be Deleted.
         </div>
         <div class="content">
-            <p style="text-align: center">The Product detail will be deleted, are you sure to delete
-                this Product?</p>
+            <p style="text-align: center">The Product Image will be deleted, are you sure to delete
+                this Image?</p>
         </div>
         <div class="actions">
             <div class="ui red basic cancel inverted button">
@@ -91,128 +164,68 @@
     </div>
 
 
-    <div class="ui overlay fullscreen modal front transition scrolling win" id="batchDiv">
+    <div class="ui coupled  modal front transition scrolling win batchDiv" id="batchDiv">
         <div class="header">
-            Batch <span class="ui teal text">Detail.</span>
+            Product <span class="ui teal text">Images.</span>
 
         </div>
         <div class="content" style="padding-top: 0!important;">
             <div class="description">
                 <div class="ui right aligned basic segment">
-<h5 class="ui horizontal left aligned divider header">
+                    <h5 class="ui horizontal left aligned divider header">
                         <i class="left align icon"></i>
-                        Add New Product Batch Details
+                        Add Product Image
                     </h5>
 
-                        <div class="ui internally grid">
+                    <div class="ui internally grid">
 
-                            <div class="row" style="padding-bottom: 0!important;">
-                                <div class="thirteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
-                                    <form action="" id="batchForm">{% csrf_token %}
-                                        <input type="hidden" id="batchProductID">
-                                        <div class="ui mini form">
-                                            <div class="6 fields">
-                                                <div class="field">
-                                                    <label style="text-align: center">Batch Number</label>
-                                                        <div class="ui icon input">
-                                                            <input placeholder="Batch Number" class="prompt"
-                                                                   type="text"
-                                                                   id="batchNumber">
+                        <div class="row" style="padding-bottom: 0!important;text-align: center">
+                            <div class="sixteen wide column" style="padding-top: 0!important;padding-bottom: 0;">
+                                <form action="" id="batchForm">{% csrf_token %}
+                                    <div class="field required">
+                                        <div class="ui" style="width: 100%; text-align: center">
+                                            <div class="ui icon header">
+                                                <div class="inline ">
+
+                                                    <div class="avatar-upload">
+                                                        <div class="avatar-edit">
+                                                            <input type='file' id="imageUpload" name="photo"
+                                                                   accept=".png, .jpg, .jpeg"/>
+                                                            <label for="imageUpload"><i class="edit icon"
+                                                                                        style="font-size: 1rem;padding: 0.4rem"></i></label>
                                                         </div>
-
-                                                </div>
-                                                <div class="field">
-                                                    <label style="text-align: center">Quantity</label>
-                                                        <div class="ui icon input">
-                                                            <input placeholder="Quantity" class="prompt" type="number"
-                                                                   id="batchQuantity" autocomplete="off" value="0">
-                                                            <input type="hidden" id="batchID" value="N/A">
+                                                        <div class="avatar-preview">
+                                                            <div id="cImg"
+                                                                 style="background-image: url('https://cdn-icons.flaticon.com/png/512/4785/premium/4785452.png?token=exp=1651559899~hmac=8bd1641cd72c54268deafab8b26dd7a9');">
+                                                            </div>
                                                         </div>
-
-                                                </div>
-                                                <div class="field">
-                                                    <label style="text-align: center">Rate</label>
-                                                    <input placeholder="Rate" id="batchRate" type="number" value="0"
-                                                    >
-                                                </div>
-                                                <div class="field">
-                                                    <label style="text-align: center">MRP</label>
-                                                    <input placeholder="MRP" id="batchMrp" type="number" value="0">
-                                                </div>
-                                                <div class="field" id="mDate">
-                                                    <label style="text-align: center">Manufacture Date</label>
-                                                    <input placeholder="Manufacture Date" id="manufactureBatch" type="text">
-                                                </div>
-                                                <div class="field" id="eDate">
-                                                    <label style="text-align: center">Expiry Date</label>
-                                                    <input placeholder="Expiry Date" id="expiryBatch" type="text" >
-                                                </div>
-
-                                            </div>
-                                            <div class="two fields" style="float: left;width: 100%;">
-
-
-                                                <div class="field">
-                                                    <label style="text-align: center">Location</label>
-                                                    <input placeholder="Location" id="locationBatch" type="text">
-                                                </div>
-                                                 <div class="field">
-                                                    <label style="text-align: center">Additional Detail</label>
-                                                    <input placeholder="Additional Detail" id="additionBatch" type="text">
+                                                    </div>
                                                 </div>
                                             </div>
+
                                         </div>
-
-                                    </form>
-                                </div>
-                                <div class="three left column" style="padding: 3rem">
-                                    <div class="ui buttons">
-
-                                        <button class="ui positive button" id="addBatchBtn" type="button"
-                                                onclick="addBatch()">
-                                            <i class="plus icon"></i>Add
-                                        </button>
-                                        <button style="display: none" type="button" id="updateBatchBtn"
-                                                onclick="editBatch()" class="ui orange button">
-                                            <i class="icon redo"></i>
-                                            Update
-                                        </button>
-                                        <div class="or"></div>
-                                        <button class="ui button red" onclick="clearBatchForm()"><i
-                                                class="minus icon"></i> Clear
-                                        </button>
                                     </div>
-
-                                </div>
+                                    <input type="hidden" id="productID">
+                                </form>
+                                <button class="ui positive tiny button" id="saveBtn" type="button"
+                                        onclick="addProductImage()">
+                                    <i class="image icon"></i> Add Image
+                                </button>
+                                <button id="saveBtnLoad" style="display: none;" class="ui green double loading button">
+                                    Saving ....
+                                </button>
                             </div>
-
                         </div>
+
+                    </div>
 
                     <h5 class="ui horizontal left aligned divider header">
                         <i class="left align icon"></i>
-                        Product Batch List
+                        Product Image List
                     </h5>
                     <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
-                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
-                        <table class="ui sortable celled very compact table" id="batchTable"
-                           style="margin-top: 5px;width: 100%;">
-                        <thead>
-                        <tr>
-                            <th>Batch Number</th>
-                            <th>Quantity</th>
-                            <th>Rate(₹)</th>
-                            <th>MRP(₹)</th>
-                            <th>ManDate</th>
-                            <th>ExDate</th>
-                            <th>Location</th>
-                            <th>Add Details</th>
-                            <th>Datetime</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                        <div class="ui six cards" id="pImageListDIV">
+                            <div class="card"> <div class="image"><img src=""></div><div class="extra"><a class="ui right icon red fluid label">Delete<i class="trash icon"></i></a></div></div>
                         </div>
 
                     </div>
@@ -221,35 +234,12 @@
         </div>
         <div class="actions">
 
-            <div class="ui primary approve button">
+            <div class="ui primary approve button" onclick="closeModal()">
                 Close
                 <i class="compress arrows alternate icon"></i>
             </div>
         </div>
     </div>
-
-        <div class="ui basic modal custom" id="delBatchModal">
-        <div class="ui icon header">
-            <i class="archive icon"></i>
-            Product Batch detail will be Deleted.
-        </div>
-        <div class="content">
-            <p style="text-align: center">The Product Batch detail will be deleted, are you sure to delete
-                this Product Batch?</p>
-        </div>
-        <div class="actions">
-            <div class="ui red basic cancel inverted button">
-                <i class="remove icon"></i>
-                No
-            </div>
-            <input type="hidden" id="dpBatchID">
-            <div class="ui green ok inverted button" onclick="deleteBatch()">
-                <i class="checkmark icon"></i>
-                Yes
-            </div>
-        </div>
-    </div>
-
 
 
 
@@ -257,6 +247,20 @@
 {% block js %}
     <script>
 
+        function readURLPhoto(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#cImg').css('background-image', 'url(' + e.target.result + ')');
+                    $('#cImg').hide();
+                    $('#cImg').fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#imageUpload").change(function () {
+            readURLPhoto(this);
+        });
 
         $(getProduct());
         var productTab;
@@ -306,19 +310,20 @@
             });
         }
 
-        function delProduct(id) {
+        function delProductImage(id) {
             $('#delProductModal')
-                .modal('show')
+                .modal('attach events','.batchDiv')
             ;
             $('#dpID').val(id)
         }
 
         function deleteProduct() {
             var id = $('#dpID').val();
+            var productID = $('#productID').val();
             var formdata = new FormData();
             formdata.append('ID', id);
             $.ajax({
-                url: "{% url 'homeApp:delete_product' %}",
+                url: "{% url 'ecomApp:delete_product_image_api' %}",
                 type: "post",
                 data: formdata,
                 contentType: false,
@@ -330,11 +335,11 @@
                         $('body')
                             .toast({
                                 class: 'success',
-                                message: 'Product Detail Deleted Successfully.'
+                                message: 'Product Image Deleted Successfully.'
                             })
                         ;
 
-
+                        getProductImageList(productID);
                         productTab.ajax.reload();
                     } else {
                         $('body')
@@ -360,5 +365,143 @@
 
         }
 
+
+        function addProductImage() {
+            var productID = $('#productID').val();
+            var imageUpload = document.getElementById("imageUpload").files[0];
+
+            if (imageUpload !== undefined) {
+                showLoading();
+                var formdata = new FormData();
+                formdata.append('productID', productID);
+                formdata.append('imageUpload', imageUpload);
+                $.ajax({
+                    url: "{% url 'ecomApp:add_product_image_api' %}",
+                    type: "post",
+                    data: formdata,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+
+                    success: function (response) {
+                        if (response.message === 'success') {
+                            $('body')
+                                .toast({
+                                    class: 'success',
+                                    message: 'Product Image added successfully.'
+                                })
+                            ;
+                            $('#cImg').css('background-image','url(https://cdn-icons.flaticon.com/png/512/4785/premium/4785452.png?token=exp=1651559899~hmac=8bd1641cd72c54268deafab8b26dd7a9)');
+                            productTab.ajax.reload();
+                            getProductImageList(productID)
+
+                        } else {
+                            $('body')
+                                .toast({
+                                    class: 'error',
+                                    message: 'An error occurred !'
+                                })
+                            ;
+
+                        }
+                        hideLoading();
+                        return response;
+                    },
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                        hideLoading();
+                    }
+                });
+            }
+            else {
+                $('body').toast({
+                    class: 'orange',
+                    message: 'Please select image.'
+                });
+            }
+
+
+        }
+
+
+        function GetProductImageDetail(id) {
+            $('#batchDiv').modal('show')
+            ;
+            $('#productID').val(id);
+            getProductImageList(id);
+        }
+
+             function closeModal() {
+
+            $('#delProductModal').modal('hide');
+               $('#batchDiv').modal('hide');
+
+        }
+        function showLoading() {
+            $('#saveBtn').css('display', 'none');
+            $('#saveBtnLoad').css('display', '');
+
+        }
+        function hideLoading() {
+            $('#saveBtn').css('display', '');
+            $('#saveBtnLoad').css('display', 'none');
+
+        }
+
+      function getProductImageList(id) {
+
+{#            var productID = $('#productID').val();#}
+          var htmlData = $('#pImageListDIV');
+          htmlData.html("");
+            var formdata = new FormData();
+             formdata.append('productID', id);
+            $.ajax({
+                type: 'POST',
+                url: '{% url "ecomApp:product_image_list_api" %}',
+                data:formdata,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (response) {
+         console.log(response);
+                    if (response.message === 'success') {
+
+                  $.each(response.data, function (index) {
+                  htmlData.append('<div class="card"> <div class="image"><img src="'+ response.data[index].Image+'"></div><div class="extra"><a onclick="delProductImage('+response.data[index].ImageID +')" class="ui right icon red fluid label">Delete<i class="trash icon"></i></a></div></div>');
+                   });
+
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                title: 'Something went wrong.',
+                                message: 'Please try again.',
+
+                            });
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            title: 'Something went wrong.',
+                            message: 'Please try again.',
+
+                        });
+                }
+            });
+
+        }
+$('.coupled.modal')
+  .modal({
+    allowMultiple: true
+  })
+;
     </script>
 {% endblock %}
