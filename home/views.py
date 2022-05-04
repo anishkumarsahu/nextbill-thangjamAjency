@@ -2967,7 +2967,12 @@ def postLogin(request):
 
         if user is not None:
             login(request, user)
-            return JsonResponse({'message': 'success'}, safe=False)
+            if 'Admin' in request.user.groups.values_list('name', flat=True) or 'Staff' in request.user.groups.values_list('name', flat=True) :
+                return JsonResponse({'message': 'success','data':'/'}, safe=False)
+            elif 'Executive' in request.user.groups.values_list('name', flat=True):
+                return JsonResponse({'message': 'success','data':'/ecom/home/'}, safe=False)
+            else:
+                return JsonResponse({'message': 'fail'}, safe=False)
 
 
         else:

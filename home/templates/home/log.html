@@ -173,7 +173,7 @@
                                     class: 'success',
                                     message: 'Login Successful.'
                                 });
-                           document.location.href = "{% url 'homeApp:homepage' %}"
+                           document.location.href = ""+ response.data;
                         }
                         else {
                             $('body')

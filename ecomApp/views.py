@@ -29,6 +29,16 @@ def sales_executive(request):
 
 
 
+@is_activated()
+def home(request):
+    customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
+    context = {
+        'customers':customers
+    }
+    return render(request, 'ecomApp/executiveHome.html', context)
+
+
+
 class ExecutiveUserListJson(BaseDatatableView):
     order_columns = ['name', 'username', 'userPassword', 'phone', 'address', 'city',
                      'zip', 'state', 'email', 'isActive', 'target'

@@ -2,7 +2,10 @@ from django.conf.urls import url
 from .views import *
 
 urlpatterns = [
-    # pages
+    # Executive
+    url(r'^home/$', home, name='home'),
+
+    # admin
     url(r'^sales_executive/$', sales_executive, name='sales_executive'),
     url(r'^ExecutiveUserListJson/$', ExecutiveUserListJson.as_view(), name='ExecutiveUserListJson'),
 
