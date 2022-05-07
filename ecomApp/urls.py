@@ -4,6 +4,7 @@ from .views import *
 urlpatterns = [
     # Executive
     url(r'^home/$', home, name='home'),
+    url(r'^browse_products/$', browse_products, name='browse_products'),
 
     # admin
     url(r'^sales_executive/$', sales_executive, name='sales_executive'),
@@ -20,6 +21,10 @@ urlpatterns = [
     url(r'^add_product_image_api/$', add_product_image_api, name='add_product_image_api'),
     url(r'^product_image_list_api/$', product_image_list_api, name='product_image_list_api'),
     url(r'^delete_product_image_api/$', delete_product_image_api, name='delete_product_image_api'),
+
+
+    url(r'^get_customer_ledger_detail/$', get_customer_ledger_detail, name='get_customer_ledger_detail'),
+    url(r'^product_list_api/(?P<Page>[0-9]+)/$', product_list_api, name='product_list_api'),
 
 
     ]

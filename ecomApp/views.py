@@ -1,5 +1,6 @@
 import calendar
 from django.core import management
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.db.models import Q, Sum, F
 from django.http import JsonResponse
@@ -27,6 +28,10 @@ from django.utils.html import escape
 def sales_executive(request):
     return render(request, 'ecomApp/userEcom.html')
 
+
+@is_activated()
+def browse_products(request):
+    return render(request, 'ecomApp/productList.html')
 
 
 @is_activated()
@@ -330,3 +335,80 @@ def delete_product_image_api(request):
         cus = ProductImage.objects.get(pk=int(idC))
         cus.delete()
         return JsonResponse({'message': 'success'}, safe=False)
+
+
+
+@csrf_exempt
+def get_customer_ledger_detail(request):
+    try:
+        q = request.GET.get('q')
+        id = str(q).split('|')
+        instance = Customer.objects.get(pk=int(id[1]), isDeleted__exact=False)
+        all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=instance.pk)
+        pay = TakePayment.objects.filter(customerID_id=instance.pk)
+
+        paid = 0.0
+        total = 0.0
+        for s in all_sales:
+            paid = paid + s.paidAgainstBill
+            total = total + s.grandTotal
+
+        for p in pay:
+            paid = paid + p.amount
+        due = total - paid
+
+        return JsonResponse({'message': 'success', 'total':total, 'paid':paid , 'due':due, 'name':instance.name.capitalize(), 'address':instance.address, 'id':instance.pk }, safe=False)
+    except:
+        return JsonResponse({'message': 'error'}, safe=False)
+
+def product_list_api(request, *args,**kwargs):
+
+    # try:
+
+        # print
+        try:
+            sortBy = request.GET.get('sortBy')
+            products = Product.objects.filter(isDeleted__exact=False).order_by('name')
+        except:
+            products = Product.objects.filter(isDeleted__exact=False).order_by('name')
+
+        Index = kwargs['Page']
+        paginator = Paginator(products, 8)
+        try:
+            products = paginator.page(Index)
+        except PageNotAnInteger:
+            products = paginator.page(1)
+        except EmptyPage:
+            products = []
+
+        product_list = []
+
+        for product in products:
+            # try:
+            #     Wish = Wishlist.objects.get(customerID__userID_id=request.user.pk, isDeleted__exact=False,
+            #                                 productID_id=product.pk)
+            #     myWish = 'Y'
+            # except:
+            #     myWish = 'N'
+            image = ProductImage.objects.filter(productID_id=product.pk, isDeleted__exact=False)
+            if image.count() > 0:
+                oriImage = image[0].productImage.medium.url
+            else:
+                oriImage = 'https://cdn-icons.flaticon.com/png/512/4194/premium/4194746.png?token=exp=1651906853~hmac=5bc4ca930ed1e7aa229eb5a648f823c0'
+
+            if product.stock > 0:
+                stock = '<span style="color:green;font-weight:bold" class="date">/- {} {} Available </span>'.format(product.stock, product.unitID.name)
+            else:
+                stock = '<span style="color:red;" class="date">Out Of Stock </span>'
+            product_dic = {
+                'Name': str(product.name).capitalize(),
+                'ID': product.pk,
+                'OriImageURL': oriImage,
+                'Category': product.categoryID.name +'/ ' + product.categoryID.brand,
+                'Mrp': product.mrp,
+                'IsAvailable': stock
+            }
+            product_list.append(product_dic)
+        return JsonResponse({'message': 'success', 'data': product_list})
+    # except:
+    #     return JsonResponse({'message': 'error'})

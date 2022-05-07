@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,  user-scalable=0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>NextBill | Ecom</title>
     <link rel="icon" href="{% static 'logo/logo.png' %}" type="image/gif" sizes="16x16">
@@ -13,14 +13,9 @@
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
 
 
-{#    <link#}
-{#            rel="stylesheet"#}
-{#            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"#}
-{#            integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ="#}
-{#            crossorigin="anonymous"#}
-{#    />#}
-{#    <link rel="stylesheet" href="https://frontendfunn.github.io/semantic-ui-admin-dashboard-template/css/style.css"/>#}
+{% block css %}
 
+{% endblock %}
     <style>
 
         .preloader {
@@ -38,38 +33,40 @@
         }
 
         body ::-webkit-scrollbar {
-  width: 6px;
-}
+            width: 6px;
+        }
 
-.ui.vertical.menu.sidebar-menu {
-  margin-top: 40px !important;
-  max-height: calc(100% - 40px) !important;
-  height: calc(100% - 40px) !important;
-}
+        .ui.vertical.menu.sidebar-menu {
+            margin-top: 40px !important;
+            max-height: calc(100% - 40px) !important;
+            height: calc(100% - 40px) !important;
+        }
 
-.ui.vertical.menu.sidebar-menu .item i.icon {
-  float: left;
-  margin: 0em 0.5em 0em 0em;
-}
+        .ui.vertical.menu.sidebar-menu .item i.icon {
+            float: left;
+            margin: 0em 0.5em 0em 0em;
+        }
 
-.main-content {
-  margin-top: 40px;
-}
+        .main-content {
+            margin-top: 40px;
+        }
 
-@media (min-width: 768px) {
-  .ui.vertical.menu.sidebar-menu {
-    visibility: visible;
-    -webkit-transform: translate3d(0, 0, 0);
-            transform: translate3d(0, 0, 0);
-    width: 15rem !important;
-  }
-  .main-content {
-    margin-left: 15rem;
-  }
-  .sidebar-menu-toggler {
-    display: none !important;
-  }
-}
+        @media (min-width: 768px) {
+            .ui.vertical.menu.sidebar-menu {
+                visibility: visible;
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+                width: 15rem !important;
+            }
+
+            .main-content {
+                margin-left: 15rem;
+            }
+
+            .sidebar-menu-toggler {
+                display: none !important;
+            }
+        }
     </style>
 
 </head>
@@ -172,7 +169,7 @@
 
     <div class="right menu">
         <a href="#" class="item">
-            <i class="bell icon"></i>
+           <i class="cart arrow down icon"></i>
         </a>
         <div class="ui dropdown item">
             <i class="user cirlce icon"></i>
@@ -199,46 +196,94 @@
 
     <div class="main-content">
         {% block body %}
-            <div class="ui aligned basic padded segment" style="padding-top: 5rem;">
-                <div class="ui raised brown segment  " >
-                    <form class="ui tiny form" id="expenseForm">
-                        <h4 class="ui  left aligned  dividing header">Search Customer</h4>
+     <div class="ui centered grid">
 
-                        <div class="four fields">
 
-                            <div class="field"></div>
-                            <div class="field">
-                                <label>Search By Customer</label>
-                                <select class="ui search dropdown" id="customerNameID">
-                                    <option value="">Search By Customer</option>
-                                    {% for customer in customers %}
-                                        <option value="{{ customer.name }}|{{ customer.pk }}"> {{ customer.name }}
-                                            - {{ customer.address }}</option>
-                                    {% endfor %}
+                <div class="sixteen wide tablet nine wide computer column" style="margin-top: 2rem">
+                    <div class="ui raised brown segment padded  ">
+                        <form class="ui tiny form" id="expenseForm">
+                            <h4 class="ui  left aligned  dividing header">Search Customer</h4>
 
-                                </select>
+                            <div class="two fields">
+
+                                <div class="field">
+                                    <label>Search By Customer</label>
+                                    <select class="ui search dropdown" id="customerNameID">
+                                        <option value="">Search By Customer</option>
+                                        {% for customer in customers %}
+                                            <option value="{{ customer.name }}|{{ customer.pk }}"> {{ customer.name }}
+                                                - {{ customer.address }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+
+
+                                <div class="field" style="padding-top: 1.666em;">
+                                    <button type="button" class="ui fluid green button" id="searchBtn"
+                                            onclick="GetCustomerDetail()">
+                                        <i class="icon search"></i>
+                                        Search
+                                    </button>
+                                    <button type="button" style="display: none" class="ui fluid red button"
+                                            onclick="clearDetail()" id="cancelBtn">
+                                        <i class="icon cancel"></i>
+                                        Clear
+                                    </button>
+                                </div>
                             </div>
 
-
-                            <div class="field" style="padding-top: 1.666em;">
-                                <button type="button" class="ui fluid green button" id="searchBtn"
-                                        onclick="GetCustomerDetail()">
-                                    <i class="icon search"></i>
-                                    Search
-                                </button>
-                                <button type="button" style="display: none" class="ui fluid red button"
-                                        onclick="clearDetail()" id="cancelBtn">
-                                    <i class="icon cancel"></i>
-                                    Clear
-                                </button>
-                            </div>
-                            <div class="field"></div>
-                        </div>
-
-                    </form>
+                        </form>
+                    </div>
                 </div>
+                <div class="sixteen wide tablet nine wide computer column" id="cDetailDiv" style="display: none">
+                    <h5 class="ui horizontal left aligned divider header">
+                        <i class="left align icon"></i>
+                        Customer Details
+                    </h5>
+                    <div class="ui aligned basic segment">
+                        <table class="ui unstackable olive table">
+                            <thead>
+                            <tr>
+                                <th>Properties</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Name</td>
+                                <td id="cName"></td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td id="cAddress"></td>
+                            </tr>
+                            <tr>
+                                <td>Total Billed (₹)</td>
+                                <td class="left marked red negative" id="cTotal"></td>
+                            </tr>
+                            <tr>
+                                <td>Total Paid (₹)</td>
+                                <td class="left marked green positive" id="cPaid"></td>
+                            </tr>
+                            <tr>
+                                <td>Due (₹)</td>
+                                <td class="left marked orange warning" id="cDue">Denied</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: center">
+                                <button class="positive mini ui button" onclick="startBooking()">Start Booking</button>
 
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
             </div>
+
+            <input type="hidden" id="cID">
         {% endblock %}
     </div>
 
@@ -246,8 +291,8 @@
 </div>
 <div class="preloader">
     <div class="ui active dimmer">
-    <div class="ui medium text loader">Loading</div>
-  </div>
+        <div class="ui medium text loader">Loading</div>
+    </div>
 </div>
 
 <script src="https://frontendfunn.github.io/semantic-ui-admin-dashboard-template/js/script.js"></script>
@@ -257,6 +302,82 @@
         $(".preloader").fadeOut(50);
     });
 </script>
+{% block js %}
+    <script>
+
+
+        function GetCustomerDetail() {
+            var customerNameID = $('#customerNameID').val();
+
+
+            $.ajax({
+                type: 'get',
+                url: "{% url 'ecomApp:get_customer_ledger_detail' %}?q=" + customerNameID,
+
+                success: function (response) {
+
+                    if (response.message === 'success') {
+                        $('#cDetailDiv').css('display', 'block');
+                        $('#searchBtn').css('display', 'none');
+                        $('#cancelBtn').css('display', '');
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'Customer details found!'
+                            })
+                        ;
+                        $('#cAddress').html(response.address);
+                        $('#cName').html(response.name);
+                        $('#cPaid').html(response.paid);
+                        $('#cDue').html(response.due);
+                        $('#cTotal').html(response.total);
+                        $('#cID').val(""+response.id);
+                    }
+                    else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'No Detail found!'
+                            })
+                        ;
+                    }
+
+                },
+
+                error: function () {
+                    $('#cDetailDiv').css('display', 'none');
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+
+        }
+
+        function clearDetail() {
+            location.reload();
+             localStorage.removeItem("customerID");
+             localStorage.removeItem("customerName");
+
+        }
+
+        function startBooking() {
+            var cID = $('#cID').val();
+            var customerName = $('#cName').html();
+            localStorage.setItem("customerID", cID);
+            localStorage.setItem("customerName", customerName);
+            location.href = "{% url 'ecomApp:browse_products' %}"
+
+
+        }
+
+    </script>
+
+{% endblock %}
 
 </body>
 </html>

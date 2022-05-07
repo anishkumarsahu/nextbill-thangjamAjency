@@ -5904,7 +5904,7 @@ def download_return_product_sales_report(request):
 
 #customer ledger
 
-def get_customer_detail_by_name_for_ledger(request):
+def  get_customer_detail_by_name_for_ledger(request):
 
 
     try:
