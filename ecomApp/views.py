@@ -363,7 +363,7 @@ def get_customer_ledger_detail(request):
 
 def product_list_api(request, *args,**kwargs):
 
-    # try:
+    try:
 
         # print
         try:
@@ -410,5 +410,28 @@ def product_list_api(request, *args,**kwargs):
             }
             product_list.append(product_dic)
         return JsonResponse({'message': 'success', 'data': product_list})
-    # except:
-    #     return JsonResponse({'message': 'error'})
+    except:
+        return JsonResponse({'message': 'error'})
+
+
+def get_product_detail_for_cart_api(request):
+    try:
+        ID = request.GET.get('ID')
+        product = Product.objects.get(pk = int(ID))
+
+        if product.stock > 0:
+            stock = '<span style="color:green;font-weight:bold" class="date">{} {} Available </span>'.format(
+                product.stock, product.unitID.name)
+        else:
+            stock = '<span style="color:red;" class="date">Out Of Stock </span>'
+        data = {
+            'Name': str(product.name).capitalize(),
+            'ID': product.pk,
+            'Category': product.categoryID.name + '/ ' + product.categoryID.brand,
+            'Mrp': product.mrp,
+            'IsAvailable': stock,
+            'Unit': product.unitID.name
+        }
+        return JsonResponse({'message': 'success', 'data': data})
+    except:
+        return JsonResponse({'message': 'error'})

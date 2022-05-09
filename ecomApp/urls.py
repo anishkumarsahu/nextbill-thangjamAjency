@@ -25,6 +25,7 @@ urlpatterns = [
 
     url(r'^get_customer_ledger_detail/$', get_customer_ledger_detail, name='get_customer_ledger_detail'),
     url(r'^product_list_api/(?P<Page>[0-9]+)/$', product_list_api, name='product_list_api'),
+    url(r'^get_product_detail_for_cart_api/$', get_product_detail_for_cart_api, name='get_product_detail_for_cart_api'),
 
 
     ]

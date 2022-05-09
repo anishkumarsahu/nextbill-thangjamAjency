@@ -154,10 +154,10 @@
       <td>Quantity</td>
       <td class="right aligned">
           <div class="ui mini right labeled input">
-  <input type="number" placeholder="Enter Quantity" id="pQuantity">
+  <input type="number" placeholder="Enter Quantity" id="pQuantity" value="1">
               <input type="hidden" id="pID">
   <div class="ui basic label" id="pUnit">
-    kg
+    N/A
   </div>
 </div>
       </td>
@@ -168,7 +168,7 @@
         </div>
         <div class="actions">
             <button class="ui red deny button">Cancel</button>
-            <button class="ui button green">Add</button>
+            <button class="ui button green" onclick="addCart()">Add</button>
         </div>
     </div>
     <button class="mini ui blue button" style="position: fixed;bottom: 1em;right: 1em;" onclick="loadMore()">Load More ..</button>
@@ -248,8 +248,51 @@
         function addToCart(id) {
 
              $('#addToCart').modal('show');
-                    $('#pID').val(id)
+                    $('#pID').val(id);
+            GetProductDetail(id);
         }
+
+                function GetProductDetail(id) {
+
+
+            $.ajax({
+                type: 'get',
+                url: "{% url 'ecomApp:get_product_detail_for_cart_api' %}?ID=" + id,
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('#pName').html(response.data["Name"]);
+                        $('#pCat').html(response.data["Category"]);
+                        $('#pMrp').html(response.data["Mrp"]);
+                        $('#pStock').html(response.data["IsAvailable"]);
+                        $('#pUnit').html(response.data["Unit"]);
+                        $('#pID').val(response.data["ID"]);
+                    }
+                    else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'No Detail found!'
+                            })
+                        ;
+                    }
+
+                },
+
+                error: function () {
+                    $('#cDetailDiv').css('display', 'none');
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+
+
+        }
+
 
 
     </script>

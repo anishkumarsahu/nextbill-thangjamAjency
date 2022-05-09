@@ -13,9 +13,9 @@
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
 
 
-{% block css %}
+    {% block css %}
 
-{% endblock %}
+    {% endblock %}
     <style>
 
         .preloader {
@@ -168,8 +168,11 @@
     </div>
 
     <div class="right menu">
-        <a href="#" class="item">
-           <i class="cart arrow down icon"></i>
+        <a onclick="cart()" class="item">
+            <i class="cart arrow down icon"></i>
+            <div class="ui label cartCount "
+                 style="    position: absolute!important;top: 2px!important;right: 6px!important;padding: 3px;">0
+            </div>
         </a>
         <div class="ui dropdown item">
             <i class="user cirlce icon"></i>
@@ -196,7 +199,7 @@
 
     <div class="main-content">
         {% block body %}
-     <div class="ui centered grid">
+            <div class="ui centered grid">
 
 
                 <div class="sixteen wide tablet nine wide computer column" style="margin-top: 2rem">
@@ -272,7 +275,8 @@
                             </tr>
                             <tr>
                                 <td colspan="2" style="text-align: center">
-                                <button class="positive mini ui button" onclick="startBooking()">Start Booking</button>
+                                    <button class="positive mini ui button" onclick="startBooking()">Start Booking
+                                    </button>
 
                                 </td>
                             </tr>
@@ -295,12 +299,141 @@
     </div>
 </div>
 
+<div class="ui medium modal" id="cart">
+    <div class="header">My Cart <span id="cartItems" class="ui text purple"></span></div>
+    <div class="scrolling content">
+        <table class="ui unstackable blue table" id="cartTable">
+            <thead>
+            <tr>
+                <th>SlNo.</th>
+                <th>Name</th>
+                <th>MRP</th>
+                <th>QTY</th>
+                <th>Unit</th>
+                <th class="right aligned">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>1</td><td>John</td><td>Approved</td><td>Approved</td><td>Approved</td><td >None</td></tr>
+
+
+            </tbody>
+        </table>
+    </div>
+    <div class="center aligned actions">
+        <div class="ui negative button">Cancel</div>
+        <button class="ui positive button">Place Order</button>
+    </div>
+</div>
+
 <script src="https://frontendfunn.github.io/semantic-ui-admin-dashboard-template/js/script.js"></script>
 
 <script>
     $(window).on("load", function () {
         $(".preloader").fadeOut(50);
     });
+
+
+    var ItemArray = JSON.parse(localStorage.getItem("ItemArray"));
+    if (null === ItemArray) {
+        var itemArray = [];
+        localStorage.setItem("ItemArray", JSON.stringify(itemArray));
+
+    }
+    var dataCountArray = localStorage.getItem("ItemArray");
+    var dataCount = JSON.parse(dataCountArray);
+
+    $('.cartCount').html(dataCount.length);
+
+    function addCart() {
+        var id = $('#pID').val();
+        var pname = $('#pName').html();
+        var pQuantity = $('#pQuantity').val();
+        var pUnit = $('#pUnit').html();
+        var pMrp = $('#pMrp').html();
+        var ItemArray = [];
+        ItemArray = JSON.parse(localStorage.getItem('ItemArray')) || [];
+        if (ItemArray.length === 0) {
+
+
+            var p = {
+                "ProductName": pname,
+                "ID": id,
+                "Quantity": pQuantity,
+                'Unit': pUnit,
+                'MRP': pMrp
+            };
+            ItemArray.push(p);
+            localStorage.setItem("ItemArray", JSON.stringify(ItemArray));
+        }
+        else {
+            var foundCount = 1;
+            for (var i = 0; i < ItemArray.length; i++) {
+                if (ItemArray[i].ID === id) {
+                    ItemArray[i].ProductName = pname;
+                    ItemArray[i].Quantity = pQuantity;
+                    ItemArray[i].MRP = pMrp;
+                    foundCount++;
+
+                }
+                localStorage.setItem("ItemArray", JSON.stringify(ItemArray));
+            }
+            if (foundCount === 1) {
+                var p = {
+                    "ProductName": pname,
+                    "ID": id,
+                    "Quantity": pQuantity,
+                    'Unit': pUnit,
+                    'MRP': pMrp
+                };
+                ItemArray.push(p);
+                localStorage.setItem("ItemArray", JSON.stringify(ItemArray));
+            }
+        }
+        var dataCountArray = localStorage.getItem("ItemArray");
+        var dataCount = JSON.parse(dataCountArray);
+
+        $('.cartCount').html(dataCount.length);
+        $('#pQuantity').val(1);
+        $('#addToCart').modal('hide');
+
+    }
+
+    function cart() {
+
+        $('#cart').modal('show');
+
+    }
+    if (dataCount.length === 0) {
+        $('#NoItem').css('display', '');
+        $('#HaveItem').css('display', 'none');
+
+    } else {
+        $('#HaveItem').css('display', '');
+        $('#NoItem').css('display', 'none');
+        var htmlData = $('#cartProducts');
+        var itemCountInCart = '';
+        var totalItemPriceInCart = 0.0;
+        var discountInCart = 0.0;
+        var totalInCart = 0.0;
+        dataCount = dataCount.sort(function (a, b) {
+            return a.ID - b.ID;
+        });
+        if (dataCount.length === 1) {
+            $('#cartItems').html('( 1 Item )');
+
+        } else {
+            $('#cartItems').html('( ' + dataCount.length + ' Items )');
+        }
+                 $.each(dataCount, function (index, value) {
+                     console.log(dataCount[index]);
+
+                $('#cartTable tbody').append('<tr><td>'+ parseInt(index+1)+'</td><td>'+dataCount[index].ProductName+'</td><td>'+dataCount[index].MRP+'</td><td>'+dataCount[index].Quantity+'</td><td>'+dataCount[index].Unit+'</td><td ></button><button style="font-size:10px;" onclick="delItem(' + index + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+
+
+            });
+    }
+
 </script>
 {% block js %}
     <script>
@@ -331,7 +464,7 @@
                         $('#cPaid').html(response.paid);
                         $('#cDue').html(response.due);
                         $('#cTotal').html(response.total);
-                        $('#cID').val(""+response.id);
+                        $('#cID').val("" + response.id);
                     }
                     else {
                         $('body')
@@ -360,8 +493,8 @@
 
         function clearDetail() {
             location.reload();
-             localStorage.removeItem("customerID");
-             localStorage.removeItem("customerName");
+            localStorage.removeItem("customerID");
+            localStorage.removeItem("customerName");
 
         }
 
