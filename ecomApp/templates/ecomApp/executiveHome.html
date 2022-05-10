@@ -77,10 +77,17 @@
     <div class="item">
         <div class="header">General</div>
         <div class="menu">
-            <a class="item">
+            <a class="item" href="{% url 'ecomApp:home' %}">
                 <div>
-                    <i class="icon tachometer alternate"></i>
-                    Dashboard
+                    <i class="icon home"></i>
+                    Home
+                </div>
+            </a>
+
+             <a class="item" href="{% url 'ecomApp:browse_products' %}">
+                <div>
+                    <i class="icon shopping basket"></i>
+                    Browse Product
                 </div>
             </a>
         </div>
@@ -170,7 +177,7 @@
     <div class="right menu">
         <a onclick="cart()" class="item">
             <i class="cart arrow down icon"></i>
-            <div class="ui label cartCount "
+            <div class="ui label green cartCount "
                  style="    position: absolute!important;top: 2px!important;right: 6px!important;padding: 3px;">0
             </div>
         </a>
@@ -299,7 +306,8 @@
     </div>
 </div>
 
-<div class="ui medium modal" id="cart">
+<div class="ui medium modal" id="cart"><i
+        class="close icon"></i>
     <div class="header">My Cart <span id="cartItems" class="ui text purple"></span></div>
     <div class="scrolling content">
         <table class="ui unstackable blue table" id="cartTable">
@@ -309,20 +317,42 @@
                 <th>Name</th>
                 <th>MRP</th>
                 <th>QTY</th>
-                <th>Unit</th>
-                <th class="right aligned">Action</th>
+                <th>Remove</th>
             </tr>
             </thead>
             <tbody>
-            <tr><td>1</td><td>John</td><td>Approved</td><td>Approved</td><td>Approved</td><td >None</td></tr>
-
 
             </tbody>
         </table>
+        <p id="NoItem">No item added.</p>
     </div>
     <div class="center aligned actions">
+        <div class="ui orange button deny" onclick="clearCart()">Clear</div>
         <div class="ui negative button">Cancel</div>
-        <button class="ui positive button">Place Order</button>
+        <button class="ui green button">Place Order</button>
+    </div>
+</div>
+
+
+<div class="ui basic modal custom" id="delItemModal">
+    <div class="ui icon header">
+        <i class="archive icon"></i>
+        Item will be Deleted.
+    </div>
+    <div class="content">
+        <p style="text-align: center">The Item detail will be deleted, are you sure to delete
+            this Item?</p>
+    </div>
+    <div class="actions">
+        <div class="ui red basic cancel inverted button" onclick="cart()">
+            <i class="remove icon"></i>
+            No
+        </div>
+        <input type="hidden" id="itemDelID">
+        <div class="ui green ok inverted button" onclick="deleteItem()">
+            <i class="checkmark icon"></i>
+            Yes
+        </div>
     </div>
 </div>
 
@@ -332,6 +362,15 @@
     $(window).on("load", function () {
         $(".preloader").fadeOut(50);
     });
+    function clearCart() {
+        itemArray = [];
+        localStorage.setItem("ItemArray", JSON.stringify(itemArray));
+        dataCountArray = localStorage.getItem("ItemArray");
+        dataCount = JSON.parse(dataCountArray);
+
+        $('.cartCount').html(dataCount.length);
+
+    }
 
 
     var ItemArray = JSON.parse(localStorage.getItem("ItemArray"));
@@ -351,7 +390,7 @@
         var pQuantity = $('#pQuantity').val();
         var pUnit = $('#pUnit').html();
         var pMrp = $('#pMrp').html();
-        var ItemArray = [];
+{#        var ItemArray = [];#}
         ItemArray = JSON.parse(localStorage.getItem('ItemArray')) || [];
         if (ItemArray.length === 0) {
 
@@ -365,6 +404,7 @@
             };
             ItemArray.push(p);
             localStorage.setItem("ItemArray", JSON.stringify(ItemArray));
+            $('.cartCount').html(dataCount.length);
         }
         else {
             var foundCount = 1;
@@ -389,49 +429,83 @@
                 ItemArray.push(p);
                 localStorage.setItem("ItemArray", JSON.stringify(ItemArray));
             }
+            $('body')
+                .toast({
+                    class: 'success',
+                    message: 'Item Added To Cart.'
+                })
+            ;
         }
-        var dataCountArray = localStorage.getItem("ItemArray");
-        var dataCount = JSON.parse(dataCountArray);
+        dataCountArray = localStorage.getItem("ItemArray");
+        dataCount = JSON.parse(dataCountArray);
 
         $('.cartCount').html(dataCount.length);
         $('#pQuantity').val(1);
         $('#addToCart').modal('hide');
 
+
     }
 
     function cart() {
-
-        $('#cart').modal('show');
-
-    }
-    if (dataCount.length === 0) {
-        $('#NoItem').css('display', '');
-        $('#HaveItem').css('display', 'none');
-
-    } else {
-        $('#HaveItem').css('display', '');
-        $('#NoItem').css('display', 'none');
-        var htmlData = $('#cartProducts');
-        var itemCountInCart = '';
-        var totalItemPriceInCart = 0.0;
-        var discountInCart = 0.0;
-        var totalInCart = 0.0;
-        dataCount = dataCount.sort(function (a, b) {
-            return a.ID - b.ID;
-        });
-        if (dataCount.length === 1) {
-            $('#cartItems').html('( 1 Item )');
+        if (dataCount.length === 0) {
+            $('#NoItem').css('display', '');
+            $('#cartTable').css('display', 'none');
 
         } else {
-            $('#cartItems').html('( ' + dataCount.length + ' Items )');
-        }
-                 $.each(dataCount, function (index, value) {
-                     console.log(dataCount[index]);
+            $('#cartTable').css('display', '');
+            $('#NoItem').css('display', 'none');
+            $('#cartTable tbody').html('');
+            dataCount = dataCount.sort(function (a, b) {
+                return a.ID - b.ID;
+            });
+            if (dataCount.length === 1) {
+                $('#cartItems').html('( 1 Item )');
 
-                $('#cartTable tbody').append('<tr><td>'+ parseInt(index+1)+'</td><td>'+dataCount[index].ProductName+'</td><td>'+dataCount[index].MRP+'</td><td>'+dataCount[index].Quantity+'</td><td>'+dataCount[index].Unit+'</td><td ></button><button style="font-size:10px;" onclick="delItem(' + index + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+            } else {
+                $('#cartItems').html('( ' + dataCount.length + ' Items )');
+            }
+            $.each(dataCount, function (index, value) {
+                $('#cartTable tbody').append('<tr id="' + dataCount[index].ID + '" ><td>' + parseInt(index + 1) + '</td><td>' + dataCount[index].ProductName + '</td><td>' + dataCount[index].MRP + '</td><td><div class="ui right mini labeled input"><input id="QNT' + dataCount[index].ID + '" onkeyup="changeQuantity(' + dataCount[index].ID + ')" type="number" style="max-width:50%" value="' + dataCount[index].Quantity + '" placeholder="Quantity"><div class="ui basic label">' + dataCount[index].Unit + '</div></td><td ></button><button style="font-size:10px;" onclick="delItem(' + dataCount[index].ID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
 
 
             });
+        }
+        $('#cart').modal('show');
+        $('.cartCount').html(dataCount.length);
+
+    }
+
+    function delItem(id) {
+        $('#delItemModal')
+            .modal('show')
+        ;
+        $('#itemDelID').val(id)
+    }
+    function deleteItem() {
+        var id = $('#itemDelID').val();
+        $('#' + id).remove();
+        {#        var id = $('#deleteItemID').val();#}
+        dataCount = $.grep(dataCount, function (e) {
+            return e.ID != id
+        });
+        localStorage.setItem("ItemArray", JSON.stringify(dataCount));
+        cart();
+        $('body')
+            .toast({
+                class: 'warning',
+                message: 'Item Removed From Cart!',
+
+            })
+        ;
+
+
+    }
+    function changeQuantity(id) {
+        var q = $('#QNT' + id).val();
+
+       var result =  dataCount.find( ({ ID }) => ID === ""+id );
+       result.Quantity = q;
+
     }
 
 </script>
@@ -511,6 +585,5 @@
     </script>
 
 {% endblock %}
-
 </body>
 </html>
