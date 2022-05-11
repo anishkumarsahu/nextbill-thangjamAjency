@@ -366,10 +366,10 @@ def product_list_api(request, *args,**kwargs):
     try:
 
         # print
-        try:
-            sortBy = request.GET.get('sortBy')
-            products = Product.objects.filter(isDeleted__exact=False).order_by('name')
-        except:
+        searchProduct = request.GET.get('searchProduct')
+        if searchProduct != '':
+            products = Product.objects.filter(Q(name__icontains=searchProduct) | Q(categoryID__brand__icontains=searchProduct) | Q(categoryID__name__icontains=searchProduct),isDeleted__exact=False).order_by('name')
+        else:
             products = Product.objects.filter(isDeleted__exact=False).order_by('name')
 
         Index = kwargs['Page']

@@ -24,6 +24,7 @@
                 margin-right: 0.4em;
             }
         }
+
     </style>
 
 {% endblock %}
@@ -31,97 +32,7 @@
 {% block body %}
 
     <div class="ui segment">
-        <div class="ui four doubling cards" id="productJsonDiv">
-            {% comment %}          <div class="card"><div class="image"><img src="https://cdn-icons-png.flaticon.com/512/7436/7436436.png"></div><div class="content"><p class="ui sub header text-capitalize" style="font-size: 14px;">Kristy</p><div class="meta"><span class="ui medium green boldtext text">MRP ₹ 2013</span><span class="date">Joined in 2013</span></div><div class="description" style="margin-top: 0">Kristy / Demo.</div></div><div class="extra content"><div class="ui green fluid label button center aligned"><i class="cart plus icon"></i>Add To Cart</div></div></div>
-
-            <div class="card">
-                <div class="image">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7436/7436436.png">
-                </div>
-                <div class="content">
-                    <p class="ui sub header text-capitalize" style="font-size: 14px;">Kristy</p>
-                    <div class="meta">
-                        <span class="ui medium green boldtext text">MRP ₹ 2013</span>
-                        <span class="date">Joined in 2013</span>
-                    </div>
-                    <div class="description" style="margin-top: 0">
-                        Kristy / Demo.
-                    </div>
-                </div>
-                <div class="extra content">
-                    <div class="ui green fluid label button center aligned">
-                        <i class="cart plus icon"></i>
-                        Add To Cart
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="image">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7436/7436436.png">
-                </div>
-                <div class="content">
-                    <p class="ui sub header text-capitalize" style="font-size: 14px;">Kristy</p>
-                    <div class="meta">
-                        <span class="ui medium green boldtext text">MRP ₹ 2013</span>
-                        <span class="date">Joined in 2013</span>
-                    </div>
-                    <div class="description" style="margin-top: 0">
-                        Kristy / Demo.
-                    </div>
-                </div>
-                <div class="extra content">
-                    <div class="ui green fluid label button center aligned">
-                        <i class="cart plus icon"></i>
-                        Add To Cart
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="image">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7436/7436436.png">
-                </div>
-                <div class="content">
-                    <p class="ui sub header text-capitalize" style="font-size: 14px;">Kristy</p>
-                    <div class="meta">
-                        <span class="ui medium green boldtext text">MRP ₹ 2013</span>
-                        <span class="date">Joined in 2013</span>
-                    </div>
-                    <div class="description" style="margin-top: 0">
-                        Kristy / Demo.
-                    </div>
-                </div>
-                <div class="extra content">
-                    <div class="ui green fluid label button center aligned">
-                        <i class="cart plus icon"></i>
-                        Add To Cart
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="image">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7436/7436436.png">
-                </div>
-                <div class="content">
-                    <p class="ui sub header text-capitalize" style="font-size: 14px;">Kristy</p>
-                    <div class="meta">
-                        <span class="ui medium green boldtext text">MRP ₹ 2013</span>
-                        <span class="date">Joined in 2013</span>
-                    </div>
-                    <div class="description" style="margin-top: 0">
-                        Kristy / Demo.
-                    </div>
-                </div>
-                <div class="extra content">
-                    <div class="ui green fluid label button center aligned">
-                        <i class="cart plus icon"></i>
-                        Add To Cart
-                    </div>
-                </div>
-            </div>{% endcomment %}
-        </div>
+        <div class="ui four doubling cards" id="productJsonDiv"></div>
     </div>
 
     <div class="ui tiny modal mini transition  front" id="addToCart"><i
@@ -180,75 +91,7 @@
 
 {% block js %}
     <script>
-        var pageCount = 1;
-        $(getProductList(pageCount));
 
-
-        function getProductList(pageCount) {
-
-            var htmlData = $('#productJsonDiv');
-            var sortData = $('#sortProduct').val();
-
-
-            $.ajax({
-                type: 'GET',
-                url: '/ecom/product_list_api/' + pageCount + '/?sortBy=' + sortData,
-                success: function (response) {
-
-                    if (response.message === 'success') {
-                        if (response.data.length === 0) {
-                            $('body')
-                                .toast({
-                                    class: 'warning',
-                                    title: 'No More',
-                                    message: 'No more products to load',
-                                    showProgress: 'bottom',
-                                    classProgress: 'grey',
-                                    position: 'bottom center',
-
-                                });
-                        }
-                        $.each(response.data, function (index) {
-                            htmlData.append('<div class="card"><div class="image"><img src="' + response.data[index].OriImageURL + '" loading="lazy"></div><div class="content"><p class="ui sub header text-capitalize" style="font-size: 14px;">' + response.data[index].Name + '</p><div class="meta"><span class="ui medium green boldtext text">MRP ₹ ' + response.data[index].Mrp + '</span>' + response.data[index].IsAvailable + '</div><div class="description" style="margin-top: 0">' + response.data[index].Category + '</div></div><div class="extra content"><div class="ui green fluid label button center aligned" onclick="addToCart(' + response.data[index].ID + ')"><i class="cart plus icon"></i>Add To Cart</div></div></div>');
-                        });
-
-
-                    } else {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                title: 'Something went wrong.',
-                                message: 'Please try again.',
-                                showProgress: 'bottom',
-                                classProgress: 'grey',
-                                position: 'top center',
-
-                            });
-                    }
-                },
-
-                error: function () {
-                    $('body')
-                        .toast({
-                            class: 'error',
-                            title: 'Something went wrong.',
-                            message: 'Please try again.',
-                            showProgress: 'bottom',
-                            classProgress: 'grey',
-                            position: 'top center',
-
-                        });
-                }
-            });
-
-        }
-
-
-        function loadMore() {
-            pageCount++;
-            getProductList(pageCount);
-            return pageCount;
-        }
         function addToCart(id) {
 
             $('#addToCart').modal('show');

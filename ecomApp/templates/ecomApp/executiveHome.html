@@ -67,6 +67,16 @@
                 display: none !important;
             }
         }
+
+        .custom_search {
+            width: 100%;
+            -webkit-transition: width 0.4s ease-in-out;
+            transition: width 0.4s ease-in-out;
+        }
+
+        .custom_search:focus {
+            width: 100%;
+        }
     </style>
 
 </head>
@@ -84,7 +94,7 @@
                 </div>
             </a>
 
-             <a class="item" href="{% url 'ecomApp:browse_products' %}">
+            <a class="item" href="{% url 'ecomApp:browse_products' %}">
                 <div>
                     <i class="icon shopping basket"></i>
                     Browse Product
@@ -141,7 +151,7 @@
     <div class="item">
         <form action="#">
             <div class="ui mini action input">
-                <input type="text" placeholder="Search..."/>
+                <input type="text" class="" placeholder="Search..."/>
                 <button class="ui mini icon button">
                     <i class=" search icon"></i>
                 </button>
@@ -170,11 +180,18 @@
             <i class="sidebar icon"></i>
         </a>
         <a href="#" class="header item">
-            NextBill | Ecom
+            NextBill
         </a>
     </div>
-
+    <div class="ui mini scrolling local search productListSearch" style="margin: 0.5em">
+        <div class="ui icon input">
+            <input class="prompt custom_search mini" type="text" value="" id="productSearch" placeholder="Search Products...">
+            <i class="search icon"></i>
+        </div>
+        <div class="results"></div>
+    </div>
     <div class="right menu">
+
         <a onclick="cart()" class="item">
             <i class="cart arrow down icon"></i>
             <div class="ui label green cartCount "
@@ -310,19 +327,23 @@
         class="close icon"></i>
     <div class="header">My Cart <span id="cartItems" class="ui text purple"></span></div>
     <div class="scrolling content">
-        <table class="ui unstackable blue table" id="cartTable">
+        <table class="ui unstackable blue table cartTable" id="cartTable">
             <thead>
             <tr>
                 <th>SlNo.</th>
                 <th>Name</th>
-                <th>MRP</th>
+                <th>MRP(₹)</th>
                 <th>QTY</th>
+                <th>Total(₹)</th>
                 <th>Remove</th>
             </tr>
             </thead>
             <tbody>
 
             </tbody>
+            <div class="ui tiny purple label cartTable">
+                Total(₹) : <span id="grandTotal"> 0.00</span>
+            </div>
         </table>
         <p id="NoItem">No item added.</p>
     </div>
@@ -369,6 +390,7 @@
         dataCount = JSON.parse(dataCountArray);
 
         $('.cartCount').html(dataCount.length);
+        calculateGrandTotal();
 
     }
 
@@ -390,7 +412,7 @@
         var pQuantity = $('#pQuantity').val();
         var pUnit = $('#pUnit').html();
         var pMrp = $('#pMrp').html();
-{#        var ItemArray = [];#}
+        {#        var ItemArray = [];#}
         ItemArray = JSON.parse(localStorage.getItem('ItemArray')) || [];
         if (ItemArray.length === 0) {
 
@@ -449,12 +471,13 @@
     function cart() {
         if (dataCount.length === 0) {
             $('#NoItem').css('display', '');
-            $('#cartTable').css('display', 'none');
+            $('.cartTable').css('display', 'none');
+            $('#cartItems').html('');
 
         } else {
-            $('#cartTable').css('display', '');
+            $('.cartTable').css('display', '');
             $('#NoItem').css('display', 'none');
-            $('#cartTable tbody').html('');
+            $('.cartTable tbody').html('');
             dataCount = dataCount.sort(function (a, b) {
                 return a.ID - b.ID;
             });
@@ -464,22 +487,35 @@
             } else {
                 $('#cartItems').html('( ' + dataCount.length + ' Items )');
             }
+            var grandTotal = 0.0;
             $.each(dataCount, function (index, value) {
-                $('#cartTable tbody').append('<tr id="' + dataCount[index].ID + '" ><td>' + parseInt(index + 1) + '</td><td>' + dataCount[index].ProductName + '</td><td>' + dataCount[index].MRP + '</td><td><div class="ui right mini labeled input"><input id="QNT' + dataCount[index].ID + '" onkeyup="changeQuantity(' + dataCount[index].ID + ')" type="number" style="max-width:50%" value="' + dataCount[index].Quantity + '" placeholder="Quantity"><div class="ui basic label">' + dataCount[index].Unit + '</div></td><td ></button><button style="font-size:10px;" onclick="delItem(' + dataCount[index].ID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
-
+                var total = parseFloat(dataCount[index].Quantity) * parseFloat(dataCount[index].MRP);
+                $('.cartTable tbody').append('<tr id="' + dataCount[index].ID + '" ><td>' + parseInt(index + 1) + '</td><td>' + dataCount[index].ProductName + '</td><td id ="mrp' + dataCount[index].ID + '">' + dataCount[index].MRP + '</td><td><div class="ui right mini labeled input"><input id="QNT' + dataCount[index].ID + '" onkeyup="changeQuantity(' + dataCount[index].ID + ')" type="number" style="max-width:50%" value="' + dataCount[index].Quantity + '" placeholder="Quantity"><div class="ui basic label">' + dataCount[index].Unit + '</div></td><td id ="total' + dataCount[index].ID + '">' + total + '</td><td ></button><button style="font-size:10px;" onclick="delItem(' + dataCount[index].ID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                grandTotal = grandTotal + total
 
             });
+            $('#grandTotal').html(grandTotal);
         }
         $('#cart').modal('show');
         $('.cartCount').html(dataCount.length);
 
+    }
+    function calculateGrandTotal() {
+        var grandTotal = 0.0
+        $.each(dataCount, function (index, value) {
+            var total = parseFloat(dataCount[index].Quantity) * parseFloat(dataCount[index].MRP);
+            grandTotal = grandTotal + total
+
+        });
+        $('#grandTotal').html(grandTotal);
     }
 
     function delItem(id) {
         $('#delItemModal')
             .modal('show')
         ;
-        $('#itemDelID').val(id)
+        $('#itemDelID').val(id);
+
     }
     function deleteItem() {
         var id = $('#itemDelID').val();
@@ -497,16 +533,126 @@
 
             })
         ;
+        calculateGrandTotal();
 
 
     }
     function changeQuantity(id) {
         var q = $('#QNT' + id).val();
+        var mrp = $('#mrp' + id).html();
+        var result = dataCount.find(({ID}) => ID === "" + id);
+        result.Quantity = q;
 
-       var result =  dataCount.find( ({ ID }) => ID === ""+id );
-       result.Quantity = q;
+        var total = parseFloat(q) * parseFloat(mrp);
+        $('#total' + id).html(total);
+        calculateGrandTotal();
+
 
     }
+
+    function showLoading() {
+        $('#saveBtn').css('display', 'none');
+        $('#saveBtnLoad').css('display', '');
+
+    }
+    function hideLoading() {
+        $('#saveBtn').css('display', '');
+        $('#saveBtnLoad').css('display', 'none');
+
+    }
+
+    $('.ui.productListSearch')
+        .search({
+            apiSettings: {
+                url: '/ecom/product_list_api/1/?searchProduct={query}'
+            },
+            fields: {
+                results: 'data',
+                title: 'Name',
+                "price": "Gst",
+                "description": "Address",
+            },
+            onSelect: function (result) {
+                console.log(result)
+
+{#                $('#customerID').val(result.ID);#}
+                     $(getProductList(pageCount));
+
+
+            },
+            cache: false,
+            minCharacters: 2
+        });
+
+            var pageCount = 1;
+        $(getProductList(pageCount));
+
+
+        function getProductList(pageCount) {
+
+            var htmlData = $('#productJsonDiv');
+            var sortData = $('#productSearch').val();
+
+
+            $.ajax({
+                type: 'GET',
+                url: '/ecom/product_list_api/' + pageCount + '/?searchProduct=' + sortData,
+                success: function (response) {
+
+                    if (response.message === 'success') {
+                        if (response.data.length === 0) {
+                            $('body')
+                                .toast({
+                                    class: 'warning',
+                                    title: 'No More',
+                                    message: 'No more products to load',
+                                    showProgress: 'bottom',
+                                    classProgress: 'grey',
+                                    position: 'bottom center',
+
+                                });
+                        }
+                        $.each(response.data, function (index) {
+                            htmlData.append('<div class="card"><div class="image"><img src="' + response.data[index].OriImageURL + '" loading="lazy"></div><div class="content"><p class="ui sub header text-capitalize" style="font-size: 14px;">' + response.data[index].Name + '</p><div class="meta"><span class="ui medium green boldtext text">MRP ₹ ' + response.data[index].Mrp + '</span>' + response.data[index].IsAvailable + '</div><div class="description" style="margin-top: 0">' + response.data[index].Category + '</div></div><div class="extra content"><div class="ui green fluid label button center aligned" onclick="addToCart(' + response.data[index].ID + ')"><i class="cart plus icon"></i>Add To Cart</div></div></div>');
+                        });
+
+
+                    } else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                title: 'Something went wrong.',
+                                message: 'Please try again.',
+                                showProgress: 'bottom',
+                                classProgress: 'grey',
+                                position: 'top center',
+
+                            });
+                    }
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            title: 'Something went wrong.',
+                            message: 'Please try again.',
+                            showProgress: 'bottom',
+                            classProgress: 'grey',
+                            position: 'top center',
+
+                        });
+                }
+            });
+
+        }
+
+
+        function loadMore() {
+            pageCount++;
+            getProductList(pageCount);
+            return pageCount;
+        }
 
 </script>
 {% block js %}
