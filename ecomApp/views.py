@@ -31,7 +31,13 @@ def sales_executive(request):
 
 @is_activated()
 def browse_products(request):
-    return render(request, 'ecomApp/productList.html')
+    product = request.GET.get('product')
+    if product == '' or product == None:
+        product = ''
+    context = {
+        "product":product
+    }
+    return render(request, 'ecomApp/productList.html', context)
 
 
 @is_activated()
@@ -367,7 +373,7 @@ def product_list_api(request, *args,**kwargs):
 
         # print
         searchProduct = request.GET.get('searchProduct')
-        if searchProduct != '':
+        if searchProduct != '' :
             products = Product.objects.filter(Q(name__icontains=searchProduct) | Q(categoryID__brand__icontains=searchProduct) | Q(categoryID__name__icontains=searchProduct),isDeleted__exact=False).order_by('name')
         else:
             products = Product.objects.filter(isDeleted__exact=False).order_by('name')
@@ -404,7 +410,7 @@ def product_list_api(request, *args,**kwargs):
                 'Name': str(product.name).capitalize(),
                 'ID': product.pk,
                 'OriImageURL': oriImage,
-                'Category': product.categoryID.name +'/ ' + product.categoryID.brand,
+                'Category': product.categoryID.name +'/' + product.categoryID.brand,
                 'Mrp': product.mrp,
                 'IsAvailable': stock
             }

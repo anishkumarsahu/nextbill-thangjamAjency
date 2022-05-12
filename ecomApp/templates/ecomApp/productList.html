@@ -28,10 +28,24 @@
     </style>
 
 {% endblock %}
-
+{% block search %}
+    <div class="ui mini scrolling local search productListSearch" style="margin: 0.5em">
+        <div class="ui icon input">
+            <input class="prompt custom_search mini" type="text" value="{{ product }}" id="productSearch"
+                   placeholder="Search Products...">
+            <i class="search icon"></i>
+        </div>
+        <div class="results"></div>
+    </div>
+{% endblock %}
 {% block body %}
 
     <div class="ui segment">
+    <div class="ui breadcrumb">
+  <div class="section">Home</div>
+  <div class="divider"> / </div>
+  <div class="active section">Product List</div>
+</div>
         <div class="ui four doubling cards" id="productJsonDiv"></div>
     </div>
 

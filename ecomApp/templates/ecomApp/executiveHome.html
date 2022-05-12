@@ -116,57 +116,16 @@
         </div>
     </div>
 
-    <a href="#" class="item">
-        <div>
-            <i class="icon chart line"></i>
-            Charts
-        </div>
-    </a>
 
-    <a class="item">
-        <div>
-            <i class="icon lightbulb"></i>
-            Apps
-        </div>
-    </a>
-    <div class="item">
-        <div class="header">Other</div>
-        <div class="menu">
-            <a href="#" class="item">
-                <div>
-                    <i class="icon envelope"></i>
-                    Messages
-                </div>
-            </a>
-
-            <a href="#" class="item">
-                <div>
-                    <i class="icon calendar alternate"></i>
-                    Calendar
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div class="item">
-        <form action="#">
-            <div class="ui mini action input">
-                <input type="text" class="" placeholder="Search..."/>
-                <button class="ui mini icon button">
-                    <i class=" search icon"></i>
-                </button>
-            </div>
-        </form>
-    </div>
     <div class="ui segment inverted">
         <div class="ui tiny olive inverted progress">
             <div class="bar" style="width: 54%"></div>
-            <div class="label">Monthly Bandwidth</div>
+            <div class="label">NextBill(Ecom)</div>
         </div>
 
         <div class="ui tiny teal inverted progress">
             <div class="bar" style="width:78%"></div>
-            <div class="label">Disk Usage</div>
+            <div class="label">v 0.1.5</div>
         </div>
     </div>
 </div>
@@ -183,13 +142,17 @@
             NextBill
         </a>
     </div>
-    <div class="ui mini scrolling local search productListSearch" style="margin: 0.5em">
-        <div class="ui icon input">
-            <input class="prompt custom_search mini" type="text" value="" id="productSearch" placeholder="Search Products...">
-            <i class="search icon"></i>
+    {% block search %}
+        <div class="ui mini scrolling local search productListSearch" style="margin: 0.5em">
+            <div class="ui icon input">
+                <input class="prompt custom_search mini" type="text" value="" id="productSearch"
+                       placeholder="Search Products...">
+                <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
         </div>
-        <div class="results"></div>
-    </div>
+    {% endblock %}
+
     <div class="right menu">
 
         <a onclick="cart()" class="item">
@@ -223,10 +186,15 @@
 
     <div class="main-content">
         {% block body %}
+            <div class="ui segment">
+                <div class="ui breadcrumb">
+                    <div class="active section">Home</div>
+                </div>
+            </div>
             <div class="ui centered grid">
 
-
                 <div class="sixteen wide tablet nine wide computer column" style="margin-top: 2rem">
+
                     <div class="ui raised brown segment padded  ">
                         <form class="ui tiny form" id="expenseForm">
                             <h4 class="ui  left aligned  dividing header">Search Customer</h4>
@@ -325,7 +293,11 @@
 
 <div class="ui medium modal" id="cart"><i
         class="close icon"></i>
-    <div class="header">My Cart <span id="cartItems" class="ui text purple"></span></div>
+    <div class="header" style="font-size: 15px;">My Cart <span id="cartItems" class="ui text purple"></span>
+        <div class="ui tiny violet label">
+            Customer Name : <span id="customerNameCart">N/A</span>
+        </div>
+    </div>
     <div class="scrolling content">
         <table class="ui unstackable blue table cartTable" id="cartTable">
             <thead>
@@ -350,7 +322,7 @@
     <div class="center aligned actions">
         <div class="ui orange button deny" onclick="clearCart()">Clear</div>
         <div class="ui negative button">Cancel</div>
-        <button class="ui green button">Place Order</button>
+        <button class="ui green button" onclick="confirmOrderModal()">Place Order</button>
     </div>
 </div>
 
@@ -373,6 +345,26 @@
         <div class="ui green ok inverted button" onclick="deleteItem()">
             <i class="checkmark icon"></i>
             Yes
+        </div>
+    </div>
+</div>
+
+
+<div class="ui mini test modal front transition" id="confirmOrderModal"><i
+        class="close icon"></i>
+    <div class="header">
+        Order Confirmation
+    </div>
+    <div class="content">
+        <p>Are you sure you want to place your order?</p>
+    </div>
+    <div class="actions">
+        <div class="ui red button" onclick="cancelOrder()">
+            No
+        </div>
+        <div class="ui green right labeled icon button" onclick="placeOrder()">
+            Yes
+            <i class="checkmark icon"></i>
         </div>
     </div>
 </div>
@@ -498,6 +490,7 @@
         }
         $('#cart').modal('show');
         $('.cartCount').html(dataCount.length);
+        $('#customerNameCart').html(localStorage.getItem('customerName'))
 
     }
     function calculateGrandTotal() {
@@ -569,69 +562,57 @@
             fields: {
                 results: 'data',
                 title: 'Name',
-                "price": "Gst",
+                "price": "Category",
                 "description": "Address",
             },
             onSelect: function (result) {
-                console.log(result)
+                var sortData = $('#productSearch').val();
+                {#                    console.log(sortData);#}
+                location.href = '/ecom/browse_products/?product=' + sortData;
 
-{#                $('#customerID').val(result.ID);#}
-                     $(getProductList(pageCount));
+                {#                $('#customerID').val(result.ID);#}
+                {#                     $(getProductList(pageCount));#}
 
 
             },
             cache: false,
-            minCharacters: 2
+            minCharacters: 3
         });
 
-            var pageCount = 1;
-        $(getProductList(pageCount));
+    var pageCount = 1;
+    $(getProductList(pageCount));
 
 
-        function getProductList(pageCount) {
+    function getProductList(pageCount) {
 
-            var htmlData = $('#productJsonDiv');
-            var sortData = $('#productSearch').val();
-
-
-            $.ajax({
-                type: 'GET',
-                url: '/ecom/product_list_api/' + pageCount + '/?searchProduct=' + sortData,
-                success: function (response) {
-
-                    if (response.message === 'success') {
-                        if (response.data.length === 0) {
-                            $('body')
-                                .toast({
-                                    class: 'warning',
-                                    title: 'No More',
-                                    message: 'No more products to load',
-                                    showProgress: 'bottom',
-                                    classProgress: 'grey',
-                                    position: 'bottom center',
-
-                                });
-                        }
-                        $.each(response.data, function (index) {
-                            htmlData.append('<div class="card"><div class="image"><img src="' + response.data[index].OriImageURL + '" loading="lazy"></div><div class="content"><p class="ui sub header text-capitalize" style="font-size: 14px;">' + response.data[index].Name + '</p><div class="meta"><span class="ui medium green boldtext text">MRP ₹ ' + response.data[index].Mrp + '</span>' + response.data[index].IsAvailable + '</div><div class="description" style="margin-top: 0">' + response.data[index].Category + '</div></div><div class="extra content"><div class="ui green fluid label button center aligned" onclick="addToCart(' + response.data[index].ID + ')"><i class="cart plus icon"></i>Add To Cart</div></div></div>');
-                        });
+        var htmlData = $('#productJsonDiv');
+        var sortData = $('#productSearch').val();
 
 
-                    } else {
+        $.ajax({
+            type: 'GET',
+            url: '/ecom/product_list_api/' + pageCount + '/?searchProduct=' + sortData,
+            success: function (response) {
+
+                if (response.message === 'success') {
+                    if (response.data.length === 0) {
                         $('body')
                             .toast({
-                                class: 'error',
-                                title: 'Something went wrong.',
-                                message: 'Please try again.',
+                                class: 'warning',
+                                title: 'No More',
+                                message: 'No more products to load',
                                 showProgress: 'bottom',
                                 classProgress: 'grey',
-                                position: 'top center',
+                                position: 'bottom center',
 
                             });
                     }
-                },
+                    $.each(response.data, function (index) {
+                        htmlData.append('<div class="card"><div class="image"><img src="' + response.data[index].OriImageURL + '" loading="lazy"></div><div class="content"><p class="ui sub header text-capitalize" style="font-size: 14px;">' + response.data[index].Name + '</p><div class="meta"><span class="ui medium green boldtext text">MRP ₹ ' + response.data[index].Mrp + '</span>' + response.data[index].IsAvailable + '</div><div class="description" style="margin-top: 0">' + response.data[index].Category + '</div></div><div class="extra content"><div class="ui green fluid label button center aligned" onclick="addToCart(' + response.data[index].ID + ')"><i class="cart plus icon"></i>Add To Cart</div></div></div>');
+                    });
 
-                error: function () {
+
+                } else {
                     $('body')
                         .toast({
                             class: 'error',
@@ -643,16 +624,81 @@
 
                         });
                 }
+            },
+
+            error: function () {
+                $('body')
+                    .toast({
+                        class: 'error',
+                        title: 'Something went wrong.',
+                        message: 'Please try again.',
+                        showProgress: 'bottom',
+                        classProgress: 'grey',
+                        position: 'top center',
+
+                    });
+            }
+        });
+
+    }
+
+
+    function loadMore() {
+        pageCount++;
+        getProductList(pageCount);
+        return pageCount;
+    }
+
+    function confirmOrderModal() {
+        $('#confirmOrderModal')
+            .modal('show');
+    }
+    function cancelOrder() {
+        $('#confirmOrderModal')
+            .modal('hide');
+        $('#cart')
+            .modal('show');
+    }
+    function placeOrder() {
+        var cus = localStorage.getItem('customerName');
+        var cusID = localStorage.getItem('customerID');
+        var datas = '';
+         $('#cartTable tbody tr').each(function () {
+                var id = $(this).closest('tr').attr('id');
+                var pro = $('#product' + id).html();
+                var cat = $('#category' + id).html();
+                var hs = $('#hsn' + id).html();
+                var qty = $('#quantity' + id).html();
+                var pri = $('#price' + id).html();
+                var gs = $('#gst' + id).html();
+                var netp = $('#netprice' + id).html();
+                var tot = $('#total' + id).html();
+                var dis = $('#disc' + id).html();
+                var unit = $('#unit' + id).html();
+                var batch = $('#batch' + id).html();
+                var margin = $('#margin' + id).html();
+
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '|' + margin + '@'
+
+
             });
 
+        if (cus === 'N/A') {
+            $('body')
+                .toast({
+                    class: 'warning',
+                    title: 'No Detail',
+                    message: 'Please select customer and add items in cart.',
+                    showProgress: 'bottom',
+                    classProgress: 'white',
+                    position: 'top center',
+
+                });
         }
 
 
-        function loadMore() {
-            pageCount++;
-            getProductList(pageCount);
-            return pageCount;
-        }
+
+    }
 
 </script>
 {% block js %}
@@ -710,11 +756,12 @@
 
 
         }
-
         function clearDetail() {
             location.reload();
-            localStorage.removeItem("customerID");
-            localStorage.removeItem("customerName");
+            {#            localStorage.removeItem("customerID");#}
+            {#            localStorage.removeItem("customerName");#}
+            localStorage.setItem("customerID", 'N/A');
+            localStorage.setItem("customerName", 'N/A');
 
         }
 
@@ -723,7 +770,8 @@
             var customerName = $('#cName').html();
             localStorage.setItem("customerID", cID);
             localStorage.setItem("customerName", customerName);
-            location.href = "{% url 'ecomApp:browse_products' %}"
+            location.href = "{% url 'ecomApp:browse_products' %}";
+            console.log(localStorage.getItem('customerName'));
 
 
         }
