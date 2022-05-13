@@ -313,9 +313,18 @@
             <tbody>
 
             </tbody>
+              <div class="ui calendar cartTableDate" id="calender2">
+                <label class="ui tiny purple label ">Expected Delivery Date:</label>
+
+                <div class="ui input mini left icon">
+                    <i class="calendar icon"></i>
+                    <input type="text" placeholder="Date" id="deliveryDate">
+                </div>
+            </div>
             <div class="ui tiny purple label cartTable">
                 Total(₹) : <span id="grandTotal"> 0.00</span>
             </div>
+
         </table>
         <p id="NoItem">No item added.</p>
     </div>
@@ -375,6 +384,27 @@
     $(window).on("load", function () {
         $(".preloader").fadeOut(50);
     });
+    var today = new Date();
+    $('#calender2')
+        .calendar({
+                initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                monthFirst: false,
+                type: 'date',
+                formatter: {
+                    date: function (date, settings) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return day + '/' + month + '/' + year;
+                    }
+                },
+                popupOptions: {
+                    observeChanges: false
+                }
+
+            }
+        );
     function clearCart() {
         itemArray = [];
         localStorage.setItem("ItemArray", JSON.stringify(itemArray));
@@ -464,10 +494,12 @@
         if (dataCount.length === 0) {
             $('#NoItem').css('display', '');
             $('.cartTable').css('display', 'none');
+            $('.cartTableDate').css('display', 'none');
             $('#cartItems').html('');
 
         } else {
             $('.cartTable').css('display', '');
+            $('.cartTableDate').css('display', '');
             $('#NoItem').css('display', 'none');
             $('.cartTable tbody').html('');
             dataCount = dataCount.sort(function (a, b) {
@@ -482,7 +514,7 @@
             var grandTotal = 0.0;
             $.each(dataCount, function (index, value) {
                 var total = parseFloat(dataCount[index].Quantity) * parseFloat(dataCount[index].MRP);
-                $('.cartTable tbody').append('<tr id="' + dataCount[index].ID + '" ><td>' + parseInt(index + 1) + '</td><td>' + dataCount[index].ProductName + '</td><td id ="mrp' + dataCount[index].ID + '">' + dataCount[index].MRP + '</td><td><div class="ui right mini labeled input"><input id="QNT' + dataCount[index].ID + '" onkeyup="changeQuantity(' + dataCount[index].ID + ')" type="number" style="max-width:50%" value="' + dataCount[index].Quantity + '" placeholder="Quantity"><div class="ui basic label">' + dataCount[index].Unit + '</div></td><td id ="total' + dataCount[index].ID + '">' + total + '</td><td ></button><button style="font-size:10px;" onclick="delItem(' + dataCount[index].ID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
+                $('.cartTable tbody').append('<tr id="' + dataCount[index].ID + '" ><td>' + parseInt(index + 1) + '</td><td id="proName' + dataCount[index].ID + '">' + dataCount[index].ProductName + '</td><td id ="mrp' + dataCount[index].ID + '">' + dataCount[index].MRP + '</td><td><div class="ui right mini labeled input"><input id="QNT' + dataCount[index].ID + '" onkeyup="changeQuantity(' + dataCount[index].ID + ')" type="number" style="max-width:50%" value="' + dataCount[index].Quantity + '" placeholder="Quantity"><div class="ui basic label">' + dataCount[index].Unit + '</div></td><td id ="total' + dataCount[index].ID + '">' + total + '</td><td ></button><button style="font-size:10px;" onclick="delItem(' + dataCount[index].ID + ')" class="ui circular youtube icon button"><i class="trash alternate icon"></i></button></td></tr>');
                 grandTotal = grandTotal + total
 
             });
@@ -662,28 +694,18 @@
     function placeOrder() {
         var cus = localStorage.getItem('customerName');
         var cusID = localStorage.getItem('customerID');
+        var grandTotal = $('#grandTotal').html();
         var datas = '';
-         $('#cartTable tbody tr').each(function () {
-                var id = $(this).closest('tr').attr('id');
-                var pro = $('#product' + id).html();
-                var cat = $('#category' + id).html();
-                var hs = $('#hsn' + id).html();
-                var qty = $('#quantity' + id).html();
-                var pri = $('#price' + id).html();
-                var gs = $('#gst' + id).html();
-                var netp = $('#netprice' + id).html();
-                var tot = $('#total' + id).html();
-                var dis = $('#disc' + id).html();
-                var unit = $('#unit' + id).html();
-                var batch = $('#batch' + id).html();
-                var margin = $('#margin' + id).html();
+        $('.cartTable tbody tr').each(function () {
+            var id = $(this).closest('tr').attr('id');
+            var pro = $('#proName' + id).html();
+            var mrp = $('#mrp' + id).html();
+            var qty = $('#QNT' + id).val();
+            var total = $('#total' + id).html();
+            datas = datas + '' + id + '|' + pro + '|' + mrp + '|' + qty + '|' + total + '@'
+        });
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '|' + margin + '@'
-
-
-            });
-
-        if (cus === 'N/A') {
+        if (cus === 'N/A' || datas === '' || cusID === 'N/A') {
             $('body')
                 .toast({
                     class: 'warning',
@@ -695,7 +717,96 @@
 
                 });
         }
+        else {
+            data = new FormData();
+            data.append('cus', cus);
+            data.append('cusID', cusID);
+            data.append('datas', datas);
+            data.append('grandTotal', grandTotal);
 
+            $.ajax({
+                type: 'post',
+                url: '/api/add_sales_from_booking/',
+                data: data,
+                contentType: false,
+                cache: false,
+                processData: false,
+
+
+                success: function (response) {
+                    if (response.message === 'success') {
+                        $('body')
+                            .toast({
+                                class: 'success',
+                                message: 'New Sales created Successfully.'
+                            });
+
+                        window.location.href = '/sales/';
+                        $('#itemTable tbody tr').remove();
+                        $('#formtest').trigger('reset');
+                        $('#formtest2').trigger('reset');
+                        $('#formtest3').trigger('reset');
+                        $('#AddCompanyForm').trigger('reset');
+                        $('#subTotal').html('0.00');
+                        $('#taxable').html('0.00');
+                        $('#totalAfterGst').html('0.00');
+                        $('#roundOff').html('0.00');
+                        $('#taxableGST').html('0.00');
+                        $('#billDiscount').html('0.00');
+
+                        $('#GrandTotal').html('0.00');
+                        $('#otherCharges').html('0.00');
+                        $('#personalDiscount').html('0.00');
+                        $('#paidMoney').val('0');
+                        $('#dueOrReturn').val('0');
+                        $('#getLastSale').html('');
+                        getInvoiceSeries();
+                        var today = new Date();
+                        $('#standard_calendar')
+                            .calendar({
+                                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+                                    type: 'date',
+                                    formatter: {
+                                        date: function (date, settings) {
+                                            if (!date) return '';
+                                            var day = date.getDate();
+                                            var month = date.getMonth() + 1;
+                                            var year = date.getFullYear();
+                                            return day + '/' + month + '/' + year;
+                                        }
+                                    }
+                                }
+                            );
+                        PrintOption();
+                        $('#printSaleID').val(response.saleID)
+                        hideLoading();
+
+                    }
+                    else {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
+                        hideLoading();
+                    }
+
+                    return response;
+                },
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                    hideLoading();
+                }
+            });
+
+
+        }
 
 
     }
