@@ -695,6 +695,7 @@
         var cus = localStorage.getItem('customerName');
         var cusID = localStorage.getItem('customerID');
         var grandTotal = $('#grandTotal').html();
+        var deliveryDate = $('#deliveryDate').val();
         var datas = '';
         $('.cartTable tbody tr').each(function () {
             var id = $(this).closest('tr').attr('id');
@@ -705,7 +706,7 @@
             datas = datas + '' + id + '|' + pro + '|' + mrp + '|' + qty + '|' + total + '@'
         });
 
-        if (cus === 'N/A' || datas === '' || cusID === 'N/A') {
+        if (cus === 'N/A' || datas === '' || cusID === 'N/A'|| deliveryDate === '') {
             $('body')
                 .toast({
                     class: 'warning',
@@ -723,6 +724,7 @@
             data.append('cusID', cusID);
             data.append('datas', datas);
             data.append('grandTotal', grandTotal);
+            data.append('deliveryDate', deliveryDate);
 
             $.ajax({
                 type: 'post',

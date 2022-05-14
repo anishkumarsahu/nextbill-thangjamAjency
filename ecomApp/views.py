@@ -441,3 +441,70 @@ def get_product_detail_for_cart_api(request):
         return JsonResponse({'message': 'success', 'data': data})
     except:
         return JsonResponse({'message': 'error'})
+
+@csrf_exempt
+@transaction.atomic
+def add_booking_from_ecom(request):
+    if request.method == 'POST':
+
+        cus = request.POST.get("cus")
+        cusID = request.POST.get("cusID")
+        pDate = request.POST.get("pDate")
+        datas = request.POST.get("datas")
+        grandTotal = request.POST.get("grandTotal")
+        deliveryDate = request.POST.get("deliveryDate")
+
+        status = True
+        paidDate = datetime.today().date()
+
+
+        sale = BookingEcom()
+        sale.customerID_id = int(cusID)
+        sale.customerName = cus
+
+        sale.invoiceDate = datetime.strptime(pDate, '%d/%m/%Y')
+
+        sale.grandTotal = float(grandTotal)
+
+        sale.companyID_id = 1
+        sale.addedBy_id = request.user.pk
+
+
+        sale.save()
+
+        splited_receive_item = datas.split("@")
+        for item in splited_receive_item[:-1]:
+            item_details = item.split('|')
+
+            p = SalesLaterProduct()
+            p.salesID_id = sale.pk
+            p.productID_id = int(item_details[0])
+            p.productName = item_details[1]
+            p.category = item_details[2]
+            p.hsn = item_details[3]
+            p.quantity = int(item_details[4])
+            p.rate = float(item_details[5])
+            p.gst = float(item_details[6])
+            p.netRate = float(item_details[7])
+            p.total = float(item_details[8])
+            p.disc = float(item_details[9])
+            p.unit = item_details[10]
+            p.margin = float(item_details[12])
+            if item_details[11] == 'Default':
+                try:
+                    bat = ProductBatch.objects.filter(productID_id=int(item_details[0])).first()
+                    p.batchID_id = bat.pk
+                    p.save()
+                except:
+                    pass
+            else:
+                try:
+                    bat = ProductBatch.objects.get(productID_id=int(item_details[0]), pk=int(item_details[11]))
+
+                    p.batchID_id = bat.pk
+                    p.save()
+                except:
+                    pass
+
+            p.save()
+        return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
