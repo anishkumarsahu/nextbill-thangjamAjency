@@ -1900,13 +1900,13 @@
             var roundNumber = Math.round(taxPlusGst.toFixed(2));
 
             var roundOfNumber = roundNumber - taxPlusGst.toFixed(2);
-            $('#roundOff').html(roundOfNumber.toFixed(2))
+            $('#roundOff').html(roundOfNumber.toFixed(2));
 
 
             var grandTotal = parseFloat(taxPlusGst) + parseFloat(otherCharges) - parseFloat(personalDiscount) + parseFloat(roundOfNumber.toFixed(2));
 
 
-            $('#GrandTotal').html(grandTotal.toFixed(2))
+            $('#GrandTotal').html(Math.round(grandTotal.toFixed(2)))
         }
 
 
