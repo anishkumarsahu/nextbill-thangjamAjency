@@ -234,6 +234,13 @@ def product_images(request):
     return render(request, 'ecomApp/productImages.html')
 
 
+
+@is_activated()
+def booking_list_ecom(request):
+    return render(request, 'ecomApp/ecomBookingListUser.html')
+
+
+
 # done
 class ProductListForImageJson(BaseDatatableView):
     order_columns = ['name', 'brand', 'categoryID', 'mrp','cost', 'spWithoutGst', 'spWithGst','barcode']
@@ -449,25 +456,26 @@ def add_booking_from_ecom(request):
 
         cus = request.POST.get("cus")
         cusID = request.POST.get("cusID")
-        pDate = request.POST.get("pDate")
+        # pDate = request.POST.get("pDate")
         datas = request.POST.get("datas")
         grandTotal = request.POST.get("grandTotal")
         deliveryDate = request.POST.get("deliveryDate")
 
-        status = True
-        paidDate = datetime.today().date()
+        # paidDate = datetime.today().date()
 
 
         sale = BookingEcom()
         sale.customerID_id = int(cusID)
         sale.customerName = cus
 
-        sale.invoiceDate = datetime.strptime(pDate, '%d/%m/%Y')
+        sale.expectedDeliveryDate = datetime.strptime(deliveryDate, '%d/%m/%Y')
 
         sale.grandTotal = float(grandTotal)
 
         sale.companyID_id = 1
         sale.addedBy_id = request.user.pk
+        euser = ExecutiveUser.objects.get(user_ID=request.user.pk)
+        sale.addedByUser = euser.name
 
 
         sale.save()
@@ -476,35 +484,80 @@ def add_booking_from_ecom(request):
         for item in splited_receive_item[:-1]:
             item_details = item.split('|')
 
-            p = SalesLaterProduct()
+            p = BookingProductList()
             p.salesID_id = sale.pk
             p.productID_id = int(item_details[0])
             p.productName = item_details[1]
-            p.category = item_details[2]
-            p.hsn = item_details[3]
-            p.quantity = int(item_details[4])
-            p.rate = float(item_details[5])
-            p.gst = float(item_details[6])
-            p.netRate = float(item_details[7])
-            p.total = float(item_details[8])
-            p.disc = float(item_details[9])
-            p.unit = item_details[10]
-            p.margin = float(item_details[12])
-            if item_details[11] == 'Default':
-                try:
-                    bat = ProductBatch.objects.filter(productID_id=int(item_details[0])).first()
-                    p.batchID_id = bat.pk
-                    p.save()
-                except:
-                    pass
-            else:
-                try:
-                    bat = ProductBatch.objects.get(productID_id=int(item_details[0]), pk=int(item_details[11]))
-
-                    p.batchID_id = bat.pk
-                    p.save()
-                except:
-                    pass
-
+            p.quantity = int(item_details[3])
+            p.netRate = float(item_details[2])
+            p.total = float(item_details[4])
+            p.margin = 1.0
+            try:
+                bat = ProductBatch.objects.filter(productID_id=int(item_details[0])).first()
+                p.batchID_id = bat.pk
+            except:
+                pass
             p.save()
+
         return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
+
+
+
+class BookingEcomListByUserJson(BaseDatatableView):
+    order_columns = ['customerName', 'expectedDeliveryDate',  'grandTotal', 'datetime', ]
+
+    def get_initial_queryset(self):
+        sDate = self.request.GET.get('startDate')
+        eDate = self.request.GET.get('endDate')
+        startDate = datetime.strptime(sDate, '%d/%m/%Y')
+        endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+        # if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+        #     return SalesLater.objects.filter(isDeleted__exact=False, invoiceDate__gte=startDate.date(),
+        #                                      invoiceDate__lte=endDate.date() + timedelta(days=1))
+        # else:
+        return BookingEcom.objects.filter(isDeleted__exact=False, addedBy_id = self.request.user.pk,
+                                             datetime__gte=startDate.date(),
+                                            datetime__lte=endDate.date() + timedelta(days=1))
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(customerName__icontains=search) | Q(grandTotal__icontains=search) ).order_by('-id')
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+
+                action = '''<a style="font-size:10px;" href="/BookingSale/{}" class="ui circular  icon button green">
+                               <i class="clipboard check icon"></i>
+                             </a>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            else:
+                action = '''<a style="font-size:10px;" href="/BookingSale/{}" class="ui circular  icon button green">
+                               <i class="clipboard check icon"></i>
+                             </a>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            json_data.append([
+                escape(item.customerName),  # escape HTML for security reasons
+                escape(item.expectedDeliveryDate),
+                escape(item.grandTotal),
+                escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
+                action
+            ])
+        return json_data
+

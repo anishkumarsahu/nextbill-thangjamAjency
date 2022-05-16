@@ -11,12 +11,15 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/dataTables.semanticui.min.css">
 
     {% block css %}
 
     {% endblock %}
     <style>
+        html {
+  scroll-behavior: smooth;
+}
 
         .preloader {
             align-items: center;
@@ -104,14 +107,11 @@
     </div>
     <div class="item">
         <div class="header">
-            Administration
+            Sales
         </div>
         <div class="menu">
-            <a class="item">
-                <div><i class="cogs icon"></i>Settings</div>
-            </a>
-            <a class="item">
-                <div><i class="users icon"></i>Team</div>
+            <a class="item" href="{% url 'ecomApp:booking_list_ecom' %}">
+                <div><i class="cogs icon"></i>Order List</div>
             </a>
         </div>
     </div>
@@ -692,6 +692,7 @@
             .modal('show');
     }
     function placeOrder() {
+        showLoading()
         var cus = localStorage.getItem('customerName');
         var cusID = localStorage.getItem('customerID');
         var grandTotal = $('#grandTotal').html();
@@ -725,10 +726,9 @@
             data.append('datas', datas);
             data.append('grandTotal', grandTotal);
             data.append('deliveryDate', deliveryDate);
-
             $.ajax({
                 type: 'post',
-                url: '/api/add_sales_from_booking/',
+                url: '{% url "ecomApp:add_booking_from_ecom" %}',
                 data: data,
                 contentType: false,
                 cache: false,
@@ -740,47 +740,15 @@
                         $('body')
                             .toast({
                                 class: 'success',
-                                message: 'New Sales created Successfully.'
+                                message: 'New order created Successfully.'
                             });
 
-                        window.location.href = '/sales/';
-                        $('#itemTable tbody tr').remove();
-                        $('#formtest').trigger('reset');
-                        $('#formtest2').trigger('reset');
-                        $('#formtest3').trigger('reset');
-                        $('#AddCompanyForm').trigger('reset');
-                        $('#subTotal').html('0.00');
-                        $('#taxable').html('0.00');
-                        $('#totalAfterGst').html('0.00');
-                        $('#roundOff').html('0.00');
-                        $('#taxableGST').html('0.00');
-                        $('#billDiscount').html('0.00');
+{#                        window.location.href = '/sales/';#}
+                        clearCart();
+                         $('#confirmOrderModal').modal('hide');
+                         localStorage.setItem("customerID", 'N/A');
+                        localStorage.setItem("customerName", 'N/A');
 
-                        $('#GrandTotal').html('0.00');
-                        $('#otherCharges').html('0.00');
-                        $('#personalDiscount').html('0.00');
-                        $('#paidMoney').val('0');
-                        $('#dueOrReturn').val('0');
-                        $('#getLastSale').html('');
-                        getInvoiceSeries();
-                        var today = new Date();
-                        $('#standard_calendar')
-                            .calendar({
-                                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-                                    type: 'date',
-                                    formatter: {
-                                        date: function (date, settings) {
-                                            if (!date) return '';
-                                            var day = date.getDate();
-                                            var month = date.getMonth() + 1;
-                                            var year = date.getFullYear();
-                                            return day + '/' + month + '/' + year;
-                                        }
-                                    }
-                                }
-                            );
-                        PrintOption();
-                        $('#printSaleID').val(response.saleID)
                         hideLoading();
 
                     }
@@ -814,6 +782,17 @@
     }
 
 </script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.semanticui.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.semanticui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js"></script>
+
 {% block js %}
     <script>
 

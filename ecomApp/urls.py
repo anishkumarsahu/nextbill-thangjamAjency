@@ -28,4 +28,8 @@ urlpatterns = [
     url(r'^get_product_detail_for_cart_api/$', get_product_detail_for_cart_api, name='get_product_detail_for_cart_api'),
 
 
+    url(r'^add_booking_from_ecom/$', add_booking_from_ecom, name='add_booking_from_ecom'),
+    url(r'^BookingEcomListByUserJson/$', BookingEcomListByUserJson.as_view(), name='BookingEcomListByUserJson'),
+    url(r'^booking_list_ecom/$', booking_list_ecom, name='booking_list_ecom'),
+
     ]
