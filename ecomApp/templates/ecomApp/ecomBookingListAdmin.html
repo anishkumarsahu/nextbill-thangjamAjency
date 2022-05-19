@@ -1,7 +1,7 @@
 {% extends 'ecomApp/indexEcom.html' %}
 {% load static %}
 {% block title %}
-    <title>Bookings</title>
+    <title>Ecom Bookings</title>
 {% endblock %}
 {% block css %}
 {% endblock %}
@@ -73,36 +73,7 @@
                     </div>
 
                 </div>
-                {% comment %} <div class="two wide column" style="text-align: center">
-                    <a href="">
-                    <span>
-                            <i class="funnel dollar icon" style="font-size: 2em"></i>
-                            <p>Get Report</p>
-                                </span>
-                    </a>
-
-                </div>
-                <div class="two wide column" style="text-align: center">
-                    <a href="">
-                    <span>
-                            <i class="credit card outline icon" style="font-size: 2em"></i>
-                            <p>Credit Due</p>
-                                </span>
-                    </a>
-
-                </div>
-                <div class="two wide column" style="text-align: center">
-                    <a href="">
-                    <span>
-                            <i class="clipboard list icon" style="font-size: 2em"></i>
-                            <p>Over Due</p>
-                                </span>
-                    </a>
-
-                </div>
-
-{% endcomment %}
-            </div>
+      </div>
         </div>
 
         <div class="ui internally celled grid">
@@ -110,21 +81,16 @@
                 <div class="sixteen wide column">
                     <h5 class="ui horizontal left aligned divider header">
                         <i class="left align icon"></i>
-                        Booking List
+                        Ecom Booking List
                     </h5>
                     <table id="purchaseTable" class="ui sortable celled very compact table" style="margin-top: 5px">
                         <thead>
                         <tr>
                             <th>Customer</th>
-                            <th>Customer GST</th>
-                            <th>InvoiceDate</th>
-                            <th>InvoiceNo.</th>
+                            <th>ExpectedDeliveryDate</th>
                             <th>Total(₹)</th>
-                            <th>Paid(₹)</th>
-                            <th>Due(₹)</th>
-                            <th>PayType</th>
-                            <th>Company</th>
-                            <th>Type</th>
+                            <th>Status</th>
+                            <th>CreatedBy</th>
                             <th>EnteredOn</th>
                             <th>TakeAction</th>
 
@@ -589,48 +555,37 @@
                 buttons: [{
                     extend: 'excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 }, {
                     extend: 'print',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 }
-                    , {
-                        extend: 'colvis',
-                        exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                        }
-                    }
                 ],
                 "columnDefs": [
                     {"name": "customerName", "targets": 0, "orderable": true},
-                    {"name": "customerGst", "targets": 1, "orderable": true},
-                    {"name": "invoiceDate", "targets": 2, "orderable": true},
-                    {"name": "invoiceNumber", "targets": 3, "orderable": true},
-                    {"name": "grandTotal", "targets": 4, "orderable": true},
-                    {"name": "dueOrReturnAmount", "targets": 5, "orderable": true},
-                    {"name": "paymentType", "targets": 6, "orderable": true},
-                    {"name": "companyID", "targets": 7, "orderable": true},
-                    {"name": "salesType", "targets": 8, "orderable": true},
-                    {"name": "status", "targets": 9, "orderable": true},
-                    {"name": "datetime", "targets": 10, "orderable": true},
-                    {"name": "action", "targets": 11, "orderable": false},
+                    {"name": "expectedDeliveryDate", "targets": 1, "orderable": true},
+                    {"name": "grandTotal", "targets": 2, "orderable": true},
+                    {"name": "isSold", "targets": 3, "orderable": true},
+                    {"name": "addedByUser", "targets": 4, "orderable": true},
+                    {"name": "datetime", "targets": 5, "orderable": true},
+                    {"name": "action", "targets": 6, "orderable": false},
 
                 ],
-                aaSorting: [[9, 'desc']],
+                aaSorting: [[5, 'desc']],
                 "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
                 "pageLength": 8,
                 "processing": true,
                 "serverSide": true,
-                "ajax": '{% url 'homeApp:BookingListJson' %}?startDate=' + startDate + '&endDate=' + endDate
+                "ajax": '{% url 'ecomApp:BookingEcomListByAdminJson' %}?startDate=' + startDate + '&endDate=' + endDate
             });
         }
         function filterDetails() {
             var startDate = $('#startDateF').val();
             var endDate = $('#endDateF').val();
-            salesTab.ajax.url('{% url 'homeApp:BookingListJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
+            salesTab.ajax.url('{% url 'ecomApp:BookingEcomListByAdminJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
 
         }
 

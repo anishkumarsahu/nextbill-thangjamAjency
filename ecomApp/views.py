@@ -241,6 +241,7 @@ def product_images(request):
 
 
 
+
 @is_activated()
 def booking_list_ecom(request):
     return render(request, 'ecomApp/ecomBookingListUser.html')
@@ -567,3 +568,87 @@ class BookingEcomListByUserJson(BaseDatatableView):
             ])
         return json_data
 
+
+class BookingEcomListByAdminJson(BaseDatatableView):
+    order_columns = ['customerName', 'expectedDeliveryDate',  'grandTotal','isSold','addedByUser', 'datetime', ]
+
+    def get_initial_queryset(self):
+        sDate = self.request.GET.get('startDate')
+        eDate = self.request.GET.get('endDate')
+        startDate = datetime.strptime(sDate, '%d/%m/%Y')
+        endDate = datetime.strptime(eDate, '%d/%m/%Y')
+
+        if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+        #     return SalesLater.objects.filter(isDeleted__exact=False, invoiceDate__gte=startDate.date(),
+        #                                      invoiceDate__lte=endDate.date() + timedelta(days=1))
+        # else:
+            return BookingEcom.objects.filter(isDeleted__exact=False,
+                                                 datetime__gte=startDate.date(),
+                                                datetime__lte=endDate.date() + timedelta(days=1))
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(customerName__icontains=search) |Q(addedByUser__icontains=search) | Q(grandTotal__icontains=search) ).order_by('-id')
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
+
+                action = '''<a style="font-size:10px;" href="/ecom/EcomBookingSale/{}" class="ui circular  icon button green">
+                               <i class="clipboard check icon"></i>
+                             </a>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            else:
+                action = '''<a style="font-size:10px;" href="/ecom/EcomBookingSale/{}" class="ui circular  icon button green">
+                               <i class="clipboard check icon"></i>
+                             </a>
+
+
+
+                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+                               <i class="trash alternate icon"></i>
+                             </button>'''.format(item.pk, item.pk, item.pk),
+            json_data.append([
+                escape(item.customerName),  # escape HTML for security reasons
+                escape(item.expectedDeliveryDate),
+                escape(item.grandTotal),
+                escape(item.status),
+                escape(item.addedByUser),
+                escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
+                action
+            ])
+        return json_data
+
+
+def EcomBookingSale(request, id=None):
+    if request.user.is_authenticated:
+        instance = get_object_or_404(BookingEcom, pk=id)
+        pro = BookingProductList.objects.filter(salesID_id=instance.pk)
+
+        # if request.groups.filter(name='Staff').is_authenticated:
+
+        if 'Admin' in request.user.groups.values_list('name', flat=True):
+            company = CompanyProfile.objects.filter(isDeleted__exact=False)
+        else:
+            user = CompanyUser.objects.get(user_ID_id=request.user.pk)
+            company = CompanyProfile.objects.filter(pk=user.company_ID_id, isDeleted__exact=False)
+
+        context = {
+            'sale': instance,
+            'Products': pro,
+            'company': company,
+        }
+
+        return render(request, 'ecomApp/ecomBookingSale.html', context)
+    else:
+        return redirect('homeApp:loginPage')
