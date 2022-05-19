@@ -31,5 +31,6 @@ urlpatterns = [
     url(r'^add_booking_from_ecom/$', add_booking_from_ecom, name='add_booking_from_ecom'),
     url(r'^BookingEcomListByUserJson/$', BookingEcomListByUserJson.as_view(), name='BookingEcomListByUserJson'),
     url(r'^booking_list_ecom/$', booking_list_ecom, name='booking_list_ecom'),
+    url(r'^ecom_booking_list_admin/$', ecom_booking_list_admin, name='ecom_booking_list_admin'),
 
     ]

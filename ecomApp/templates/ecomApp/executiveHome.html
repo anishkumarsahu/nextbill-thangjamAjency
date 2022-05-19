@@ -750,6 +750,7 @@
                         localStorage.setItem("customerName", 'N/A');
 
                         hideLoading();
+                        location.href = "{% url 'ecomApp:booking_list_ecom' %}";
 
                     }
                     else {

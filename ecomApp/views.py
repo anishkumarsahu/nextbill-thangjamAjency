@@ -30,6 +30,12 @@ def sales_executive(request):
 
 
 @is_activated()
+def ecom_booking_list_admin(request):
+    return render(request, 'ecomApp/ecomBookingListAdmin.html')
+
+
+
+@is_activated()
 def browse_products(request):
     product = request.GET.get('product')
     if product == '' or product == None:
