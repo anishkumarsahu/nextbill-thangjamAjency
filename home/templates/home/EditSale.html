@@ -1980,7 +1980,7 @@ $("#quantity").keyup(function () {
             var grandTotal = parseFloat(taxPlusGst) + parseFloat(otherCharges) - parseFloat(personalDiscount) + parseFloat(roundOfNumber.toFixed(2));
 
            $('#paidAgainstBill').val(0);
-            $('#GrandTotal').html(grandTotal.toFixed(2));
+              $('#GrandTotal').html(Math.round(grandTotal.toFixed(2)))
 
 
 

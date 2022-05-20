@@ -34,5 +34,11 @@ urlpatterns = [
     url(r'^booking_list_ecom/$', booking_list_ecom, name='booking_list_ecom'),
     url(r'^ecom_booking_list_admin/$', ecom_booking_list_admin, name='ecom_booking_list_admin'),
     url(r'^EcomBookingSale/(?P<id>[0-9]+)/$', EcomBookingSale, name='EcomBookingSale'),
+    url(r'^api/add_sales_from_booking_ecom/$', add_sales_from_booking_ecom, name='add_sales_from_booking_ecom'),
+
+    url(r'^ecom_salesReport/$', ecom_salesReport, name='ecom_salesReport'),
+    url(r'^api/EcomSalesListJson/$', EcomSalesListJson.as_view(), name='EcomSalesListJson'),
+    url(r'^api/SalesListByProductEcomJson/$', SalesListByProductEcomJson.as_view(), name='SalesListByProductEcomJson'),
+    url(r'^edit_sale_ecom/(?P<id>[0-9]+)/$', edit_sale_ecom, name='edit_sale_ecom'),
 
 ]

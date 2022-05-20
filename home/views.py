@@ -2119,7 +2119,7 @@ class SalesListByProductJson(BaseDatatableView):
 
 class SalesListJson(BaseDatatableView):
     order_columns = ['customerName', 'customerGst', 'invoiceDate', 'id', 'invoiceNumber',
-                     'grandTotal', 'paidAgainstBill', 'dueOrReturnAmount', 'paymentType', 'companyID', 'salesType',
+                     'grandTotal', 'paidAgainstBill', 'dueOrReturnAmount', 'paymentType', 'saleFrom', 'salesType',
                      'datetime', ]
 
     def get_initial_queryset(self):
@@ -2141,7 +2141,7 @@ class SalesListJson(BaseDatatableView):
             qs = qs.filter(
                 Q(customerName__icontains=search) | Q(customerGst__icontains=search) | Q(id__icontains=search)
                 | Q(invoiceDate__icontains=search) | Q(invoiceNumber__icontains=search)
-                | Q(salesType__icontains=search)
+                | Q(salesType__icontains=search)| Q(saleFrom__icontains=search)
                 | Q(grandTotal__icontains=search) | Q(paymentType__icontains=search) | Q(
                     creditDays__icontains=search) | Q(status__icontains=search) | Q(companyID__name__icontains=search)
             ).order_by('-id')
@@ -2194,7 +2194,7 @@ class SalesListJson(BaseDatatableView):
                 escape(item.paidAgainstBill),
                 escape(item.grandTotal - item.paidAgainstBill),
                 escape(item.paymentType),
-                escape(item.companyID.name),
+                escape(item.saleFrom),
                 escape(item.salesType),
                 escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
                 action

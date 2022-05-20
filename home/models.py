@@ -357,6 +357,7 @@ class Sales(models.Model):
     invoiceActualNumber = models.IntegerField(default=0)
     paidAgainstBill = models.FloatField(default=0.0)
     personalDiscount = models.FloatField(default=0.0)
+    saleFrom = models.CharField(max_length=200, blank=True, null=True, default='ByShop')
 
     def __str__(self):
         return self.customerName

@@ -1,6 +1,6 @@
-{% extends 'home/index.html' %}
+{% extends 'ecomApp/indexEcom.html' %}
 {% block title %}
-    <title>Booking Sales</title>
+    <title>Edit Sales</title>
 {% endblock %}
 {% block body %}
     <style>
@@ -40,8 +40,12 @@
         }
     </style>
 
-
+    <h5 class="ui horizontal left aligned divider header" style="margin-top: 0">
+                        <i class="left align icon"></i>
+                       Edit Sale
+                    </h5>
     <div class="ui right aligned basic segment">
+
         <div class="ui internally grid">
 
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
@@ -55,7 +59,7 @@
                                 </span>
 
                             <div class="ui customerList search">
-                                <div class="ui icon input" style="width:75%;">
+                                <div class="ui  icon input" style="width:75%;">
                                     <input autocomplete="off" type="text" class="prompt" id="customerName"
                                            name="customerName"
                                            placeholder="customer Name" value="{{ sale.customerName }}">
@@ -65,13 +69,13 @@
                             </div>
                         </div>
 
-                        <div class="field inline">
+                        <div class="field  inline">
                             <span style="float: left">
                             <i class="mobile icon"></i>
 
                             <label>Phone</label>
                             </span>
-                            <input value="{{ sale.customerPhone }}" class="cwide" type="text" id="phone" name="phone"
+                            <input value="{{ sale.customerPhone }}" class="cwide tiny" type="text" id="phone" name="phone"
                                    placeholder="Phone Number">
                         </div>
                         <div class="field inline">
@@ -108,7 +112,7 @@
                             <i class="map marker alternate icon"></i>
                             <label>Address</label>
                                 </span>
-                            <textarea class="cwide" rows="1" id="address"
+                            <textarea class="cwide" rows="1" id="address" placeholder="Address"
                                       style="padding-bottom: 0.4rem;padding-top: 0.3rem"></textarea>
                         </div>
                         <div class="field inline">
@@ -176,7 +180,7 @@
 
                                 <option value="Normal">Normal</option>
                                 {% if  request.user|has_group:"Admin" %}
-                                    <option value="Jet">Jet</option>
+{#                                    <option value="Jet">Jet</option>#}
                                 {% endif %}
 
 
@@ -187,7 +191,7 @@
 
                 <div class="six wide column">
                     <div class="ui form">
-                        <div class="ui tiny form">
+                        <div class="ui mini form">
                             <div class="inline fields">
                                 <i class="amazon pay icon"></i>
                                 <label>Payment Type</label>
@@ -199,7 +203,7 @@
                                     </div>
                                 </div>
                                 <div class="field">
-                                    <div class="ui radio checkbox" onclick="showDay('n')">
+                                    <div class="ui radio  checkbox" onclick="showDay('n')">
                                         <input type="radio" name="payment" value="Card" tabindex="0" class="hidden">
                                         <label>Card</label>
                                     </div>
@@ -256,8 +260,8 @@
 
                                                 </div>
                                             </div>
-                                            <input type="text" placeholder="Invoice Number" id="invoiceNo"
-                                                   name="nainvoiceme" style="width: 17%" readonly>
+                                            <input type="text" placeholder="Invoice Number" id="invoiceNo" value="{{ sale.invoiceNumber }}"
+                                                   name="nainvoiceme" style="width: 17%;background-color: lightgrey;" readonly>
 
                                         </div>
 
@@ -270,7 +274,7 @@
                             <i class="calendar alternate icon"></i>
                             <label>Date</label>
                             </span>
-                                        <input style="width: 65%" type="text" name="gst" placeholder="Date"
+                                        <input style="width: 60%" type="text" name="gst" placeholder="Date"
                                                autocomplete="off"
                                                id="date">
                                     </div>
@@ -320,139 +324,138 @@
             <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
 
                 <div class="eleven wide column" style="padding-top: 0!important;padding-bottom: 0;padding-left:0">
-                    <form class="ui mini form" action="" autocomplete="off" id="addProductForm">
-                        <div class="ui mini form">
-                            <div class="seven fields">
-                                <div class="field" style="width: 15%">
-                                    <label style="text-align: center">Product Name <i onclick="openProduct()"
-                                                                                      class="plus green icon"
-                                                                                      style="cursor:pointer"></i></label>
-                                    <div class="ui productList search">
-                                        <div class="ui icon input">
-                                            <input type="text" class="prompt" id="productName" name="productName"
-                                                   placeholder="Product Name" onfocus="proSearch()" autocomplete="off">
-                                            <i class="shopping bag icon"></i>
-                                            <input type="hidden" id="itemID">
+                <form class="ui mini form" action=""  autocomplete="off" id="addProductForm">
+                    <div class="ui mini form">
+                        <div class="seven fields">
+                            <div class="field" style="width: 15%">
+                                <label style="text-align: center">Product Name <i onclick="openProduct()"
+                                                                                  class="plus green icon"
+                                                                                  style="cursor:pointer"></i></label>
+                                <div class="ui productList search">
+                                    <div class="ui icon input">
+                                        <input type="text" class="prompt" id="productName" name="productName"
+                                               placeholder="Product Name" onfocus="proSearch()"  autocomplete="off">
+                                        <i class="shopping bag icon"></i>
+                                        <input type="hidden" id="itemID">
 
 
-                                        </div>
-                                        <div class="results"></div>
                                     </div>
+                                    <div class="results"></div>
                                 </div>
-                                <div class="field" style="width: 30%">
-                                    <label style="text-align: center">Batch Number</label>
-                                    <select class="ui fluid dropdown search" id="batchList"
-                                            style="border-color:black!important;">
-                                        <option value="Default">Default</option>
+                            </div>
+                            <div class="field" style="width: 30%">
+                                <label style="text-align: center">Batch Number</label>
+                                <select class="ui fluid dropdown search" id="batchList"
+                                        style="border-color:black!important;">
+                                    <option value="Default">Default</option>
 
-                                    </select>
-                                </div>
-                                <div class="field" style="width: 9%">
-                                    <label style="text-align: center">Quantity</label>
-                                    <input placeholder="Quantity" type="text"
-                                           id="quantity">
-                                </div>
-                                <div class="field" style="width: 9%">
-                                    <label style="text-align: center">Unit</label>
-                                    <input placeholder="Unit" type="text"
-                                           id="unit" readonly style="background-color: lightgray;">
-                                </div>
-                                <div class="field" style="width: 10%">
-                                    <label style="text-align: center">Net Price(₹)</label>
-                                    <input placeholder="Net Price" type="number" id="netPrice" step="0.01">
-                                </div>
-
-
-                                <div class="field" style="width: 13%">
-                                    <label style="text-align: center">Rate(₹) <span class="ui red text" id="lsp"
-                                                                                    data-tooltip="Last selling price of the product to a customer"
-                                                                                    data-position="top center"></span></label>
-                                    <input placeholder="Price" type="number" id="Price">
-                                </div>
-
-                                <div class="field" style="width: 13%">
-                                    <label style="text-align: center">Total (Without Tax)(₹)</label>
-                                    <input placeholder="Total" type="number" id="total">
-                                </div>
+                                </select>
+                            </div>
+                            <div class="field" style="width: 9%">
+                                <label style="text-align: center">Quantity</label>
+                                <input placeholder="Quantity" type="text"
+                                       id="quantity">
+                            </div>
+                            <div class="field" style="width: 9%">
+                                <label style="text-align: center">Unit</label>
+                                <input placeholder="Unit" type="text"
+                                       id="unit" readonly style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width: 10%">
+                                <label style="text-align: center">Net Price(₹)</label>
+                                <input placeholder="Net Price" type="number" id="netPrice" step="0.01">
                             </div>
 
 
-                            <div class="9 fields">
-                                <div class="field" style="width: 13%">
-                                    <label style="text-align: center">Bar Code</label>
-                                    <input placeholder="Bar Code" type="text" id="barCode">
-                                </div>
-                                <div class="field" style="width: 13%">
-                                    <label style="text-align: center">Category <i onclick="openCategory()"
-                                                                                  class="plus green icon"
-                                                                                  style="cursor:pointer"></i></label>
-                                    <input placeholder="Category" type="text" id="category" readonly
-                                           style="background-color: lightgray;">
-                                </div>
-                                <div class="field" style="width: 8%">
-                                    <label style="text-align: center">GST%</label>
-                                    <input placeholder="GST" type="number" id="GST">
-                                </div>
-                                <div class="field" style="width:10%;">
-                                    <label style="text-align: center">HSN</label>
-                                    <input placeholder="HSN" type="text" id="hsn" readonly
-                                           style="background-color: lightgray;">
-                                </div>
-                                <div class="field" style="width:10%;">
-                                    <label style="text-align: center">Stock</label>
-                                    <input placeholder="Stock" type="number" id="stock" readonly
-                                           style="background-color: lightgray;">
-                                </div>
-                                <div class="field" style="width:10%;">
-                                    <label style="text-align: center">MRP(₹)</label>
-                                    <input placeholder="MRP" type="number" id="mrp"
-                                           style="background-color: #673ab7;color: white">
-                                </div>
-                                <div class="field" style="width:8%;">
-                                    <label style="text-align: center">Item Dics%</label>
-                                    <input placeholder="Item Disc%" type="number" id="disc" value="0">
-                                </div>
-                                <div class="field">
-                                    <label style="text-align: center">Margin</label>
-                                    <select class="ui fluid dropdown search" id="marginList"
-                                            style="border-color:black!important;" onchange="useMargin()">
-                                        <option value="1.0" selected>1.00</option>
-                                        <option value="1.1">1.10</option>
-                                        <option value="1.15">1.15</option>
-                                        <option value="1.18">1.18</option>
-                                        <option value="1.2">1.20</option>
-                                        <option value="1.25">1.25</option>
+                            <div class="field" style="width: 13%">
+                                <label style="text-align: center">Rate(₹) <span class="ui red text" id="lsp"
+                                                                                data-tooltip="Last selling price of the product to a customer"
+                                                                                data-position="top center"></span></label>
+                                <input placeholder="Price" type="number" id="Price">
+                            </div>
 
-                                    </select>
-                                </div>
-                                {% comment %} <div class="field">
+                            <div class="field" style="width: 13%">
+                                <label style="text-align: center">Total (Without Tax)(₹)</label>
+                                <input placeholder="Total" type="number" id="total">
+                            </div>
+                        </div>
+
+
+                        <div class="9 fields">
+                            <div class="field"  style="width: 13%">
+                                <label style="text-align: center">Bar Code</label>
+                                <input placeholder="Bar Code" type="text" id="barCode">
+                            </div>
+                            <div class="field"  style="width: 13%">
+                                <label style="text-align: center">Category <i onclick="openCategory()"
+                                                                              class="plus green icon"
+                                                                              style="cursor:pointer"></i></label>
+                                <input placeholder="Category" type="text" id="category" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width: 8%">
+                                <label style="text-align: center">GST%</label>
+                                <input placeholder="GST" type="number" id="GST">
+                            </div>
+                            <div class="field" style="width:10%;">
+                                <label style="text-align: center">HSN</label>
+                                <input placeholder="HSN" type="text" id="hsn" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                            <div class="field" style="width:10%;">
+                                <label style="text-align: center">Stock</label>
+                                <input placeholder="Stock" type="number" id="stock" readonly
+                                       style="background-color: lightgray;">
+                            </div>
+                                <div class="field" style="width:10%;">
+                                <label style="text-align: center">MRP(₹)</label>
+                                <input placeholder="MRP" type="number" id="mrp"
+                                       style="background-color: #673ab7;color: white">
+                            </div>
+                            <div class="field" style="width:8%;">
+                                <label style="text-align: center">Item Dics%</label>
+                                <input placeholder="Item Disc%" type="number" id="disc" value="0">
+                            </div>
+                                    <div class="field">
+                        <label style="text-align: center">Margin</label>
+                        <select class="ui fluid dropdown search" id="marginList" style="border-color:black!important;" onchange="useMargin()">
+                                    <option value="1.0" selected>1.00</option>
+                                    <option value="1.1">1.10</option>
+                                    <option value="1.15">1.15</option>
+                                    <option value="1.18">1.18</option>
+                                    <option value="1.2">1.20</option>
+                                    <option value="1.25">1.25</option>
+
+                                </select>
+                      </div>
+                            {% comment %} <div class="field">
                                 <label style="text-align: center">Bill Disc%</label>
                                 <input placeholder="Bill Disc%" type="text" id="bill_disc">
                             </div>{% endcomment %}
 
-                                <div class="field" style="    padding-top: 1.6rem;">
-                                    <div class="ui tiny buttons">
-                                        <button class="ui positive  button" id="addItemBtn" type="button"
-                                                onclick="addSubItems()"><i class="plus icon"></i>Add
-                                        </button>
-                                        <button style="display: none" type="button" id="updateItemBtn"
-                                                onclick="updateSubItems()" class="ui orange button">
-                                            <i class="icon redo"></i>
-                                            Update
-                                        </button>
-                                        <div class="or"></div>
-                                        <button class="ui button red" type="button" onclick="ClearData()"><i
-                                                class="minus icon"></i>
-                                            Clear
-                                        </button>
+                            <div class="field" style="    padding-top: 1.6rem;">
+                                <div class="ui tiny buttons">
+                                    <button class="ui positive  button" id="addItemBtn" type="button"
+                                            onclick="addSubItems()"><i class="plus icon"></i>Add
+                                    </button>
+                                    <button style="display: none" type="button" id="updateItemBtn"
+                                            onclick="updateSubItems()" class="ui orange button">
+                                        <i class="icon redo"></i>
+                                        Update
+                                    </button>
+                                    <div class="or"></div>
+                                    <button class="ui button red" type="button" onclick="ClearData()"><i
+                                            class="minus icon"></i>
+                                        Clear
+                                    </button>
 
 
-                                    </div>
                                 </div>
                             </div>
-
                         </div>
-                    </form>
+
+                    </div>
+                             </form>
                 </div>
 
                 <div class="five wide column">
@@ -537,13 +540,13 @@
                                 <td id="disc{{ product.productID_id }}">{{ product.disc }}</td>
                                 <td id="netprice{{ product.productID_id }}">{{ product.netRate }}</td>
                                 <td id="total{{ product.productID_id }}">{{ product.total }}</td>
+                                <td id="margin{{ product.productID_id }}">{{ product.margin }}</td>
                                 {% if product.batchID %}
                                     <td style="display:none;"
                                         id="batch{{ product.productID_id }}">{{ product.batchID.pk }}</td>
                                 {% else %}
                                     <td style="display:none;" id="batch{{ product.productID_id }}">Default</td>
                                 {% endif %}
-                                <td id="margin{{ product.productID_id }}">{{ product.margin }}</td>
                                 <td>
                                     <button style="font-size:10px;"
                                             onclick="GetItemDetail('{{ product.productID_id }}')"
@@ -589,8 +592,7 @@
 
                                 <div class="field" style="background: lightgrey;">
                                     <label>Paid</label>
-                                    <input placeholder="Paid" type="number" id="paidMoney"
-                                           value="{{ sale.paidAmount }}">
+                                    <input placeholder="Paid" type="number" id="paidMoney" value="{{ sale.paidAmount }}">
                                 </div>
                                 <div class="field" style="background: lightgrey;">
                                     <label id="returnLabel">Due/Return</label>
@@ -605,34 +607,17 @@
                     <div class="ui center aligned basic segment"
                          style="margin-top: 200px;padding-top: 0;padding-bottom: 0;">
 
-                        <div id="saveBtn">
-                            <div class="ui segment" style="padding-bottom: 0">
-                                <div class="ui two column very relaxed grid" style="padding-bottom: 0;">
-                                    <div class="column">
-                                        <a onclick="salesSave()" style="cursor: pointer;">
-                                            <i class="save icon" style="font-size: 2rem"></i>
-                                            <p>Sale Now</p>
-                                        </a>
-                                    </div>
-                                    <div class="column">
-                                        <a onclick="saleLater()" style="cursor: pointer;">
-                                            <i class="box icon" style="font-size: 2rem"></i>
-                                            <p> Update Sale Later</p>
-                                        </a>
-                                    </div>
+
+                        <div class="ui segment" style="padding-bottom: 0">
+                                <div class="column">
+                                    <a id="saveBtn" onclick="salesSave()" style="cursor: pointer;">
+                                        <i class="save icon" style="font-size: 2rem"></i>
+                                        <p>Update Sale</p>
+                                    </a>
+                                    <button id="saveBtnLoad" style="display: none;" class="ui green double loading button">Saving ....</button>
+
                                 </div>
-                                <div class="ui vertical divider">
-                                    OR
-                                </div>
-                            </div>
-
-
-
-
                         </div>
-                              <button id="saveBtnLoad" style="display: none;" class="ui green double loading button">
-                                Saving ....
-                            </button>
 
 
                     </div>
@@ -1159,7 +1144,6 @@
 
 
 
-
 {% endblock %}
 
 {% block js %}
@@ -1182,7 +1166,7 @@
             }
             else {
                 proSearch()
-                $('#invoiceNo').val('').attr('readonly', true).css('background-color', 'white');
+                $('#invoiceNo').val('').attr('readonly', true).css('background-color', 'lightgrey');
                 $('#GST').val('0').attr('readonly', true).css('background-color', 'lightgray');
                 $('#taxDiv').attr('readonly', false).css('background-color', 'white');
                 $('#gstDiv').attr('readonly', false).css('background-color', 'white');
@@ -1208,8 +1192,8 @@
         var today = new Date();
         $('#standard_calendar')
             .calendar({
-                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-
+{#                    initialDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),#}
+                    initialDate: {{ sale.invoiceDate|date:'d' }} + '/' + {{ sale.invoiceDate|date:'m' }} + '/' + {{ sale.invoiceDate|date:'Y' }},
                     monthFirst: false,
                     type: 'date',
                     formatter: {
@@ -1219,6 +1203,7 @@
                             var day = String(date.getDate());
                             var month = String(date.getMonth() + 1);
                             var year = date.getFullYear();
+{#                            return '{{ sale.invoiceDate|date:'d/m/Y' }}';#}
                             return day + '/' + month + '/' + year;
                         }
                     }
@@ -1469,9 +1454,8 @@
                         $('#netPrice').val(response.data['Sp']);
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
-                        getproductBatchList(response.data['ID']);
-                        useMargin();
-
+                           getproductBatchList(response.data['ID']);
+                                                         useMargin();
                     }
                     else {
                         $('#itemID').val(response.data['ID']);
@@ -1488,7 +1472,7 @@
                         $('#Price').val(response.data['Sp']);
                         $('#barCode').val(response.data['BarCode']);
                         getproductBatchList(response.data['ID']);
-                        useMargin();
+                         useMargin();
 
                     }
 
@@ -1555,8 +1539,7 @@
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
                         getproductBatchList(response.data['ID']);
-                        useMargin();
-
+                         useMargin();
                     }
                     else {
                         $('#itemID').val(response.data['ID']);
@@ -1572,7 +1555,7 @@
                         $('#netPrice').val(response.data['Net']);
                         $('#Price').val(response.data['Sp']);
                         {#                        $('#barCode').val(response.data['BarCode']);#}
-                        getproductBatchList(response.data['ID']);
+                       getproductBatchList(response.data['ID']);
                         useMargin();
                     }
 
@@ -1588,18 +1571,18 @@
                 }
             });
         });
-        $("#quantity").keyup(function () {
+$("#quantity").keyup(function () {
             var q = $('#quantity').val();
-            {#            var price = $('#Price').val();#}
+{#            var price = $('#Price').val();#}
             var gst = $('#GST').val();
             var disc = $('#disc').val();
             var net = $('#netPrice').val();
-            var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
+              var sp = parseFloat(net) / (1 + ((parseFloat(gst) / 100)));
             $('#Price').val(sp.toFixed(2));
 
-            {#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
+{#            var netPriceCal = (parseFloat(price) * parseFloat(gst) / 100.0) + parseFloat(price);#}
             var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
-            {#            $('#netPrice').val(netPriceCal.toFixed(2));#}
+{#            $('#netPrice').val(netPriceCal.toFixed(2));#}
             $('#total').val(totalPriceCal.toFixed(2));
 
 
@@ -1627,15 +1610,15 @@
             var gst = $('#GST').val();
             var disc = $('#disc').val();
 
-            var net = parseFloat(price) + ( parseFloat(price) * (parseFloat(gst) / 100));
-            $('#netPrice').val(net.toFixed(2));
-            var sp = parseFloat(net.toFixed(2)) / (1 + ((parseFloat(gst) / 100)));
+            var net = parseFloat(price) +( parseFloat(price)* (parseFloat(gst)/100));
+             $('#netPrice').val(net.toFixed(2));
+             var sp = parseFloat(net.toFixed(2)) / (1 + ((parseFloat(gst) / 100)));
 
-            {#            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);#}
-            {#            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);#}
-            {#            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);#}
+{#            var totalPriceCal = (parseFloat(price) * parseFloat(q)) - (parseFloat(price) * parseFloat(q)) * (parseFloat(disc) / 100.0);#}
+{#            var totalPriceOfAnItem = parseFloat(totalPriceCal) / parseFloat(q);#}
+{#            var netPriceCal = (parseFloat(totalPriceOfAnItem) * parseFloat(gst) / 100) + parseFloat(totalPriceOfAnItem);#}
 
-            {#            $('#total').val(totalPriceCal.toFixed(2));#}
+{#            $('#total').val(totalPriceCal.toFixed(2));#}
 
             var totalPriceCal = (parseFloat(sp) * parseFloat(q)) - (parseFloat(sp) * parseFloat(q)) * (parseFloat(disc) / 100.0);
             $('#total').val(totalPriceCal.toFixed(2));
@@ -1644,7 +1627,7 @@
         });
 
         $("#disc").keyup(function () {
-            var q = $('#quantity').val();
+          var q = $('#quantity').val();
             var gst = $('#GST').val();
             var disc = $('#disc').val();
             var net = $('#netPrice').val();
@@ -1668,16 +1651,17 @@
 
 
         });
-        function useMargin() {
+
+               function useMargin() {
             var mar = $('#marginList').val();
             console.log(mar);
             var mrp = $('#mrp').val();
 
-            var net = mrp / mar;
+            var net = mrp/mar;
 
             $('#netPrice').val(parseFloat(net).toFixed(2));
 
-            var q = $('#quantity').val();
+                     var q = $('#quantity').val();
             var gst = $('#GST').val();
             var disc = $('#disc').val();
             var net = $('#netPrice').val();
@@ -1688,9 +1672,8 @@
             $('#total').val(totalPriceCal.toFixed(2));
 
 
+
         }
-
-
         function returnCalc() {
             var GrandTotal = $('#GrandTotal').html();
             var paidMoney = $('#paidMoney').val();
@@ -1748,6 +1731,7 @@
 
         });
 
+
     function addRowCount(tableAttr) {
           $(tableAttr).each(function(){
             $('td:first-child', this).each(function(i){
@@ -1772,8 +1756,7 @@
             var stock = $('#stock').val();
             var mrp = $('#mrp').val();
             var batch = $('#batchList').val();
-            var margin = $('#marginList').val();
-
+     var margin = $('#marginList').val();
             if (productName === '' || Quantity === '' || Price === '' ||
                 Total === '' || category === '') {
                 $('body')
@@ -1790,14 +1773,14 @@
                 calTaxAndTotal();
                 returnCalc();
                 $('#lsp').html();
-               addRowCount('#itemTable');
+                addRowCount('#itemTable');
             }
 
         }
 
 
         function GetItemDetail(id) {
-            getproductBatchList(id);
+              getproductBatchList(id);
             $('#addItemBtn').css('display', 'none');
             $('#updateItemBtn').css('display', '');
             var product = $('#product' + id).html();
@@ -1810,8 +1793,8 @@
             var disc = $('#disc' + id).html();
             var netprice = $('#netprice' + id).html();
             var total = $('#total' + id).html();
-            var batch = $('#batch' + id).html();
-            var margin = $('#margin' + id).html();
+                        var batch = $('#batch' + id).html();
+                          var margin = $('#margin' + id).html();
 
             $('#productName').val(product);
             $('#quantity').val(quantity);
@@ -1846,10 +1829,11 @@
                     ;
                 }
             });
-            setTimeout(function () {
+             setTimeout(function(){
                 $('#batchList').val(batch).change();
-                $('#marginList').val(margin).change();
-            }, 500);
+                 $('#marginList').val(margin).change();
+
+            },500);
         }
 
 
@@ -1868,8 +1852,9 @@
             var stock = $('#stock').val();
             var mrp = $('#mrp').val();
             var disc = $('#disc').val();
-            var batch = $('#batchList').val();
-            var margin = $('#marginList').val();
+                        var batch = $('#batchList').val();
+                                    var margin = $('#marginList').val();
+
 
             if (productName === '' || Quantity === '' || Price === '' ||
                 Total === '' || category === '') {
@@ -1892,7 +1877,7 @@
                 $('#total' + id).html(Total);
                 $('#disc' + id).html(disc);
                 $('#batch' + id).html(batch);
-                $('#margin' + id).html(margin);
+                    $('#margin' + id).html(margin);
 
                 ClearData();
                 calTaxAndTotal();
@@ -1912,8 +1897,7 @@
             var id = $('#itemDelID').val();
             $('#' + id).remove();
             calTaxAndTotal();
-          addRowCount('#itemTable');
-
+               addRowCount('#itemTable');
 
         }
         function ClearData() {
@@ -1937,7 +1921,7 @@
             $('#itemID').val('');
             $('#lsp').html('');
             $('#batchList').html('<option value="Default">Default</option>');
-            $('#marginList').val('1.00').change();
+             $('#marginList').val('1.00').change();
 
         }
 
@@ -1995,8 +1979,10 @@
 
             var grandTotal = parseFloat(taxPlusGst) + parseFloat(otherCharges) - parseFloat(personalDiscount) + parseFloat(roundOfNumber.toFixed(2));
 
+           $('#paidAgainstBill').val(0);
+              $('#GrandTotal').html(Math.round(grandTotal.toFixed(2)))
 
-                $('#GrandTotal').html(Math.round(grandTotal.toFixed(2)))
+
 
         }
 
@@ -2059,7 +2045,7 @@
                 var batch = $('#batch' + id).html();
                 var margin = $('#margin' + id).html();
 
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '|' + margin + '@'
+                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit +'|' + batch +'|' + margin + '@'
 
 
             });
@@ -2082,8 +2068,7 @@
                     })
                 ;
                 hideLoading();
-            }
-            else {
+            } else {
                 data = new FormData();
                 data.append('referrerID', referrerID);
 
@@ -2125,11 +2110,11 @@
                 data.append('defaultInvoiceSeries', defaultInvoiceSeries);
                 data.append('paidAgainstBill', paidAgainstBill);
                 data.append('personalDiscount', personalDiscount);
-
+                data.append('SaleUpdateID', {{ sale.pk }});
 
                 $.ajax({
                     type: 'post',
-                    url: '/api/add_sales_from_booking/',
+                    url: '/api/update_sale/',
                     data: data,
                     contentType: false,
                     cache: false,
@@ -2141,10 +2126,10 @@
                             $('body')
                                 .toast({
                                     class: 'success',
-                                    message: 'New Sales created Successfully.'
+                                    message: 'New Sales Updated Successfully.'
                                 });
 
-                            window.location.href = '/sales/';
+                             location.reload();
                             $('#itemTable tbody tr').remove();
                             $('#formtest').trigger('reset');
                             $('#formtest2').trigger('reset');
@@ -2184,6 +2169,7 @@
                             $('#printSaleID').val(response.saleID)
                             hideLoading();
 
+
                         }
                         else {
                             $('body')
@@ -2192,7 +2178,7 @@
                                     message: 'An error occurred !'
                                 })
                             ;
-                            hideLoading();
+hideLoading();
                         }
 
                         return response;
@@ -2323,17 +2309,17 @@
                     success: function (response) {
 
                         $('#defaultInvoiceSeries').html('');
-                        $('#defaultInvoiceSeries').html(response.data[0]["Series"]);
-                        $('#invoiceSeriesID').val(response.data[0]["ID"]);
+                        $('#defaultInvoiceSeries').html('N/A');
+                        $('#invoiceSeriesID').val('N/A');
                         getInvoiceNumber(response.data[0]["ID"]);
                         $('#otherInvoiceSeries').html('');
 
-                        var j;
+       {% comment %}                 var j;
                         for (j = 0; j < response.data.length; j++) {
 
                             $('#otherInvoiceSeries').append('<div class="item " onclick ="getInvoiceNumber(' + response.data[j]["ID"] + ')">' + response.data[j]["Series"] + '</div>');
 
-                        }
+                        }{% endcomment %}
 
                     },
 
@@ -2362,8 +2348,8 @@
 
                 success: function (response) {
 
-                    $('#invoiceNo').val(response.Invoice);
-                    $('#invoiceSeriesID').val(id);
+                    $('#invoiceNo').val({{ sale.invoiceNumber }});
+                    $('#invoiceSeriesID').val('N/A');
 
                 },
 
@@ -2455,169 +2441,6 @@
             window.open('{% url "homeApp:hsn" %}', 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
         }
 
-
-        //post
-        function saleLater() {
-            showLoading();
-            var personalDiscount = $('#personalDiscount').html();
-            var bookingID = $('#bookingID').val();
-            var customerID = $('#customerID').val();
-            var name = $('#customerName').val();
-            var gst = $('#gst').val();
-            var phone = $('#phone').val();
-            var email = $('#email').val();
-            var address = $('#address').val();
-            var state = $('#state').val();
-            var pType = $('#pType').val();
-            var payment = $('input[name="payment"]:checked').val();
-            var cDays = $('#cDays').val();
-            var invoiceNumber = $('#invoiceNo').val();
-            var pDate = $('#date').val();
-            var chequeDetail = $('#chequeDetail').val();
-            var deliveryNote = $('#deliveryNote').val();
-            var supplierReference = $('#supplierReference').val();
-            var orderNumber = $('#orderNumber').val();
-            var dispatchNumber = $('#dispatchNumber').val();
-            var dispatchThrough = $('#dispatchThrough').val();
-            var otherReference = $('#otherReference').val();
-            var dispatchNoteDate = $('#dispatchNoteDate').val();
-            var destination = $('#destination').val();
-            var company = $('#company').val();
-            var paid = $('#paidMoney').val();
-            var dueOrReturn = $('#dueOrReturn').val();
-            var invoiceSeriesID = $('#invoiceSeriesID').val();
-            var defaultInvoiceSeries = $('#defaultInvoiceSeries').html();
-            var paidAgainstBill = $('#paidAgainstBill').val();
-
-            var datas = '';
-            $('#itemTable tbody tr').each(function () {
-                var id = $(this).closest('tr').attr('id');
-                var pro = $('#product' + id).html();
-                var cat = $('#category' + id).html();
-                var hs = $('#hsn' + id).html();
-                var qty = $('#quantity' + id).html();
-                var pri = $('#price' + id).html();
-                var gs = $('#gst' + id).html();
-                var netp = $('#netprice' + id).html();
-                var tot = $('#total' + id).html();
-                var dis = $('#disc' + id).html();
-                var unit = $('#unit' + id).html();
-                var batch = $('#batch' + id).html();
-                var margin = $('#margin' + id).html();
-
-                datas = datas + '' + id + '|' + pro + '|' + cat + '|' + hs + '|' + qty + '|' + pri + '|' + gs + '|' + netp + '|' + tot + '|' + dis + '|' + unit + '|' + batch + '|' + margin + '@'
-
-
-            });
-
-            var subTotal = $('#subTotal').html();
-            var taxable = $('#taxable').html();
-            var totalFinal = $('#totalAfterGst').html();
-            var roundOff = $('#roundOff').html();
-            var taxableGST = $('#taxableGST').html();
-            var bill_disc = $('#billDiscount').html();
-            var otherCharges = $('#otherCharges').html();
-
-            var GrandTotal = $('#GrandTotal').html();
-            if (name === '' || pDate === '' || subTotal === '' || taxable === '' || totalFinal === '' ||
-                roundOff === '' || taxableGST === '' || bill_disc === '' || GrandTotal === '' || datas === '') {
-                $('body')
-                    .toast({
-                        class: 'orange',
-                        message: 'Customer Name, Date, Items, total are required !'
-                    })
-                ;
-                hideLoading();
-            } else {
-                data = new FormData();
-                data.append('bookingID', bookingID);
-                data.append('customerID', customerID);
-                data.append('name', name);
-                data.append('gst', gst);
-                data.append('phone', phone);
-                data.append('email', email);
-                data.append('address', address);
-                data.append('state', state);
-                data.append('pType', pType);
-                data.append('payment', payment);
-                data.append('cDays', cDays);
-                data.append('invoiceNumber', invoiceNumber);
-                data.append('pDate', pDate);
-                data.append('datas', datas);
-                data.append('subTotal', subTotal);
-                data.append('taxable', taxable);
-                data.append('totalFinal', totalFinal);
-                data.append('roundOff', roundOff);
-                data.append('taxableGST', taxableGST);
-                data.append('bill_disc', bill_disc);
-                data.append('GrandTotal', GrandTotal);
-                data.append('otherCharges', otherCharges);
-                data.append('chequeDetail', chequeDetail);
-                data.append('deliveryNote', deliveryNote);
-                data.append('supplierReference', supplierReference);
-                data.append('orderNumber', orderNumber);
-                data.append('dispatchNumber', dispatchNumber);
-                data.append('dispatchThrough', dispatchThrough);
-                data.append('otherReference', otherReference);
-                data.append('dispatchNoteDate', dispatchNoteDate);
-                data.append('destination', destination);
-                data.append('company', company);
-                data.append('paid', paid);
-                data.append('dueOrReturn', dueOrReturn);
-                data.append('invoiceSeriesID', invoiceSeriesID);
-                data.append('defaultInvoiceSeries', defaultInvoiceSeries);
-                data.append('paidAgainstBill', paidAgainstBill);
-                data.append('personalDiscount', personalDiscount);
-
-
-                $.ajax({
-                    type: 'post',
-                    url: '/api/update_booking/',
-                    data: data,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-
-
-                    success: function (response) {
-                        if (response.message === 'success') {
-                            $('body')
-                                .toast({
-                                    class: 'success',
-                                    message: 'Booking requested updated Successfully.'
-                                });
-
-                            window.location.href = '/sales/'
-                            hideLoading();
-
-                        }
-                        else {
-                            $('body')
-                                .toast({
-                                    class: 'error',
-                                    message: 'An error occurred !'
-                                })
-                            ;
-                            hideLoading();
-                        }
-
-                        return response;
-                    },
-                    error: function () {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
-                        hideLoading();
-                    }
-                });
-
-
-            }
-
-        }
         function PrintOption() {
 
             $('#PrintOption')
@@ -2658,46 +2481,47 @@
 
         }
 
-        function getproductBatchList(id) {
-            $.ajax({
-                type: 'get',
-                url: "{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + id,
+         function getproductBatchList(id) {
+                $.ajax({
+                    type: 'get',
+                    url: "{% url 'homeApp:ProductBatchListJson' %}?batchProductID=" + id,
 
-                success: function (response) {
+                    success: function (response) {
 
-                    $('#batchList').html('');
-                    $('#batchList').append('<option value="Default">Default</option>');
-                    var j;
-                    for (j = 0; j < response.data.length; j++) {
+                        $('#batchList').html('');
+                            $('#batchList').append('<option value="Default">Default</option>');
+                        var j;
+                        for (j = 0; j < response.data.length; j++) {
 
-                        $('#batchList').append('<option value="' + response.data[j][10] + '" >' + response.data[j][0] + '-' + response.data[j][1] + '  (' + response.data[j][4] + ' to ' + response.data[j][5] + ')</option>');
+                            $('#batchList').append('<option value="' + response.data[j][10] + '" >' + response.data[j][0] + '-'+response.data[j][1]+'  ('+response.data[j][4]+' to '+response.data[j][5]+')</option>');
 
+                        }
+
+                    },
+
+                    error: function () {
+                        $('body')
+                            .toast({
+                                class: 'error',
+                                message: 'An error occurred !'
+                            })
+                        ;
                     }
-
-                },
-
-                error: function () {
-                    $('body')
-                        .toast({
-                            class: 'error',
-                            message: 'An error occurred !'
-                        })
-                    ;
-                }
-            });
+                });
 
 
         }
 
         function showLoading() {
-            $('#saveBtn').css('display', 'none');
-            $('#saveBtnLoad').css('display', '');
+            $('#saveBtn').css('display','none');
+            $('#saveBtnLoad').css('display','');
 
         }
-        function hideLoading() {
-            $('#saveBtn').css('display', '');
-            $('#saveBtnLoad').css('display', 'none');
+             function hideLoading() {
+            $('#saveBtn').css('display','');
+            $('#saveBtnLoad').css('display','none');
 
         }
+
     </script>
 {% endblock %}

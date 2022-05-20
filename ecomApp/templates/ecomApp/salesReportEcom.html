@@ -1,7 +1,7 @@
-{% extends 'home/index.html' %}
+{% extends 'ecomApp/indexEcom.html' %}
 {% load static %}
 {% block title %}
-    <title>Sales Report</title>
+    <title>Ecom Sales Report</title>
 {% endblock %}
 {% block css %}
 {% endblock %}
@@ -239,7 +239,7 @@
         <div class="ui internally celled grid">
             <div class="row">
                 <div class="sixteen wide column">
-                    <table id="purchaseTableProduct" class="ui sortable celled very compact table" style="margin-top: 5px">
+                    <table id="purchaseTableProduct" class="ui sortable celled very compact table" style="margin-top: 5px;width: 100%;">
                         <thead>
                         <tr>
                             <th>ProductName</th>
@@ -795,7 +795,7 @@
                 "pageLength": 8,
                 "processing": true,
                 "serverSide": true,
-                "ajax": '{% url 'homeApp:SalesListJson' %}?startDate=' + startDate + '&endDate=' + endDate
+                "ajax": '{% url 'ecomApp:EcomSalesListJson' %}?startDate=' + startDate + '&endDate=' + endDate
             });
         }
         function getPurchaseByProduct() {
@@ -844,19 +844,19 @@
                 "pageLength": 8,
                 "processing": true,
                 "serverSide": true,
-                "ajax": '{% url 'homeApp:SalesListByProductJson' %}?startDate=' + startDate + '&endDate=' + endDate
+                "ajax": '{% url 'ecomApp:SalesListByProductEcomJson' %}?startDate=' + startDate + '&endDate=' + endDate
             });
         }
         function filterDetails() {
             var startDate = $('#startDateF').val();
             var endDate = $('#endDateF').val();
-            salesTab.ajax.url('{% url 'homeApp:SalesListJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
+            salesTab.ajax.url('{% url 'ecomApp:EcomSalesListJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
 
         }
    function filterDetailsProduct() {
             var startDate = $('#startDateProduct').val();
             var endDate = $('#endDateProduct').val();
-            productTab.ajax.url('{% url 'homeApp:SalesListByProductJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
+            productTab.ajax.url('{% url 'ecomApp:SalesListByProductEcomJson' %}?startDate=' + startDate + '&endDate=' + endDate).load();
 
         }
 

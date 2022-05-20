@@ -1,6 +1,6 @@
-{% extends 'home/index.html' %}
+{% extends 'ecomApp/indexEcom.html' %}
 {% block title %}
-    <title>Booking Sales</title>
+    <title>Ecom Booking Sales</title>
 {% endblock %}
 {% block body %}
     <style>
@@ -71,7 +71,7 @@
 
                             <label>Phone</label>
                             </span>
-                            <input value="{{ sale.customerPhone }}" class="cwide" type="text" id="phone" name="phone"
+                            <input value="{{ sale.customerID.phone }}" class="cwide" type="text" id="phone" name="phone"
                                    placeholder="Phone Number">
                         </div>
                         <div class="field inline">
@@ -79,7 +79,7 @@
                             <i class="registered icon"></i>
                             <label>GST Reg</label>
                             </span>
-                            <input value="{{ sale.customerGst }}" class="cwide" type="text" name="gst" id="gst"
+                            <input value="{{ sale.customerID.gst }}" class="cwide" type="text" name="gst" id="gst"
                                    placeholder="GST Reg"
                             >
                         </div>
@@ -89,13 +89,13 @@
 
                             <label>Email</label>
                             </span>
-                            <input value="{{ sale.customerEmail }}" class="cwide" type="text" id="email" name="email"
+                            <input value="{{ sale.customerID.email }}" class="cwide" type="text" id="email" name="email"
                                    placeholder="Email">
                             <input type="hidden" name="customerID" id="customerID" value="{{ sale.customerID_id }}">
                             <input type="hidden" name="bookingID" id="bookingID" value="{{ sale.pk }}">
                             <input type="hidden" name="referrerID" id="referrerID" value="NaN">
                             <input type="hidden" name="invoiceChoose" id="invoiceChoose"
-                                   value="{{ sale.invoiceSeriesID.invoiceType }}">
+                                   value="Others">
 
                         </div>
                     </form>
@@ -109,7 +109,7 @@
                             <label>Address</label>
                                 </span>
                             <textarea class="cwide" rows="1" id="address"
-                                      style="padding-bottom: 0.4rem;padding-top: 0.3rem"></textarea>
+                                      style="padding-bottom: 0.4rem;padding-top: 0.3rem"> {{ sale.customerID.address }}</textarea>
                         </div>
                         <div class="field inline">
                             <span style="float: left">
@@ -607,23 +607,23 @@
 
                         <div id="saveBtn">
                             <div class="ui segment" style="padding-bottom: 0">
-                                <div class="ui two column very relaxed grid" style="padding-bottom: 0;">
+                                <div class="ui  column very relaxed grid" style="padding-bottom: 0;">
                                     <div class="column">
                                         <a onclick="salesSave()" style="cursor: pointer;">
                                             <i class="save icon" style="font-size: 2rem"></i>
                                             <p>Sale Now</p>
                                         </a>
                                     </div>
-                                    <div class="column">
+                                {% comment %}    <div class="column">
                                         <a onclick="saleLater()" style="cursor: pointer;">
                                             <i class="box icon" style="font-size: 2rem"></i>
                                             <p> Update Sale Later</p>
                                         </a>
-                                    </div>
+                                    </div>{% endcomment %}
                                 </div>
-                                <div class="ui vertical divider">
+                               {% comment %} <div class="ui vertical divider">
                                     OR
-                                </div>
+                                </div>{% endcomment %}
                             </div>
 
 
@@ -1194,8 +1194,8 @@
 
 
         function initVal() {
-            $('#address').val('{{ sale.customerAddress }}');
-            $('#state').val('{{ sale.customerState }}');
+{#            $('#address').val('{{ sale.customerAddress }}');#}
+            $('#state').val('{{ sale.customerID.state }}');
             $('#company').val('{{ sale.companyID_id }}');
             $('#pType').val('{{ sale.salesType }}');
             $('[name=payment]').val(['{{ sale.paymentType }}']);
@@ -2129,7 +2129,7 @@
 
                 $.ajax({
                     type: 'post',
-                    url: '/api/add_sales_from_booking/',
+                    url: '{% url "ecomApp:add_sales_from_booking_ecom" %}',
                     data: data,
                     contentType: false,
                     cache: false,
@@ -2144,7 +2144,7 @@
                                     message: 'New Sales created Successfully.'
                                 });
 
-                            window.location.href = '/sales/';
+                            window.location.href = '{% url "ecomApp:ecom_booking_list_admin" %}';
                             $('#itemTable tbody tr').remove();
                             $('#formtest').trigger('reset');
                             $('#formtest2').trigger('reset');
@@ -2312,6 +2312,7 @@
 
         $(getInvoiceSeries());
         function getInvoiceSeries() {
+            debugger;
             var company = $('#company').val();
             pType = $('#pType').val();
             var invoice = $('#invoiceChoose').val();
