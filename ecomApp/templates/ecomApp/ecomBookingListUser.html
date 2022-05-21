@@ -25,9 +25,10 @@
             position: absolute;
             left: 160px;
         }
-    input[type=search]{
-    width: 100px!important;
-}
+
+        input[type=search] {
+            width: 100px !important;
+        }
     </style>
 
     <div class="ui  aligned basic segment">
@@ -38,13 +39,13 @@
                         <form class="ui tiny form">
 
                             <div class="field">
-{#      <span style="float: left;padding: 7px;">#}
+                                {#      <span style="float: left;padding: 7px;">#}
 
-                            <label><i class="calendar alternate icon"></i>Filter By Date Range</label>
-{#                            </span>#}
-{#                            </div>#}
+                                <label><i class="calendar alternate icon"></i>Filter By Date Range</label>
+                                {#                            </span>#}
+                                {#                            </div>#}
 
-{#                            <div class="field inline" id="custom_date">#}
+                                {#                            <div class="field inline" id="custom_date">#}
 
                                 <div class="three fields">
                                     <div class="four wide mobile field">
@@ -90,14 +91,16 @@
                         <i class="left align icon"></i>
                         Booking List
                     </h5>
-                    <table id="purchaseTable" class="ui unstackable  sortable celled very nowrap compact table" style="margin-top: 5px;width: 100%">
+                    <table id="purchaseTable" class="ui unstackable  sortable celled very nowrap compact table"
+                           style="margin-top: 5px;width: 100%">
                         <thead>
                         <tr>
                             <th>Customer</th>
                             <th>ExpectedDDate</th>
                             <th>Total(₹)</th>
+                            <th>IsSold</th>
                             <th>EnteredOn</th>
-                            <th>TakeAction</th>
+                            <th>Details</th>
 
                         </tr>
                         </thead>
@@ -131,161 +134,160 @@
         </div>
         <div class="content" style="padding-top: 0!important;">
             <div class="description">
-                <div class="ui right aligned basic segment">
+                <div class="ui right aligned basic segment" style="padding: 0">
 
                     <div class="ui pointing secondary menu">
                         <a class="item active" data-tab="first">Basic Details</a>
                         <a class="item" data-tab="second">Addition Details</a>
                     </div>
                     <div class="ui tab segment active" data-tab="first">
-                        <div class="ui internally grid">
-                            <div class="row" style="padding-bottom: 5px!important;padding-top: 5px!important;">
-                                <div class="three wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="user icon"></i>
-                                            <div class="content">
-                                                <a class="header">Name:</a>
-                                                <div class="description" id="CustName">N/A</div>
-                                            </div>
+                        <div class="ui internally grid" style="overflow: auto;white-space: nowrap">
+                            <div class="eight wide mobile three wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="user icon"></i>
+                                        <div class="content">
+                                            <a class="header">Name:</a>
+                                            <div class="description" id="CustName">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="registered icon"></i>
-                                            <div class="content">
-                                                <a class="header">GST Reg :</a>
-                                                <div class="description" id="custGst">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="registered icon"></i>
+                                        <div class="content">
+                                            <a class="header">GST Reg :</a>
+                                            <div class="description" id="custGst">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="mobile icon"></i>
-                                            <div class="content">
-                                                <a class="header">Phone Number:</a>
-                                                <div class="description" id="custPhone">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="mobile icon"></i>
+                                        <div class="content">
+                                            <a class="header">Phone Number:</a>
+                                            <div class="description" id="custPhone">N/A</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="four wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="mail icon"></i>
-                                            <div class="content">
-                                                <a class="header">Email:</a>
-                                                <div class="description" id="custEmail">N/A</div>
-                                            </div>
+                            </div>
+                            <div class="eight wide mobile four wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="mail icon"></i>
+                                        <div class="content">
+                                            <a class="header">Email:</a>
+                                            <div class="description" id="custEmail">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="map marker alternate icon"></i>
-                                            <div class="content">
-                                                <a class="header">Address:</a>
-                                                <div class="description" id="custAddress">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="map marker alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Address:</a>
+                                            <div class="description" id="custAddress">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="street view icon"></i>
-                                            <div class="content">
-                                                <a class="header">State :</a>
-                                                <div class="description" id="custState">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="street view icon"></i>
+                                        <div class="content">
+                                            <a class="header">State :</a>
+                                            <div class="description" id="custState">N/A</div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="two wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="amazon pay icon"></i>
-                                            <div class="content">
-                                                <a class="header">Payment Type:</a>
-                                                <div class="description" id="sPaymentType">N/A</div>
-                                            </div>
+                            <div class="eight wide mobile two wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="amazon pay icon"></i>
+                                        <div class="content">
+                                            <a class="header">Payment Type:</a>
+                                            <div class="description" id="sPaymentType">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="scroll icon"></i>
-                                            <div class="content">
-                                                <a class="header"> Invoice No:</a>
-                                                <div class="description" id="sInvoice">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="scroll icon"></i>
+                                        <div class="content">
+                                            <a class="header"> Invoice No:</a>
+                                            <div class="description" id="sInvoice">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="calendar alternate icon"></i>
-                                            <div class="content">
-                                                <a class="header">Date :</a>
-                                                <div class="description" id="sInvoiceDate">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="calendar alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Date :</a>
+                                            <div class="description" id="sInvoiceDate">N/A</div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="two wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="sticky note outline icon"></i>
-                                            <div class="content">
-                                                <a class="header">Sub Total:</a>
-                                                <div class="description" id="sSubTotal">N/A</div>
-                                            </div>
+                            <div class="eight wide mobile two wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="sticky note outline icon"></i>
+                                        <div class="content">
+                                            <a class="header">Sub Total:</a>
+                                            <div class="description" id="sSubTotal">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="percent icon"></i>
-                                            <div class="content">
-                                                <a class="header">Discount Pc:</a>
-                                                <div class="description" id="sDiscount">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="percent icon"></i>
+                                        <div class="content">
+                                            <a class="header">Discount Pc:</a>
+                                            <div class="description" id="sDiscount">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="pencil alternate icon"></i>
-                                            <div class="content">
-                                                <a class="header">Taxable :</a>
-                                                <div class="description" id="sTaxable">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="pencil alternate icon"></i>
+                                        <div class="content">
+                                            <a class="header">Taxable :</a>
+                                            <div class="description" id="sTaxable">N/A</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="two wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
+                            </div>
+                            <div class="eight wide mobile two wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
 
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="registered icon"></i>
-                                            <div class="content">
-                                                <a class="header">GST:</a>
-                                                <div class="description" id="sBillGst">N/A</div>
-                                            </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="registered icon"></i>
+                                        <div class="content">
+                                            <a class="header">GST:</a>
+                                            <div class="description" id="sBillGst">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="bullseye icon"></i>
-                                            <div class="content">
-                                                <a class="header">Round Off:</a>
-                                                <div class="description" id="sRoundOff">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="bullseye icon"></i>
+                                        <div class="content">
+                                            <a class="header">Round Off:</a>
+                                            <div class="description" id="sRoundOff">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="people carry icon"></i>
-                                            <div class="content">
-                                                <a class="header">Other Charges :</a>
-                                                <div class="description" id="sOtherCharges">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="people carry icon"></i>
+                                        <div class="content">
+                                            <a class="header">Other Charges :</a>
+                                            <div class="description" id="sOtherCharges">N/A</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="two wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="wallet icon"></i>
-                                            <div class="content">
-                                                <a class="header">Total :</a>
-                                                <div class="description" id="sGrandTotal">N/A</div>
-                                            </div>
+                            </div>
+                            <div class="eight wide mobile two wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="wallet icon"></i>
+                                        <div class="content">
+                                            <a class="header">Total :</a>
+                                            <div class="description" id="sGrandTotal">N/A</div>
                                         </div>
+                                    </div>
 
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="money bill wave icon"></i>
-                                            <div class="content">
-                                                <a class="header">Paid Amount:</a>
-                                                <div class="description" id="PaidAgainstBill">N/A</div>
-                                            </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="money bill wave icon"></i>
+                                        <div class="content">
+                                            <a class="header">Paid Amount:</a>
+                                            <div class="description" id="PaidAgainstBill">N/A</div>
                                         </div>
-                                        {% comment %}<div class="item" style="padding-bottom: 0;">
+                                    </div>
+                                    {% comment %}<div class="item" style="padding-bottom: 0;">
                                         <i class="hand holding usd icon"></i>
                                         <div class="content">
                                             <a class="header">Due Amount:</a>
@@ -293,141 +295,136 @@
                                         </div>
                                     </div>{% endcomment %}
 
-                                    </div>
                                 </div>
-
                             </div>
+
                         </div>
                     </div>
                     <div class="ui  tab segment" data-tab="second">
                         <div class="ui internally grid">
-                            <div class="row" style="padding-bottom: 5px!important;padding-top: 5px!important;">
-                                <div class="four wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="handshake icon"></i>
-                                            <div class="content">
-                                                <a class="header">Credit Days:</a>
-                                                <div class="description" id="CreditDays">N/A</div>
-                                            </div>
+                            <div class="eight wide mobile four wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="handshake icon"></i>
+                                        <div class="content">
+                                            <a class="header">Credit Days:</a>
+                                            <div class="description" id="CreditDays">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="file alternate outline icon"></i>
-                                            <div class="content">
-                                                <a class="header">Cheque Detail :</a>
-                                                <div class="description" id="chequeDetail">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="file alternate outline icon"></i>
+                                        <div class="content">
+                                            <a class="header">Cheque Detail :</a>
+                                            <div class="description" id="chequeDetail">N/A</div>
                                         </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="paperclip icon"></i>
-                                            <div class="content">
-                                                <a class="header">Delivery Note:</a>
-                                                <div class="description" id="deliveryNote">N/A</div>
-                                            </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="paperclip icon"></i>
+                                        <div class="content">
+                                            <a class="header">Delivery Note:</a>
+                                            <div class="description" id="deliveryNote">N/A</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="four wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="check double icon"></i>
-                                            <div class="content">
-                                                <a class="header">Supplier Reference:</a>
-                                                <div class="description" id="SupplierReference">N/A</div>
-                                            </div>
-                                        </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="clipboard check icon"></i>
-                                            <div class="content">
-                                                <a class="header">Buyers Order Number:</a>
-                                                <div class="description" id="BuyersOrderNumber">N/A</div>
-                                            </div>
-                                        </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="clipboard list icon"></i>
-                                            <div class="content">
-                                                <a class="header">Dispatch Document Number :</a>
-                                                <div class="description" id="DispatchDocumentNumber">N/A</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="four wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="shipping fast icon"></i>
-                                            <div class="content">
-                                                <a class="header">Dispatch Through:</a>
-                                                <div class="description" id="DispatchThrough">N/A</div>
-                                            </div>
-                                        </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="pen fancy icon"></i>
-                                            <div class="content">
-                                                <a class="header"> Other Reference:</a>
-                                                <div class="description" id="OtherReference">N/A</div>
-                                            </div>
-                                        </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="calendar check icon"></i>
-                                            <div class="content">
-                                                <a class="header">Dispatch Note Date :</a>
-                                                <div class="description" id="DispatchNoteDate">N/A</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="four wide column" style="text-align: left;">
-                                    <div class="ui very relaxed list">
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="warehouse icon"></i>
-                                            <div class="content">
-                                                <a class="header">Destination:</a>
-                                                <div class="description" id="Destination">N/A</div>
-                                            </div>
-                                        </div>
-                                        <div class="item" style="padding-bottom: 0;">
-                                            <i class="user circle icon"></i>
-                                            <div class="content">
-                                                <a class="header">AddedBy:</a>
-                                                <div class="description" id="AddedBy">N/A</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
+                            <div class="eight wide mobile four wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="check double icon"></i>
+                                        <div class="content">
+                                            <a class="header">Supplier Reference:</a>
+                                            <div class="description" id="SupplierReference">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="clipboard check icon"></i>
+                                        <div class="content">
+                                            <a class="header">Buyers Order Number:</a>
+                                            <div class="description" id="BuyersOrderNumber">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="clipboard list icon"></i>
+                                        <div class="content">
+                                            <a class="header">Dispatch Document Number :</a>
+                                            <div class="description" id="DispatchDocumentNumber">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="eight wide mobile four wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="shipping fast icon"></i>
+                                        <div class="content">
+                                            <a class="header">Dispatch Through:</a>
+                                            <div class="description" id="DispatchThrough">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="pen fancy icon"></i>
+                                        <div class="content">
+                                            <a class="header"> Other Reference:</a>
+                                            <div class="description" id="OtherReference">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="calendar check icon"></i>
+                                        <div class="content">
+                                            <a class="header">Dispatch Note Date :</a>
+                                            <div class="description" id="DispatchNoteDate">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="eight wide mobile four wide computer column" style="text-align: left;">
+                                <div class="ui very relaxed list">
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="warehouse icon"></i>
+                                        <div class="content">
+                                            <a class="header">Destination:</a>
+                                            <div class="description" id="Destination">N/A</div>
+                                        </div>
+                                    </div>
+                                    <div class="item" style="padding-bottom: 0;">
+                                        <i class="user circle icon"></i>
+                                        <div class="content">
+                                            <a class="header">AddedBy:</a>
+                                            <div class="description" id="AddedBy">N/A</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
 
                     <h4 style="text-align: left">LIST OF SALES ITEMS:</h4>
-                    <div class="row" style="padding-bottom: 0!important;padding-top: 0!important;">
-                        <div class="twelve wide column" style="padding-top: 0!important;padding-bottom: 0;">
-                            <table class="ui very compact table" id="itemTableReport">
-                                <thead>
-                                <tr>
-                                    <th>Sl No.</th>
-                                    <th>Product</th>
-                                    <th>Category</th>
-                                    <th>HSN</th>
-                                    <th>Quantity</th>
-                                    <th>Unit</th>
-                                    <th>Rate</th>
-                                    <th>Gst %</th>
-                                    <th>Discount %</th>
-                                    <th>Net Rate</th>
-                                    <th>Total</th>
-                                </tr>
-                                </thead>
-                                <tbody id="my_body">
-                                </tbody>
-                            </table>
-                        </div>
-
+                    <div class="ui segment" style="overflow-x: scroll;">
+                        <table class="ui red unstackable  very compact table" id="itemTableReport">
+                            <thead>
+                            <tr>
+                                <th>Sl No.</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>HSN</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th>Rate</th>
+                                <th>Gst %</th>
+                                <th>Discount %</th>
+                                <th>Net Rate</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody id="my_body">
+                            </tbody>
+                        </table>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -440,56 +437,67 @@
         </div>
     </div>
 
-
-    <div class="ui basic modal custom" id="delSaleModal">
-        <div class="ui icon header">
-            <i class="archive icon"></i>
-            Sales detail will be Deleted.
-        </div>
-        <div class="content">
-            <p style="text-align: center">The sales detail will be deleted, are you sure to delete
-                this Sales?</p>
-        </div>
-        <div class="actions">
-            <div class="ui red basic cancel inverted button">
-                <i class="remove icon"></i>
-                No
-            </div>
-            <input type="hidden" id="SaleID">
-            <div class="ui green ok inverted button" onclick="deleteSale()">
-                <i class="checkmark icon"></i>
-                Yes
-            </div>
-        </div>
-    </div>
-
-
-    <div class="ui modal tiny" id="takePayment">
+    <div class="ui medium modal" id="BookingDetail">
         <i class="close icon"></i>
-        <div class="header">
-            Take Payment
-        </div>
-        <div class="image content">
-            <div class="description">
-                <form class="ui form" id="AddCompanyForm">{% csrf_token %}
+        <div class="header" style="font-size: 15px;">Booking Detail
 
-                    <div class="field">
-                        <label>Paid Amount</label>
-                        <input type="number" name="paidAmount" id="paidAmount" placeholder="Paid Amount">
-                    </div>
-                    <input type="hidden" id="salePaymentID">
-
-                </form>
-            </div>
         </div>
-        <div class="actions">
-            <div class="ui black deny button">
-                Close
+
+        <div class="scrolling content">
+            <h5 class="ui horizontal left aligned divider header">
+                <i class="left align icon"></i>
+                Customer Details
+            </h5>
+            <div class="ui aligned basic segment">
+                <table class="ui unstackable olive table very compact">
+                    <thead>
+                    <tr>
+                        <th>Properties</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Customer Name</td>
+                        <td id="cName">N/A</td>
+                    </tr>
+                    <tr>
+                        <td>ExpectedDeliveryDate</td>
+                        <td id="cEDate">N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Total Amount (₹)</td>
+                        <td class="left marked green positive" id="cAmount">0.00</td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+
             </div>
-            <div class="ui positive right labeled icon button" onclick="TakePaymentPost()">
-                Done adding
-                <i class="checkmark icon"></i>
-            </div>
+            <h5 class="ui horizontal left aligned divider header">
+                <i class="left align icon"></i>
+                Product Details
+            </h5>
+            <table class="ui unstackable blue table" id="bookingTable">
+                <thead>
+                <tr>
+                    <th>SlNo.</th>
+                    <th>Name</th>
+                    <th>MRP(₹)</th>
+                    <th>QTY</th>
+                    <th>Total(₹)</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+
+
+            </table>
+        </div>
+        <div class="center aligned actions">
+            <div class="ui negative button">Close</div>
         </div>
     </div>
 
@@ -561,25 +569,26 @@
                 buttons: [{
                     extend: 'excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3]
+                        columns: [0, 1, 2, 3, 4]
                     }
                 },
-{#                    {#}
-{#                    extend: 'print',#}
-{#                    exportOptions: {#}
-{#                        columns: [0, 1, 2, 3]#}
-{#                    }#}
-{#                }#}
+                    {#                    {#}
+                    {#                    extend: 'print',#}
+                    {#                    exportOptions: {#}
+                    {#                        columns: [0, 1, 2, 3]#}
+                    {#                    }#}
+                    {#                }#}
                 ],
                 "columnDefs": [
                     {"name": "customerName", "targets": 0, "orderable": true},
                     {"name": "expectedDeliveryDate", "targets": 1, "orderable": true},
                     {"name": "grandTotal", "targets": 2, "orderable": true},
-                    {"name": "datetime", "targets": 3, "orderable": true},
-                    {"name": "action", "targets": 4, "orderable": false},
+                    {"name": "isSold", "targets": 3, "orderable": true},
+                    {"name": "datetime", "targets": 4, "orderable": true},
+                    {"name": "action", "targets": 5, "orderable": false},
 
                 ],
-                aaSorting: [[3, 'desc']],
+                aaSorting: [[4, 'desc']],
                 "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]],
                 "pageLength": 8,
                 "processing": true,
@@ -594,60 +603,6 @@
 
         }
 
-        function delSale(id) {
-            $('#delSaleModal')
-                .modal('show')
-            ;
-            $('#SaleID').val(id)
-        }
-
-        function deleteSale() {
-            var id = $('#SaleID').val();
-            var formdata = new FormData();
-            formdata.append('ID', id);
-            $.ajax({
-                url: "{% url 'homeApp:delete_booking' %}",
-                type: "post",
-                data: formdata,
-                contentType: false,
-                cache: false,
-                processData: false,
-
-                success: function (response) {
-                    if (response.message === 'success') {
-                        $('body')
-                            .toast({
-                                class: 'success',
-                                message: 'Booking Detail Deleted Successfully.'
-                            })
-                        ;
-
-
-                        salesTab.ajax.reload();
-                    } else {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
-
-                    }
-
-                    return response;
-                },
-                error: function () {
-                    $('body')
-                        .toast({
-                            class: 'error',
-                            message: 'An error occurred !'
-                        })
-                    ;
-                }
-            });
-
-        }
-
 
         function GetSaleDetail(id) {
             $('#salesID').val(id);
@@ -658,7 +613,7 @@
                 success: function (response) {
 
 
-                    $('#itemTable tbody tr').remove();
+                    {#                    $('#itemTable tbody tr').remove();#}
                     $('#CustName').html(response.data.Basic['Name']);
                     $('#custGst').html(response.data.Basic['Gst']);
                     $('#custPhone').html(response.data.Basic['Phone']);
@@ -692,6 +647,7 @@
                     $('#AddedBy').html(response.data.Basic['AddedBy']);
 
                     var i;
+                    $('#itemTableReport tbody').html('');
                     for (i = 0; i < response.data.Items.length; i++) {
                         $('#itemTableReport tbody').append('<tr id ="' + response.data.Items[i]['ItemID'] + '" ><td id ="row' + response.data.Items[i]['ItemID'] + '">#</td> <td id ="product' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemProductName'] + '</td><td id ="category' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemCategory'] + '</td><td id ="hsn' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemHsn'] + '</td><td id ="quantity' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemQuantity'] + '</td><td id ="unit' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemUnit'] + '</td><td id ="price' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemRate'] + '</td><td id ="gst' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemGst'] + '</td><td id ="disc' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemDisc'] + '</td><td id ="netprice' + response.data.Items[i]['ItemnetRate'] + '">' + response.data.Items[i]['ItemnetRate'] + '</td><td id ="total' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemTotal'] + '</td></tr>');
 
@@ -714,6 +670,44 @@
             ;
 
         }
+
+        function GetBookingDetail(id) {
+            $('#salesID').val(id);
+            $.ajax({
+                type: 'get',
+                url: '/ecom/api/get_ecom_booking_detail/' + id + '/',
+
+                success: function (response) {
+
+                    $('#cName').html(response.data.Basic['Name']);
+                    $('#cEDate').html(response.data.Basic['EDate']);
+                    $('#cAmount').html(response.data.Basic['GTotal']);
+
+                    var i;
+                    $('#bookingTable tbody').html('');
+                    for (i = 0; i < response.data.Items.length; i++) {
+                        $('#bookingTable tbody').append('<tr id ="' + response.data.Items[i]['ItemID'] + '" ><td id ="row' + response.data.Items[i]['ItemID'] + '">#</td> <td id ="product' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemProductName'] + '</td><td id ="category' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['MRP'] + '</td><td id ="hsn' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['Quantity'] + '</td><td id ="quantity' + response.data.Items[i]['ItemID'] + '">' + response.data.Items[i]['ItemTotal'] + '</td></tr>');
+
+                    }
+
+
+                },
+
+                error: function () {
+                    $('body')
+                        .toast({
+                            class: 'error',
+                            message: 'An error occurred !'
+                        })
+                    ;
+                }
+            });
+            $('#BookingDetail')
+                .modal('show')
+            ;
+
+        }
+
         function printInvoice() {
             var id = $('#salesID').val();
             window.open('/print/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
@@ -724,71 +718,11 @@
             window.open('/printBill/?q=' + id, 'popUpWindow', 'height=screen.availHeight,width=screen.availWidth,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
 
         }
-        function TakePayment(id) {
-
-            $('#takePayment')
-                .modal('show')
-            ;
-            $('#salePaymentID').val(id)
-
-        }
-
-        function TakePaymentPost() {
-            var id = $('#salePaymentID').val();
-            var paidAmount = $('#paidAmount').val();
-            var formdata = new FormData();
-            formdata.append('ID', id);
-            formdata.append('Amount', paidAmount);
-            $.ajax({
-                url: "{% url 'homeApp:take_sale_payment' %}",
-                type: "post",
-                data: formdata,
-                contentType: false,
-                cache: false,
-                processData: false,
-
-                success: function (response) {
-                    if (response.message === 'success') {
-                        $('body')
-                            .toast({
-                                class: 'success',
-                                message: 'Sales Payment added Successfully.'
-                            })
-                        ;
 
 
-                        salesTab.ajax.reload();
-                        $('#takePayment')
-                            .modal('hide')
-                        ;
-                    } else {
-                        $('body')
-                            .toast({
-                                class: 'error',
-                                message: 'An error occurred !'
-                            })
-                        ;
-
-                    }
-
-                    return response;
-                },
-                error: function () {
-                    $('body')
-                        .toast({
-                            class: 'error',
-                            message: 'An error occurred !'
-                        })
-                    ;
-                }
-            });
-
-        }
-
-    $('.pagination').removeClass('stackable');
-$(document).ready(function() {
-$('.pagination').removeClass('stackable');
-});
+        $(document).ready(function () {
+            $('.pagination').removeClass('stackable');
+        });
 
     </script>
 {% endblock %}

@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from datetime import datetime, timedelta
+from functools import wraps
 
 from activation.models import Validity
 from activation.views import is_activated
@@ -26,6 +27,30 @@ from django.utils.html import escape
 def has_group(user, group_name):
     groups = user.groups.all().values_list('name', flat=True)
     return True if group_name in groups else False
+
+
+# @register.filter('has_group')
+# def has_group(user, group_name):
+#     """
+#     Verifica se este usuário pertence a um grupo
+#     """
+#     groups = user.groups.all().values_list('name', flat=True)
+#     return True if group_name in groups else False
+
+
+
+def check_group(group_name):
+    def _check_group(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            if not request.user.groups.filter(name=group_name).exists():
+                logout(request)
+                # return redirect('/loginPage/')
+            return view_func(request, *args, **kwargs)
+
+        return wrapper
+
+    return _check_group
 
 
 @register.simple_tag()
@@ -193,10 +218,12 @@ def homepage(request):
         return redirect('/loginPage/')
 
 
+@check_group('Admin')
 def index(request):
     return render(request, 'home/index.html')
 
 
+@check_group('Admin')
 @is_activated()
 def sales(request):
     if request.user.is_authenticated:
@@ -219,6 +246,7 @@ def sales(request):
         return redirect('homeApp:loginPage')
 
 
+@check_group('Admin')
 @is_activated()
 def puchase(request):
     if request.user.is_authenticated:
@@ -238,6 +266,7 @@ def puchase(request):
         return redirect('homeApp:loginPage')
 
 
+@check_group('Admin')
 @is_activated()
 def product(request):
     if request.user.is_authenticated:
@@ -246,6 +275,7 @@ def product(request):
         return redirect('homeApp:loginPage')
 
 
+@check_group('Admin')
 @is_activated()
 def hsn_and_category(request):
     if request.user.is_authenticated:
@@ -254,6 +284,7 @@ def hsn_and_category(request):
         return redirect('homeApp:loginPage')
 
 
+@check_group('Admin')
 @is_activated()
 def create_return(request):
     if request.user.is_authenticated:
@@ -261,61 +292,61 @@ def create_return(request):
     else:
         return redirect('homeApp:loginPage')
 
-
+@check_group('Admin')
 @is_activated()
 def salesReport(request):
     return render(request, 'home/salesReport.html')
 
-
+@check_group('Admin')
 @is_activated()
 def returnReport(request):
     return render(request, 'home/returnReport.html')
 
-
+@check_group('Admin')
 @is_activated()
 def ledger(request):
     customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
     context = {
-        'customers':customers
+        'customers': customers
     }
     return render(request, 'home/ledger.html', context)
 
+@check_group('Admin')
 @is_activated()
 def customer_monthly_report(request):
-
     return render(request, 'home/CustomerMonthlyReport.html')
 
-
+@check_group('Admin')
 @cache_page(60 * 10)
 @is_activated()
 def take_payment(request):
     customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
     context = {
-        'customers':customers
+        'customers': customers
     }
     return render(request, 'home/takePayment.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def bookingList(request):
     return render(request, 'home/bookingList.html')
 
-
+@check_group('Admin')
 @is_activated()
 def purchaseReport(request):
     return render(request, 'home/purchaseReport.html')
 
-
+@check_group('Admin')
 @is_activated()
 def contact(request):
     return render(request, 'home/contact.html')
 
-
+@check_group('Admin')
 @is_activated()
 def referrer(request):
     return render(request, 'home/referrer.html')
 
-
+@check_group('Admin')
 @is_activated()
 def generalSetting(request):
     printers = PrinterSetting.objects.filter(isDeleted__exact=False).order_by('size')
@@ -331,7 +362,7 @@ def generalSetting(request):
 
     return render(request, 'home/generalsetting.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def settings(request):
     # if request.user.is_authenticated:
@@ -347,7 +378,7 @@ def settings(request):
     else:
         return redirect('homeApp:loginPage')
 
-
+@check_group('Admin')
 @is_activated()
 def manage_invoice(request):
     if 'Admin' in request.user.groups.values_list('name', flat=True):
@@ -362,7 +393,7 @@ def manage_invoice(request):
     }
     return render(request, 'home/manageInvoice.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def expense(request):
     if 'Admin' in request.user.groups.values_list('name', flat=True):
@@ -377,12 +408,12 @@ def expense(request):
     }
     return render(request, 'home/expense.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def manageUser(request):
     return render(request, 'home/ManageUser.html')
 
-
+@check_group('Admin')
 @is_activated()
 def wareHouseList(request):
     return render(request, 'home/wareHouse.html')
@@ -394,7 +425,7 @@ def loginPage(request):
     else:
         return redirect('/')
 
-
+@check_group('Admin')
 @is_activated()
 def dashboard(request):
     if request.user.is_authenticated:
@@ -446,7 +477,7 @@ def dashboard(request):
     else:
         return redirect('/')
 
-
+@check_group('Admin')
 @is_activated()
 def report(request):
     if 'Admin' in request.user.groups.values_list('name', flat=True):
@@ -460,7 +491,7 @@ def report(request):
     }
     return render(request, 'home/report.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def customer_ledger(request, id=None):
     instance = get_object_or_404(Customer, pk=id)
@@ -493,7 +524,7 @@ def customer_ledger(request, id=None):
 
     return render(request, 'home/customerLedger.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def supplier_ledger(request, id=None):
     instance = get_object_or_404(Supplier, pk=id)
@@ -518,7 +549,7 @@ def supplier_ledger(request, id=None):
 
     return render(request, 'home/supplierLedger.html', context)
 
-
+@check_group('Admin')
 @is_activated()
 def referrer_ledger(request, id=None):
     instance = get_object_or_404(Referrer, pk=id)
@@ -2141,7 +2172,7 @@ class SalesListJson(BaseDatatableView):
             qs = qs.filter(
                 Q(customerName__icontains=search) | Q(customerGst__icontains=search) | Q(id__icontains=search)
                 | Q(invoiceDate__icontains=search) | Q(invoiceNumber__icontains=search)
-                | Q(salesType__icontains=search)| Q(saleFrom__icontains=search)
+                | Q(salesType__icontains=search) | Q(saleFrom__icontains=search)
                 | Q(grandTotal__icontains=search) | Q(paymentType__icontains=search) | Q(
                     creditDays__icontains=search) | Q(status__icontains=search) | Q(companyID__name__icontains=search)
             ).order_by('-id')
@@ -2314,13 +2345,14 @@ class SalesListByCustomerJson(BaseDatatableView):
             sDate = datetime.strptime(startDateV, '%d/%m/%Y')
             eDate = datetime.strptime(endDateV, '%d/%m/%Y')
 
-
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'),
+                                            invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
             else:
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                            customerID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+                                            customerID_id=self.request.GET.get('ID'),
+                                            invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
 
         except:
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
@@ -2329,7 +2361,6 @@ class SalesListByCustomerJson(BaseDatatableView):
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
                                             customerID_id=self.request.GET.get('ID'))
-
 
     def filter_queryset(self, qs):
 
@@ -2967,10 +2998,12 @@ def postLogin(request):
 
         if user is not None:
             login(request, user)
-            if 'Admin' in request.user.groups.values_list('name', flat=True) or 'Staff' in request.user.groups.values_list('name', flat=True) :
-                return JsonResponse({'message': 'success','data':'/'}, safe=False)
+            if 'Admin' in request.user.groups.values_list('name',
+                                                          flat=True) or 'Staff' in request.user.groups.values_list(
+                    'name', flat=True):
+                return JsonResponse({'message': 'success', 'data': '/'}, safe=False)
             elif 'Executive' in request.user.groups.values_list('name', flat=True):
-                return JsonResponse({'message': 'success','data':'/ecom/home/'}, safe=False)
+                return JsonResponse({'message': 'success', 'data': '/ecom/home/'}, safe=False)
             else:
                 return JsonResponse({'message': 'fail'}, safe=False)
 
@@ -3429,13 +3462,14 @@ class PurchaseListBySupplierJson(BaseDatatableView):
             sDate = datetime.strptime(startDateV, '%d/%m/%Y')
             eDate = datetime.strptime(endDateV, '%d/%m/%Y')
 
-
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-                return Purchase.objects.filter(isDeleted__exact=False, supplierID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+                return Purchase.objects.filter(isDeleted__exact=False, supplierID_id=self.request.GET.get('ID'),
+                                               invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
             else:
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Purchase.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                               supplierID_id=self.request.GET.get('ID'), invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
+                                               supplierID_id=self.request.GET.get('ID'),
+                                               invoiceDate__range=(sDate.date(), eDate.date() + timedelta(days=1)))
         except:
 
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
@@ -3444,6 +3478,7 @@ class PurchaseListBySupplierJson(BaseDatatableView):
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Purchase.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
                                                supplierID_id=self.request.GET.get('ID'))
+
     def filter_queryset(self, qs):
 
         search = self.request.GET.get('search[value]', None)
@@ -5430,7 +5465,9 @@ def download_product_sales_report(request):
     workbook = xlsxwriter.Workbook(response, {'in_memory': True})
     worksheet = workbook.add_worksheet()
 
-    ex = SalesProduct.objects.filter(isDeleted__exact=False, salesID__invoiceDate__range=(startDate.date(), endDate.date())).order_by('productID_id')
+    ex = SalesProduct.objects.filter(isDeleted__exact=False,
+                                     salesID__invoiceDate__range=(startDate.date(), endDate.date())).order_by(
+        'productID_id')
 
     bold = workbook.add_format({'bold': True})
     worksheet.write('A1', 'Serial No.', bold)
@@ -5457,19 +5494,20 @@ def download_product_sales_report(request):
                                                    salesID__invoiceDate__lte=endDate.date() + timedelta(
                                                        days=1)).aggregate(Sum('quantity'))
 
-        p_sale_unit_price = SalesProduct.objects.filter(productID_id=int(item), salesID__invoiceDate__gte=startDate.date(),
-                                                   salesID__invoiceDate__lte=endDate.date() + timedelta(
-                                                       days=1))
+        p_sale_unit_price = SalesProduct.objects.filter(productID_id=int(item),
+                                                        salesID__invoiceDate__gte=startDate.date(),
+                                                        salesID__invoiceDate__lte=endDate.date() + timedelta(
+                                                            days=1))
         total_p = 0.0
         for p in p_sale_unit_price:
-            total_p = total_p + (p.quantity*p.netRate)
+            total_p = total_p + (p.quantity * p.netRate)
 
         worksheet.write(row, col, row)
         worksheet.write(row, col + 1, p_name.name)
         worksheet.write(row, col + 2, p_name.barcode)
         worksheet.write(row, col + 3, str(p_sale_count['quantity__sum']))
         worksheet.write(row, col + 4, str(total_p))
-        worksheet.write(row, col + 5, str(total_p/p_sale_count['quantity__sum']))
+        worksheet.write(row, col + 5, str(total_p / p_sale_count['quantity__sum']))
         worksheet.write(row, col + 6, p_name.unitID.name)
         row += 1
         # total = total + item.amount
@@ -5902,11 +5940,9 @@ def download_return_product_sales_report(request):
     return response
 
 
-#customer ledger
+# customer ledger
 
-def  get_customer_detail_by_name_for_ledger(request):
-
-
+def get_customer_detail_by_name_for_ledger(request):
     try:
         q = request.GET.get('q')
         id = str(q).split('|')
@@ -5921,7 +5957,7 @@ def  get_customer_detail_by_name_for_ledger(request):
             'Phone': instance.phone,
             'State': instance.state,
         }
-        return JsonResponse({'message':'success','data': data}, safe=False)
+        return JsonResponse({'message': 'success', 'data': data}, safe=False)
     except:
         data = {
             'ID': 'N/A',
@@ -5935,7 +5971,6 @@ def  get_customer_detail_by_name_for_ledger(request):
         }
 
     return JsonResponse({'message': 'error', 'data': data}, safe=False)
-
 
 
 class SalesLedgerListByCustomerJson(BaseDatatableView):
@@ -5954,16 +5989,16 @@ class SalesLedgerListByCustomerJson(BaseDatatableView):
 
             x = calendar.monthrange(eDate.year, eDate.month)[1]
             e = datetime(eDate.year, eDate.month, x)
-            eeDate =datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
-
-
+            eeDate = datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
 
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'),  invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+                return Sales.objects.filter(isDeleted__exact=False, customerID_id=self.request.GET.get('ID'),
+                                            invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
             else:
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
-                                            customerID_id=self.request.GET.get('ID'), invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+                                            customerID_id=self.request.GET.get('ID'),
+                                            invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
 
         except:
             if 'Admin' in self.request.user.groups.values_list('name', flat=True):
@@ -5972,7 +6007,6 @@ class SalesLedgerListByCustomerJson(BaseDatatableView):
                 user = CompanyUser.objects.get(user_ID=self.request.user.pk)
                 return Sales.objects.filter(isDeleted__exact=False, companyID_id=user.company_ID_id,
                                             customerID_id=self.request.GET.get('ID'))
-
 
     def filter_queryset(self, qs):
 
@@ -6046,11 +6080,11 @@ def get_customer_ledger_amount(request):
         eeDate = datetime.strptime(str(e.strftime("%d/%m/%Y")), '%d/%m/%Y')
         if load == 'onload':
             all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'))
-            pay =  TakePayment.objects.filter(customerID_id=request.GET.get('ID'))
+            pay = TakePayment.objects.filter(customerID_id=request.GET.get('ID'))
 
         else:
-            all_sales =  Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'),
-                                        invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
+            all_sales = Sales.objects.filter(isDeleted__exact=False, customerID_id=request.GET.get('ID'),
+                                             invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
             pay = TakePayment.objects.filter(customerID_id=request.GET.get('ID'),
                                              paymentDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
 
@@ -6063,10 +6097,9 @@ def get_customer_ledger_amount(request):
         for p in pay:
             paid = paid + p.amount
 
-
         due = total - paid
 
-        return JsonResponse({'message': 'success', 'total':total, 'paid':paid , 'due':due}, safe=False)
+        return JsonResponse({'message': 'success', 'total': total, 'paid': paid, 'due': due}, safe=False)
 
     except:
 
@@ -6083,7 +6116,7 @@ def get_customer_ledger_amount(request):
             paid = paid + p.amount
         due = total - paid
 
-        return JsonResponse({'message': 'success', 'total':total, 'paid':paid , 'due':due}, safe=False)
+        return JsonResponse({'message': 'success', 'total': total, 'paid': paid, 'due': due}, safe=False)
 
 
 # take payment
@@ -6118,7 +6151,7 @@ class TakePaymentListJson(BaseDatatableView):
         startDate = datetime.strptime(sDate, '%d/%m/%Y')
         endDate = datetime.strptime(eDate, '%d/%m/%Y')
 
-        return TakePayment.objects.filter( paymentDate__range=(startDate.date(), endDate.date() ))
+        return TakePayment.objects.filter(paymentDate__range=(startDate.date(), endDate.date()))
 
     def filter_queryset(self, qs):
 
@@ -6170,11 +6203,10 @@ class CustomerMonthlyLedgerListByCustomerJson(BaseDatatableView):
         except:
             return Customer.objects.filter(isDeleted__exact=False)
 
-
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
         if search:
-            qs = qs.filter(Q(name__icontains=search)| Q(address__icontains=search) )
+            qs = qs.filter(Q(name__icontains=search) | Q(address__icontains=search))
 
         return qs
 
@@ -6196,7 +6228,7 @@ class CustomerMonthlyLedgerListByCustomerJson(BaseDatatableView):
                 address = 'N/A'
             else:
                 address = item.address
-            sale = Sales.objects.filter(isDeleted__exact=False,customerID_id=item.pk,
+            sale = Sales.objects.filter(isDeleted__exact=False, customerID_id=item.pk,
                                         invoiceDate__range=(ssDate.date(), eeDate.date() + timedelta(days=1)))
 
             pay = TakePayment.objects.filter(customerID_id=item.pk,

@@ -74,8 +74,12 @@
                     <td class="right aligned" id="pMrp">None</td>
                 </tr>
                 <tr>
-                    <td>Stock</td>
+                    <td>Available Stock</td>
                     <td class="right aligned" id="pStock">Requires call</td>
+                </tr>
+                <tr>
+                    <td>Booked Stock</td>
+                    <td class="right aligned" id="pBookingCount" style="color: red">0.00</td>
                 </tr>
                 <tr>
                     <td>Quantity</td>
@@ -128,6 +132,7 @@
                         $('#pStock').html(response.data["IsAvailable"]);
                         $('#pUnit').html(response.data["Unit"]);
                         $('#pID').val(response.data["ID"]);
+                        $('#pBookingCount').html(response.data["BookingCount"] +' '+ response.data["Unit"]);
                     }
                     else {
                         $('body')

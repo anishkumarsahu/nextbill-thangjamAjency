@@ -40,5 +40,6 @@ urlpatterns = [
     url(r'^api/EcomSalesListJson/$', EcomSalesListJson.as_view(), name='EcomSalesListJson'),
     url(r'^api/SalesListByProductEcomJson/$', SalesListByProductEcomJson.as_view(), name='SalesListByProductEcomJson'),
     url(r'^edit_sale_ecom/(?P<id>[0-9]+)/$', edit_sale_ecom, name='edit_sale_ecom'),
+    url(r'^api/get_ecom_booking_detail/(?P<id>[0-9]+)/$', get_ecom_booking_detail, name='get_ecom_booking_detail'),
 
 ]

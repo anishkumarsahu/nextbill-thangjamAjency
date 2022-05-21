@@ -17,24 +17,26 @@ from datetime import datetime, timedelta
 from activation.models import Validity
 from activation.views import is_activated
 from home.numberToWord import num2words
+from home.views import check_group
+
 from .models import *
 from home.models import *
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import escape
 
 
-
+@check_group('Admin')
 @is_activated()
 def sales_executive(request):
     return render(request, 'ecomApp/userEcom.html')
 
-
+@check_group('Admin')
 @is_activated()
 def ecom_booking_list_admin(request):
     return render(request, 'ecomApp/ecomBookingListAdmin.html')
 
 
-
+@check_group('Executive')
 @is_activated()
 def browse_products(request):
     product = request.GET.get('product')
@@ -45,7 +47,7 @@ def browse_products(request):
     }
     return render(request, 'ecomApp/productList.html', context)
 
-
+@check_group('Executive')
 @is_activated()
 def home(request):
     customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
@@ -234,14 +236,14 @@ def Edit_executive(request):
         return JsonResponse({'message': 'success'}, safe=False)
 
 
-
+@check_group('Admin')
 @is_activated()
 def product_images(request):
     return render(request, 'ecomApp/productImages.html')
 
 
 
-
+@check_group('Executive')
 @is_activated()
 def booking_list_ecom(request):
     return render(request, 'ecomApp/ecomBookingListUser.html')
@@ -438,6 +440,10 @@ def get_product_detail_for_cart_api(request):
     try:
         ID = request.GET.get('ID')
         product = Product.objects.get(pk = int(ID))
+        order_pro = BookingProductList.objects.filter(productID_id=product.pk, salesID__isSold__exact=False, isDeleted__exact=False)
+        o_c = 0.0
+        for p in order_pro:
+            o_c = o_c + p.quantity
 
         if product.stock > 0:
             stock = '<span style="color:green;font-weight:bold" class="date">{} {} Available </span>'.format(
@@ -450,7 +456,8 @@ def get_product_detail_for_cart_api(request):
             'Category': product.categoryID.name + '/ ' + product.categoryID.brand,
             'Mrp': product.mrp,
             'IsAvailable': stock,
-            'Unit': product.unitID.name
+            'Unit': product.unitID.name,
+            'BookingCount':o_c
         }
         return JsonResponse({'message': 'success', 'data': data})
     except:
@@ -516,7 +523,7 @@ def add_booking_from_ecom(request):
 
 
 class BookingEcomListByUserJson(BaseDatatableView):
-    order_columns = ['customerName', 'expectedDeliveryDate',  'grandTotal', 'datetime', ]
+    order_columns = ['customerName', 'expectedDeliveryDate',  'grandTotal', 'isSold', 'datetime', ]
 
     def get_initial_queryset(self):
         sDate = self.request.GET.get('startDate')
@@ -536,38 +543,39 @@ class BookingEcomListByUserJson(BaseDatatableView):
         search = self.request.GET.get('search[value]', None)
         if search:
             qs = qs.filter(
-                Q(customerName__icontains=search) | Q(grandTotal__icontains=search) ).order_by('-id')
+                Q(customerName__icontains=search) |  Q(isSold__icontains=search)
+                | Q(grandTotal__icontains=search) ).order_by('-id')
 
         return qs
 
     def prepare_results(self, qs):
         json_data = []
         for item in qs:
-            if 'Admin' in self.request.user.groups.values_list('name', flat=True):
-
-                action = '''<a style="font-size:10px;" href="/BookingSale/{}" class="ui circular  icon button green">
-                               <i class="clipboard check icon"></i>
-                             </a>
-
-
-
-                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
-                               <i class="trash alternate icon"></i>
-                             </button>'''.format(item.pk, item.pk, item.pk),
+            action = '''
+                <a style="font-size:10px;" data-tooltip="Booking Detail" position="bottom left"  data-inverted="" 
+                 data-variation="tiny"  onclick = "GetBookingDetail('{}')" class="ui circular  icon button pink">
+                          <i class="clipboard outline icon"></i>
+                         </a>
+            '''.format(item.pk)
+            # action = '''
+            #              <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
+            #                <i class="trash alternate icon"></i>
+            #              </button>'''.format(item.pk, item.pk, item.pk)
+            if item.isSold == True:
+                sold = '<button class="ui tiny active green button" type="button" >  Yes </button>'
+                action = action + '''
+                <a style="font-size:10px;" data-tooltip="Invoice" position="bottom left"  data-inverted="" 
+                 data-variation="tiny"  onclick = "GetSaleDetail('{}')" class="ui circular  icon button teal">
+                           <i class="file invoice icon"></i>
+                         </a>
+                '''.format(item.confirmBookID)
             else:
-                action = '''<a style="font-size:10px;" href="/BookingSale/{}" class="ui circular  icon button green">
-                               <i class="clipboard check icon"></i>
-                             </a>
-
-
-
-                             <button style="font-size:10px;" onclick ="delSale('{}')" class="ui circular youtube icon button" style="margin-left: 3px">
-                               <i class="trash alternate icon"></i>
-                             </button>'''.format(item.pk, item.pk, item.pk),
+                sold = '<button class="ui tiny active red button" type="button" >  No </button>'
             json_data.append([
                 escape(item.customerName),  # escape HTML for security reasons
                 escape(item.expectedDeliveryDate),
                 escape(item.grandTotal),
+                sold,
                 escape(item.datetime.strftime('%d-%m-%Y %I:%M %p')),
                 action
             ])
@@ -638,7 +646,7 @@ class BookingEcomListByAdminJson(BaseDatatableView):
             ])
         return json_data
 
-
+@check_group('Admin')
 def EcomBookingSale(request, id=None):
     if request.user.is_authenticated:
         instance = get_object_or_404(BookingEcom, pk=id)
@@ -912,7 +920,7 @@ def add_sales_from_booking_ecom(request):
             book.save()
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
 
-
+@check_group('Admin')
 @is_activated()
 def ecom_salesReport(request):
     return render(request, 'ecomApp/salesReportEcom.html')
@@ -1123,3 +1131,34 @@ def edit_sale_ecom(request, id=None):
         return render(request, 'ecomApp/EditSaleEcom.html', context)
     else:
         return redirect('homeApp:loginPage')
+
+
+
+def get_ecom_booking_detail(request, id=None):
+    instance = get_object_or_404(BookingEcom, pk=id)
+    basic = {
+        'Name': instance.customerName,
+        'EDate': instance.expectedDeliveryDate,
+        'GTotal': instance.grandTotal,
+
+    }
+    items = BookingProductList.objects.filter(salesID_id=instance.pk)
+    item_list = []
+    for i in items:
+        item_dic = {
+            'ItemID': i.pk,
+            'ItemProductName': i.productName,
+            'MRP': i.netRate,
+            'Quantity': i.quantity,
+            'ItemTotal': i.total,
+
+        }
+        item_list.append(item_dic)
+
+    data = {
+        'Basic': basic,
+        'Items': item_list
+
+    }
+    return JsonResponse({'data': data}, safe=False)
+
