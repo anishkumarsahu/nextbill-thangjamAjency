@@ -14,7 +14,7 @@ from django.contrib.auth.models import Group
 from datetime import datetime, timedelta
 from functools import wraps
 
-from activation.models import Validity
+from activation.models import Validity, EcomValidity
 from activation.views import is_activated
 from home.numberToWord import num2words
 from .models import *
@@ -203,17 +203,30 @@ def print_bill_thermal(request, *args, **kwargs):
 
 def homepage(request):
     if request.user.is_authenticated:
-        try:
-            val = Validity.objects.last()
-            message = "Your License is Valid till {}".format(val.expiryDate.strftime('%d-%m-%Y'))
-        except:
-            message = "You are using a trial version."
+        if 'Executive' in request.user.groups.values_list('name', flat=True):
+            return redirect('/ecom/home/')
 
-        context = {
-            'message': message
-        }
+        else :
+            try:
+                val = Validity.objects.last()
+                message = "Your License is Valid till {}".format(val.expiryDate.strftime('%d-%m-%Y'))
+            except:
+                message = "You are using a trial version."
 
-        return render(request, 'home/main.html', context)
+            try:
+                valEcom = EcomValidity.objects.last()
+                messageEcom = "Your License is Valid till {}".format(valEcom.expiryDate.strftime('%d-%m-%Y'))
+            except:
+                messageEcom = "You are using a trial version."
+
+            context = {
+                'message': message,
+                'messageEcom':messageEcom
+            }
+
+            return render(request, 'home/main.html', context)
+
+
     else:
         return redirect('/loginPage/')
 

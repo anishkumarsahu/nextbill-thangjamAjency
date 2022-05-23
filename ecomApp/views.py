@@ -15,7 +15,7 @@ from django.contrib.auth.models import Group
 from datetime import datetime, timedelta
 
 from activation.models import Validity
-from activation.views import is_activated
+from activation.views import is_activated, is_ecom_activated
 from home.numberToWord import num2words
 from home.views import check_group
 
@@ -26,18 +26,18 @@ from django.utils.html import escape
 
 
 @check_group('Admin')
-@is_activated()
+@is_ecom_activated()
 def sales_executive(request):
     return render(request, 'ecomApp/userEcom.html')
 
 @check_group('Admin')
-@is_activated()
+@is_ecom_activated()
 def ecom_booking_list_admin(request):
     return render(request, 'ecomApp/ecomBookingListAdmin.html')
 
 
 @check_group('Executive')
-@is_activated()
+@is_ecom_activated()
 def browse_products(request):
     product = request.GET.get('product')
     if product == '' or product == None:
@@ -48,7 +48,7 @@ def browse_products(request):
     return render(request, 'ecomApp/productList.html', context)
 
 @check_group('Executive')
-@is_activated()
+@is_ecom_activated()
 def home(request):
     customers = Customer.objects.filter(isDeleted__exact=False).order_by('name')
     context = {
@@ -237,14 +237,14 @@ def Edit_executive(request):
 
 
 @check_group('Admin')
-@is_activated()
+@is_ecom_activated()
 def product_images(request):
     return render(request, 'ecomApp/productImages.html')
 
 
 
 @check_group('Executive')
-@is_activated()
+@is_ecom_activated()
 def booking_list_ecom(request):
     return render(request, 'ecomApp/ecomBookingListUser.html')
 
@@ -646,6 +646,7 @@ class BookingEcomListByAdminJson(BaseDatatableView):
             ])
         return json_data
 
+@is_ecom_activated()
 @check_group('Admin')
 def EcomBookingSale(request, id=None):
     if request.user.is_authenticated:
@@ -921,7 +922,7 @@ def add_sales_from_booking_ecom(request):
             return JsonResponse({'message': 'success', 'saleID': sale.pk}, safe=False)
 
 @check_group('Admin')
-@is_activated()
+@is_ecom_activated()
 def ecom_salesReport(request):
     return render(request, 'ecomApp/salesReportEcom.html')
 
@@ -1108,7 +1109,8 @@ class SalesListByProductEcomJson(BaseDatatableView):
             ])
         return json_data
 
-
+@check_group('Admin')
+@is_ecom_activated()
 def edit_sale_ecom(request, id=None):
     if request.user.is_authenticated:
         instance = get_object_or_404(Sales, pk=id)

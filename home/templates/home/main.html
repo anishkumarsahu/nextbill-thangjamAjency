@@ -184,6 +184,14 @@
 
 
     </div>
+
+<div class="ui error message" style="height: 60px;width: 50%;margin: 0 auto;">
+    <i class="close icon"></i>
+    <div class="header">
+        NEXTBILL Reminder!
+    </div>
+    {{ message }}
+</div>
 </div>
 <div class="ui tab segment" data-tab="second">
     <div class="ui vertically divided grid inverted" style="text-align: center">
@@ -210,7 +218,7 @@
             </div>
 
         </div>
-        <div class="four column row">
+        <div class="five column row">
 
             <div class="column">
                 <a href="{% url 'ecomApp:sales_executive' %}" >
@@ -232,20 +240,25 @@
                     <p><i class="chart line teal icon" style="font-size: 4rem;"></i><br><span class="ui text teal">ECOM SALES REPORT</span>  </p>
                 </a>
             </div>
+             <div class="column">
+                <a href="{% url 'homeApp:logout' %}">
+                    <p><i class="share square teal icon" style="font-size: 4rem;"></i><br><span class="ui text teal">LOGOUT</span> </p>
+                </a>
+            </div>
 
         </div>
 
 
     </div>
-</div>
-
-<div class="ui error message" style="height: 60px;width: 50%;margin: 0 auto;">
+    <div class="ui error message" style="height: 60px;width: 50%;margin: 0 auto;">
     <i class="close icon"></i>
     <div class="header">
-        NEXTBILL Reminder!
+        NEXTBILL ECOM Reminder!
     </div>
-    {{ message }}
+    {{ messageEcom }}
 </div>
+</div>
+
 <script>
     $('.menu .item').tab();
     $('.message .close')

@@ -25,5 +25,24 @@ def is_activated():
     return _is_activated
 
 
+
+def is_ecom_activated():
+    def _is_ecom_activated(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            try:
+                val = EcomValidity.objects.last()
+
+                if val.expiryDate < datetime.today().date():
+                    return redirect('/activate/')
+                return view_func(request, *args, **kwargs)
+            except:
+                return view_func(request, *args, **kwargs)
+
+        return wrapper
+
+    return _is_ecom_activated
+
+
 def activate(request):
     return render(request, 'activation/activate.html')

@@ -10,3 +10,11 @@ class ValidityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Validity, ValidityAdmin)
+
+
+
+class EcomValidityAdmin(admin.ModelAdmin):
+    list_display = ['activationDate', 'expiryDate', 'activationType', 'datetime', 'lastUpdatedOn']
+
+
+admin.site.register(EcomValidity, EcomValidityAdmin)

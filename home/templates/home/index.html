@@ -69,6 +69,8 @@ input[type=number] {
 </head>
 <body>
 
+{% block nav %}
+
 <div class="ui blue nine item inverted menu topNav" style="border-radius: 0;">
     <a class="item" href="{% url 'homeApp:homepage' %}">
         <i class="home icon"></i>
@@ -208,6 +210,8 @@ input[type=number] {
 
     </div>
 </div>
+{% endblock %}
+
 
 
 {% block body %}
