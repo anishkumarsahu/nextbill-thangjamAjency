@@ -6134,6 +6134,7 @@ def get_customer_ledger_amount(request):
 
 # take payment
 @transaction.atomic
+@csrf_exempt
 def add_take_payment(request):
     if request.method == 'POST':
         try:
