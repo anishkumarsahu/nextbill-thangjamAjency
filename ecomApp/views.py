@@ -416,7 +416,7 @@ def product_list_api(request, *args,**kwargs):
             if image.count() > 0:
                 oriImage = image[0].productImage.medium.url
             else:
-                oriImage = 'https://cdn-icons.flaticon.com/png/512/4194/premium/4194746.png?token=exp=1651906853~hmac=5bc4ca930ed1e7aa229eb5a648f823c0'
+                oriImage = 'https://icons.iconarchive.com/icons/graphicloads/100-flat/256/shopping-icon.png'
 
             if product.stock > 0:
                 stock = '<span style="color:green;font-weight:bold" class="date">/- {} {} Available </span>'.format(product.stock, product.unitID.name)
